@@ -19,63 +19,69 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
+    <nav className={`navbar ${isScrolled ? 'navbar-scrolled shadow-lg' : ''}`}>
       <div className="container">
         <div className="flex items-center justify-between h-20">
           
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg shadow-red-500/50">
               <Trophy className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-black text-white">
+            <span className="text-2xl font-black text-white group-hover:text-red-400 transition-colors">
               SmashRank
             </span>
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-1">
-            <Link href="/tournaments" className="nav-link">
+          <div className="hidden md:flex items-center space-x-2">
+            <Link href="/tournaments" className="nav-link px-4 py-2 hover:bg-slate-800 rounded-lg transition-all">
+              <Gamepad2 className="inline w-4 h-4 mr-2" />
               Torneos
             </Link>
-            <Link href="/rankings" className="nav-link">
+            <Link href="/rankings" className="nav-link px-4 py-2 hover:bg-slate-800 rounded-lg transition-all">
+              <Award className="inline w-4 h-4 mr-2" />
               Rankings
             </Link>
             
             {session ? (
               <>
                 {session.user.role === 'ADMIN' && (
-                  <Link href="/admin/dashboard" className="nav-link">
-                    <LayoutDashboard className="inline w-4 h-4 mr-1" />
-                    Admin
+                  <Link href="/admin/dashboard">
+                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-600/20 to-orange-600/20 border border-red-500/30 hover:border-red-500 transition-all group">
+                      <LayoutDashboard className="inline w-4 h-4 mr-2 text-red-400" />
+                      <span className="font-semibold text-red-400 group-hover:text-red-300">Admin</span>
+                    </div>
                   </Link>
                 )}
                 
                 <div className="ml-4 flex items-center gap-2">
                   <Link href="/profile">
-                    <button className="btn-ghost flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      <span>{session.user.username}</span>
+                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all border border-slate-700 hover:border-slate-600">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="font-semibold text-white">{session.user.username}</span>
                     </button>
                   </Link>
                   <button 
                     onClick={() => signOut()}
-                    className="btn-icon"
+                    className="p-2 rounded-lg bg-slate-800 hover:bg-red-600 border border-slate-700 hover:border-red-500 transition-all group"
                     title="Cerrar sesión"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-5 h-5 text-slate-400 group-hover:text-white" />
                   </button>
                 </div>
               </>
             ) : (
               <div className="ml-4 flex items-center gap-3">
                 <Link href="/auth/signin">
-                  <button className="btn-secondary">
+                  <button className="btn-secondary px-6 py-2.5">
                     Ingresar
                   </button>
                 </Link>
                 <Link href="/auth/signup">
-                  <button className="btn-primary">
+                  <button className="btn-primary px-6 py-2.5">
                     Registrarse
                   </button>
                 </Link>
@@ -97,52 +103,65 @@ export default function Navbar() {
           <div className="md:hidden py-4 space-y-2 border-t border-slate-800 animate-fade-in-up">
             <Link 
               href="/tournaments" 
-              className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
-              <Trophy className="inline w-4 h-4 mr-2" />
-              Torneos
+              <Gamepad2 className="w-5 h-5" />
+              <span>Torneos</span>
             </Link>
             <Link 
               href="/rankings" 
-              className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
-              <Award className="inline w-4 h-4 mr-2" />
-              Rankings
+              <Award className="w-5 h-5" />
+              <span>Rankings</span>
             </Link>
             
             {session ? (
               <div className="space-y-2 pt-4 border-t border-slate-800">
+                {/* User Info */}
+                <div className="px-4 py-3 bg-slate-800/50 rounded-lg mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">{session.user.username}</p>
+                      <p className="text-xs text-slate-400">{session.user.email}</p>
+                    </div>
+                  </div>
+                </div>
+
                 {session.user.role === 'ADMIN' && (
                   <Link href="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
-                    <button className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-red-600 to-orange-600 text-white font-semibold text-left">
-                      <LayoutDashboard className="inline w-4 h-4 mr-2" />
-                      Admin Dashboard
+                    <button className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-red-600/20 to-orange-600/20 border border-red-500/30 text-red-400 font-semibold text-left hover:border-red-500 transition-all">
+                      <LayoutDashboard className="inline w-5 h-5 mr-3" />
+                      Panel de Admin
                     </button>
                   </Link>
                 )}
                 <Link href="/profile" onClick={() => setIsMenuOpen(false)}>
-                  <button className="w-full px-4 py-3 rounded-lg border-2 border-slate-700 text-slate-300 hover:border-white hover:text-white font-semibold text-left transition-all">
-                    <User className="inline w-4 h-4 mr-2" />
+                  <button className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white font-semibold text-left hover:bg-slate-700 transition-all">
+                    <User className="inline w-5 h-5 mr-3" />
                     Mi Perfil
                   </button>
                 </Link>
                 <button 
-                  className="w-full px-4 py-3 rounded-lg border-2 border-slate-700 text-slate-300 hover:border-red-500 hover:text-red-400 font-semibold text-left transition-all"
+                  className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-red-500 hover:bg-red-600/10 hover:text-red-400 font-semibold text-left transition-all"
                   onClick={() => {
                     signOut();
                     setIsMenuOpen(false);
                   }}
                 >
-                  <LogOut className="inline w-4 h-4 mr-2" />
+                  <LogOut className="inline w-5 h-5 mr-3" />
                   Cerrar Sesión
                 </button>
               </div>
             ) : (
               <div className="space-y-2 pt-4 border-t border-slate-800">
                 <Link href="/auth/signin" onClick={() => setIsMenuOpen(false)}>
-                  <button className="w-full px-4 py-3 rounded-lg border-2 border-slate-700 text-slate-300 hover:border-white hover:text-white font-semibold transition-all">
+                  <button className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white hover:border-white font-semibold transition-all">
                     Ingresar
                   </button>
                 </Link>
