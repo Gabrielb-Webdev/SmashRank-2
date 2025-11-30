@@ -281,8 +281,11 @@ export default function CreateTournamentPage() {
                     </div>
                   </div>
 
-                  <div className="p-5 rounded-xl" style={{background: 'rgba(220, 20, 60, 0.05)', border: '2px solid rgba(220, 20, 60, 0.2)'}}>
-                    <label className="label flex items-center gap-2 mb-3">
+                  <div className="p-5 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(220, 20, 60, 0.05)', border: '2px solid rgba(220, 20, 60, 0.2)'}} onClick={(e) => {
+                    const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
+                    if (input && e.target !== input) input.showPicker?.();
+                  }}>
+                    <label className="label flex items-center gap-2 mb-3 cursor-pointer">
                       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
                         <Calendar className="w-4 h-4 text-white" />
                       </div>
@@ -291,7 +294,7 @@ export default function CreateTournamentPage() {
                     <div className="relative">
                       <input
                         type="datetime-local"
-                        className="input text-lg font-semibold"
+                        className="input text-lg font-semibold cursor-pointer"
                         style={{paddingRight: '3rem'}}
                         value={formData.startDate}
                         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
@@ -303,13 +306,16 @@ export default function CreateTournamentPage() {
                       </div>
                     </div>
                     <p className="text-xs mt-2 flex items-center gap-1" style={{color: '#ffd700'}}>
-                      ⚠️ Cuándo empieza el torneo (debe ser fecha futura)
+                      📅 Haz clic para seleccionar fecha y hora
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(34, 197, 94, 0.05)', border: '2px solid rgba(34, 197, 94, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
+                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(34, 197, 94, 0.05)', border: '2px solid rgba(34, 197, 94, 0.2)'}} onClick={(e) => {
+                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
+                      if (input && e.target !== input) input.showPicker?.();
+                    }}>
+                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
                           <span className="text-xs">✅</span>
                         </div>
@@ -318,7 +324,7 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold"
+                          className="input font-semibold cursor-pointer"
                           style={{paddingRight: '2.5rem'}}
                           value={formData.registrationStart}
                           onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
@@ -329,11 +335,14 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-green-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-green-400 mt-1">📅 Inicio de inscripciones</p>
+                      <p className="text-xs text-green-400 mt-1">📅 Clic para seleccionar</p>
                     </div>
 
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(239, 68, 68, 0.05)', border: '2px solid rgba(239, 68, 68, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
+                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(239, 68, 68, 0.05)', border: '2px solid rgba(239, 68, 68, 0.2)'}} onClick={(e) => {
+                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
+                      if (input && e.target !== input) input.showPicker?.();
+                    }}>
+                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-500 to-rose-500 flex items-center justify-center">
                           <span className="text-xs">🚫</span>
                         </div>
@@ -342,7 +351,7 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold"
+                          className="input font-semibold cursor-pointer"
                           style={{paddingRight: '2.5rem'}}
                           value={formData.registrationEnd}
                           onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
@@ -353,13 +362,16 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-red-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-red-400 mt-1">⏰ Cierre de inscripciones</p>
+                      <p className="text-xs text-red-400 mt-1">📅 Clic para seleccionar</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(59, 130, 246, 0.05)', border: '2px solid rgba(59, 130, 246, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
+                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(59, 130, 246, 0.05)', border: '2px solid rgba(59, 130, 246, 0.2)'}} onClick={(e) => {
+                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
+                      if (input && e.target !== input) input.showPicker?.();
+                    }}>
+                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                           <span className="text-xs">⏰</span>
                         </div>
@@ -368,7 +380,7 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold"
+                          className="input font-semibold cursor-pointer"
                           style={{paddingRight: '2.5rem'}}
                           value={formData.checkinStart}
                           onChange={(e) => setFormData({ ...formData, checkinStart: e.target.value })}
@@ -379,11 +391,14 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-blue-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-blue-400 mt-1">🔓 Inicio de check-in</p>
+                      <p className="text-xs text-blue-400 mt-1">📅 Clic para seleccionar</p>
                     </div>
 
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(168, 85, 247, 0.05)', border: '2px solid rgba(168, 85, 247, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
+                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(168, 85, 247, 0.05)', border: '2px solid rgba(168, 85, 247, 0.2)'}} onClick={(e) => {
+                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
+                      if (input && e.target !== input) input.showPicker?.();
+                    }}>
+                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                           <span className="text-xs">⛔</span>
                         </div>
@@ -392,7 +407,7 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold"
+                          className="input font-semibold cursor-pointer"
                           style={{paddingRight: '2.5rem'}}
                           value={formData.checkinEnd}
                           onChange={(e) => setFormData({ ...formData, checkinEnd: e.target.value })}
@@ -404,7 +419,7 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-purple-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-purple-400 mt-1">🔒 Cierre de check-in</p>
+                      <p className="text-xs text-purple-400 mt-1">📅 Clic para seleccionar</p>
                     </div>
                   </div>
                 </div>
