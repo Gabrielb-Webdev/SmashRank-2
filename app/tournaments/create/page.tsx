@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { PROVINCES, TOURNAMENT_FORMATS } from '@/lib/constants';
+import { TOURNAMENT_FORMATS } from '@/lib/constants';
 import toast from 'react-hot-toast';
 import { Trophy, Calendar, MapPin, Users, Settings, Wifi, Info, CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -15,7 +15,6 @@ export default function CreateTournamentPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    province: 'Buenos Aires',
     isOnline: true,
     format: 'DOUBLE_ELIMINATION',
     maxParticipants: '32',
@@ -27,6 +26,8 @@ export default function CreateTournamentPage() {
     rules: '3 stocks, 7 minutos, sin items',
     stageList: 'Battlefield, Final Destination, Smashville, Town & City, Pokémon Stadium 2',
   });
+
+  const participantOptions = ['8', '16', '32', '64', '128', '256'];
 
   // Auto-calcular fechas sugeridas
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function CreateTournamentPage() {
   const validateStep = (step: number) => {
     switch (step) {
       case 1:
-        return formData.name && formData.province && formData.format;
+        return formData.name && formData.format && formData.maxParticipants;
       case 2:
         return formData.startDate && formData.registrationStart && formData.registrationEnd && formData.checkinStart && formData.checkinEnd;
       case 3:
@@ -211,19 +212,6 @@ export default function CreateTournamentPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="label">📍 Provincia *</label>
-                      <select
-                        className="input"
-                        value={formData.province}
-                        onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                      >
-                        {PROVINCES.map((prov) => (
-                          <option key={prov} value={prov}>{prov}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
                       <label className="label">🎮 Formato *</label>
                       <select
                         className="input"
@@ -236,35 +224,34 @@ export default function CreateTournamentPage() {
                           </option>
                         ))}
                       </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-slate-800/50">
-                      <Wifi className="w-5 h-5 text-blue-400" />
-                      <div className="flex-1">
-                        <label className="label mb-0">Torneo Online</label>
-                        <p className="text-xs text-slate-500">Se juega por internet</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={formData.isOnline}
-                        onChange={(e) => setFormData({ ...formData, isOnline: e.target.checked })}
-                        className="w-5 h-5 rounded accent-red-500"
-                      />
+                      <p className="text-xs text-slate-500 mt-1">Tipo de bracket del torneo</p>
                     </div>
 
                     <div>
-                      <label className="label">👥 Máximo de Participantes</label>
-                      <input
-                        type="number"
+                      <label className="label">👥 Máximo de Participantes *</label>
+                      <select
                         className="input"
                         value={formData.maxParticipants}
                         onChange={(e) => setFormData({ ...formData, maxParticipants: e.target.value })}
-                        placeholder="32"
-                        min="2"
-                      />
-                      <p className="text-xs text-slate-500 mt-1">Opcional - Deja vacío para ilimitado</p>
+                        required
+                      >
+                        {participantOptions.map((num) => (
+                          <option key={num} value={num}>{num} participantes</option>
+                        ))}
+                      </select>
+                      <p className="text-xs text-slate-500 mt-1">Capacidad del torneo</p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                    <div className="flex items-start gap-3">
+                      <Wifi className="w-5 h-5 text-green-400 mt-0.5" />
+                      <div>
+                        <p className="text-sm text-green-300 font-semibold mb-1">🌐 Torneo Online</p>
+                        <p className="text-xs text-slate-400">
+                          Todos los torneos son online. Los usuarios indican su provincia en su perfil para rankings regionales.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -296,65 +283,86 @@ export default function CreateTournamentPage() {
 
                   <div>
                     <label className="label">🏁 Fecha y Hora de Inicio del Torneo *</label>
-                    <input
-                      type="datetime-local"
-                      className="input"
-                      value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      required
-                    />
-                    <p className="text-xs text-slate-500 mt-1">Cuándo empieza el torneo</p>
+                    <div className="relative">
+                      <input
+                        type="datetime-local"
+                        className="input"
+                        value={formData.startDate}
+                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                        min={new Date().toISOString().slice(0, 16)}
+                        required
+                      />
+                      <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">Cuándo empieza el torneo (debe ser fecha futura)</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="label">✅ Inscripciones Abren *</label>
-                      <input
-                        type="datetime-local"
-                        className="input"
-                        value={formData.registrationStart}
-                        onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
-                        required
-                      />
+                      <div className="relative">
+                        <input
+                          type="datetime-local"
+                          className="input"
+                          value={formData.registrationStart}
+                          onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
+                          min={new Date().toISOString().slice(0, 16)}
+                          required
+                        />
+                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                      </div>
                       <p className="text-xs text-slate-500 mt-1">Inicio de inscripciones</p>
                     </div>
 
                     <div>
                       <label className="label">🚫 Inscripciones Cierran *</label>
-                      <input
-                        type="datetime-local"
-                        className="input"
-                        value={formData.registrationEnd}
-                        onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
-                        required
-                      />
-                      <p className="text-xs text-slate-500 mt-1">Cierre de inscripciones</p>
+                      <div className="relative">
+                        <input
+                          type="datetime-local"
+                          className="input"
+                          value={formData.registrationEnd}
+                          onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
+                          min={formData.registrationStart || new Date().toISOString().slice(0, 16)}
+                          required
+                        />
+                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1">Cierre de inscripciones (antes del inicio)</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="label">⏰ Check-in Abre *</label>
-                      <input
-                        type="datetime-local"
-                        className="input"
-                        value={formData.checkinStart}
-                        onChange={(e) => setFormData({ ...formData, checkinStart: e.target.value })}
-                        required
-                      />
-                      <p className="text-xs text-slate-500 mt-1">Inicio de check-in</p>
+                      <div className="relative">
+                        <input
+                          type="datetime-local"
+                          className="input"
+                          value={formData.checkinStart}
+                          onChange={(e) => setFormData({ ...formData, checkinStart: e.target.value })}
+                          min={formData.registrationEnd || new Date().toISOString().slice(0, 16)}
+                          required
+                        />
+                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1">Inicio de check-in (después del cierre de inscripciones)</p>
                     </div>
 
                     <div>
                       <label className="label">⛔ Check-in Cierra *</label>
-                      <input
-                        type="datetime-local"
-                        className="input"
-                        value={formData.checkinEnd}
-                        onChange={(e) => setFormData({ ...formData, checkinEnd: e.target.value })}
-                        required
-                      />
-                      <p className="text-xs text-slate-500 mt-1">Cierre de check-in</p>
+                      <div className="relative">
+                        <input
+                          type="datetime-local"
+                          className="input"
+                          value={formData.checkinEnd}
+                          onChange={(e) => setFormData({ ...formData, checkinEnd: e.target.value })}
+                          min={formData.checkinStart || new Date().toISOString().slice(0, 16)}
+                          max={formData.startDate}
+                          required
+                        />
+                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1">Cierre de check-in (antes del inicio del torneo)</p>
                     </div>
                   </div>
                 </div>
@@ -413,16 +421,12 @@ export default function CreateTournamentPage() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-slate-400">Ubicación:</p>
-                        <p className="text-white font-semibold">
-                          {formData.isOnline ? '🌐 Online' : `📍 ${formData.province}`}
-                        </p>
+                        <p className="text-slate-400">Modalidad:</p>
+                        <p className="text-white font-semibold">🌐 Online</p>
                       </div>
                       <div>
-                        <p className="text-slate-400">Participantes:</p>
-                        <p className="text-white font-semibold">
-                          {formData.maxParticipants ? `Máx. ${formData.maxParticipants}` : 'Sin límite'}
-                        </p>
+                        <p className="text-slate-400">Capacidad:</p>
+                        <p className="text-white font-semibold">Máx. {formData.maxParticipants} jugadores</p>
                       </div>
                     </div>
                   </div>
