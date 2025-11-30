@@ -56,7 +56,9 @@ const colorStyles = {
 export default function DateTimePicker({ value, onChange, label, icon, color, min, max, required }: DateTimePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(value ? new Date(value) : new Date());
+  const [position, setPosition] = useState<'bottom' | 'top'>('bottom');
   const pickerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const styles = colorStyles[color];
 
   useEffect(() => {
@@ -74,12 +76,29 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      adjustPosition();
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
+
+  const adjustPosition = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const modalHeight = 500; // Altura aproximada del modal
+
+      // Si hay más espacio arriba que abajo, mostrar arriba
+      if (spaceBelow < modalHeight && spaceAbove > spaceBelow) {
+        setPosition('top');
+      } else {
+        setPosition('bottom');
+      }
+    }
+  };
 
   const formatDisplayDate = (date: Date) => {
     const day = String(date.getDate()).padStart(2, '0');
@@ -142,6 +161,7 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
         </label>
 
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="w-full text-left font-semibold transition-all"
@@ -162,16 +182,30 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
 
         {isOpen && (
           <div 
-            className="absolute z-50 mt-2 rounded-xl shadow-2xl animate-fade-in-up"
+            className="fixed z-[100] rounded-xl shadow-2xl animate-scale-in custom-scrollbar"
             style={{
               background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(10, 10, 10, 0.98) 100%)',
               border: `2px solid ${styles.borderFocus}`,
               backdropFilter: 'blur(10px)',
-              minWidth: '320px'
+              width: '340px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              ...(position === 'bottom' 
+                ? { 
+                    top: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().bottom + 8}px` : '100%',
+                    left: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().left}px` : '0'
+                  } 
+                : { 
+                    bottom: buttonRef.current ? `${window.innerHeight - buttonRef.current.getBoundingClientRect().top + 8}px` : '100%',
+                    left: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().left}px` : '0'
+                  })
             }}
           >
             {/* Header del calendario */}
-            <div className="p-4 border-b" style={{ borderColor: styles.border }}>
+            <div className="p-4 border-b sticky top-0 z-10" style={{ 
+              borderColor: styles.border,
+              background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(10, 10, 10, 0.98) 100%)'
+            }}>
               <div className="flex items-center justify-between mb-4">
                 <button
                   type="button"
@@ -227,7 +261,7 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
               </div>
             </div>
 
-            {/* Selector de hora */}
+              {/* Selector de hora */}
             <div className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Clock className="w-4 h-4" style={{ color: styles.text }} />
@@ -237,7 +271,7 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
                 {/* Horas */}
                 <div className="flex-1">
                   <label className="text-xs text-gray-400 mb-2 block">Hora</label>
-                  <div className="max-h-40 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
+                  <div className="h-32 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
                     {Array.from({ length: 24 }, (_, i) => (
                       <button
                         key={i}
@@ -258,7 +292,7 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
                 {/* Minutos */}
                 <div className="flex-1">
                   <label className="text-xs text-gray-400 mb-2 block">Minutos</label>
-                  <div className="max-h-40 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
+                  <div className="h-32 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
                     {Array.from({ length: 60 }, (_, i) => (
                       <button
                         key={i}
@@ -275,9 +309,7 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
                     ))}
                   </div>
                 </div>
-              </div>
-
-              <button
+              </div>              <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 className={`w-full mt-4 py-2 px-4 rounded-lg font-bold bg-gradient-to-br ${styles.button} text-white shadow-lg hover:shadow-xl transition-all`}
