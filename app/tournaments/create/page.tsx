@@ -281,11 +281,8 @@ export default function CreateTournamentPage() {
                     </div>
                   </div>
 
-                  <div className="p-5 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(220, 20, 60, 0.05)', border: '2px solid rgba(220, 20, 60, 0.2)'}} onClick={(e) => {
-                    const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
-                    if (input && e.target !== input) input.showPicker?.();
-                  }}>
-                    <label className="label flex items-center gap-2 mb-3 cursor-pointer">
+                  <div className="p-5 rounded-xl" style={{background: 'rgba(220, 20, 60, 0.05)', border: '2px solid rgba(220, 20, 60, 0.2)'}}>
+                    <label className="label flex items-center gap-2 mb-3">
                       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
                         <Calendar className="w-4 h-4 text-white" />
                       </div>
@@ -294,8 +291,21 @@ export default function CreateTournamentPage() {
                     <div className="relative">
                       <input
                         type="datetime-local"
-                        className="input text-lg font-semibold cursor-pointer"
-                        style={{paddingRight: '3rem'}}
+                        className="input text-lg font-semibold"
+                        style={{
+                          paddingRight: '3rem',
+                          background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(255, 69, 0, 0.1) 100%)',
+                          border: '2px solid rgba(220, 20, 60, 0.3)',
+                          borderRadius: '12px',
+                          padding: '14px 3rem 14px 16px',
+                          fontSize: '18px',
+                          fontWeight: '600',
+                          color: '#ffd700',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = '#dc143c'}
+                        onBlur={(e) => e.target.style.borderColor = 'rgba(220, 20, 60, 0.3)'}
                         value={formData.startDate}
                         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                         min={new Date().toISOString().slice(0, 16)}
@@ -306,16 +316,13 @@ export default function CreateTournamentPage() {
                       </div>
                     </div>
                     <p className="text-xs mt-2 flex items-center gap-1" style={{color: '#ffd700'}}>
-                      📅 Haz clic para seleccionar fecha y hora
+                      📅 Click en el campo para seleccionar fecha y hora
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(34, 197, 94, 0.05)', border: '2px solid rgba(34, 197, 94, 0.2)'}} onClick={(e) => {
-                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
-                      if (input && e.target !== input) input.showPicker?.();
-                    }}>
-                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(34, 197, 94, 0.05)', border: '2px solid rgba(34, 197, 94, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
                           <span className="text-xs">✅</span>
                         </div>
@@ -324,8 +331,19 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold cursor-pointer"
-                          style={{paddingRight: '2.5rem'}}
+                          className="input font-semibold"
+                          style={{
+                            paddingRight: '2.5rem',
+                            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%)',
+                            border: '2px solid rgba(34, 197, 94, 0.4)',
+                            borderRadius: '10px',
+                            padding: '12px 2.5rem 12px 14px',
+                            fontWeight: '600',
+                            color: '#4ade80',
+                            cursor: 'pointer',
+                          }}
+                          onFocus={(e) => e.target.style.borderColor = '#22c55e'}
+                          onBlur={(e) => e.target.style.borderColor = 'rgba(34, 197, 94, 0.4)'}
                           value={formData.registrationStart}
                           onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
                           min={new Date().toISOString().slice(0, 16)}
@@ -335,14 +353,11 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-green-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-green-400 mt-1">📅 Clic para seleccionar</p>
+                      <p className="text-xs text-green-400 mt-1">📅 Click en el campo</p>
                     </div>
 
-                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(239, 68, 68, 0.05)', border: '2px solid rgba(239, 68, 68, 0.2)'}} onClick={(e) => {
-                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
-                      if (input && e.target !== input) input.showPicker?.();
-                    }}>
-                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(239, 68, 68, 0.05)', border: '2px solid rgba(239, 68, 68, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-500 to-rose-500 flex items-center justify-center">
                           <span className="text-xs">🚫</span>
                         </div>
@@ -351,8 +366,19 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold cursor-pointer"
-                          style={{paddingRight: '2.5rem'}}
+                          className="input font-semibold"
+                          style={{
+                            paddingRight: '2.5rem',
+                            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(225, 29, 72, 0.15) 100%)',
+                            border: '2px solid rgba(239, 68, 68, 0.4)',
+                            borderRadius: '10px',
+                            padding: '12px 2.5rem 12px 14px',
+                            fontWeight: '600',
+                            color: '#f87171',
+                            cursor: 'pointer',
+                          }}
+                          onFocus={(e) => e.target.style.borderColor = '#ef4444'}
+                          onBlur={(e) => e.target.style.borderColor = 'rgba(239, 68, 68, 0.4)'}
                           value={formData.registrationEnd}
                           onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
                           min={formData.registrationStart || new Date().toISOString().slice(0, 16)}
@@ -362,16 +388,13 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-red-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-red-400 mt-1">📅 Clic para seleccionar</p>
+                      <p className="text-xs text-red-400 mt-1">📅 Click en el campo</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(59, 130, 246, 0.05)', border: '2px solid rgba(59, 130, 246, 0.2)'}} onClick={(e) => {
-                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
-                      if (input && e.target !== input) input.showPicker?.();
-                    }}>
-                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(59, 130, 246, 0.05)', border: '2px solid rgba(59, 130, 246, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                           <span className="text-xs">⏰</span>
                         </div>
@@ -380,8 +403,19 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold cursor-pointer"
-                          style={{paddingRight: '2.5rem'}}
+                          className="input font-semibold"
+                          style={{
+                            paddingRight: '2.5rem',
+                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)',
+                            border: '2px solid rgba(59, 130, 246, 0.4)',
+                            borderRadius: '10px',
+                            padding: '12px 2.5rem 12px 14px',
+                            fontWeight: '600',
+                            color: '#60a5fa',
+                            cursor: 'pointer',
+                          }}
+                          onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                          onBlur={(e) => e.target.style.borderColor = 'rgba(59, 130, 246, 0.4)'}
                           value={formData.checkinStart}
                           onChange={(e) => setFormData({ ...formData, checkinStart: e.target.value })}
                           min={formData.registrationEnd || new Date().toISOString().slice(0, 16)}
@@ -391,14 +425,11 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-blue-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-blue-400 mt-1">📅 Clic para seleccionar</p>
+                      <p className="text-xs text-blue-400 mt-1">📅 Click en el campo</p>
                     </div>
 
-                    <div className="p-4 rounded-xl cursor-pointer transition-all hover:shadow-lg" style={{background: 'rgba(168, 85, 247, 0.05)', border: '2px solid rgba(168, 85, 247, 0.2)'}} onClick={(e) => {
-                      const input = e.currentTarget.querySelector('input[type="datetime-local"]') as HTMLInputElement;
-                      if (input && e.target !== input) input.showPicker?.();
-                    }}>
-                      <label className="label flex items-center gap-2 mb-2 cursor-pointer">
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(168, 85, 247, 0.05)', border: '2px solid rgba(168, 85, 247, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
                         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                           <span className="text-xs">⛔</span>
                         </div>
@@ -407,8 +438,19 @@ export default function CreateTournamentPage() {
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input font-semibold cursor-pointer"
-                          style={{paddingRight: '2.5rem'}}
+                          className="input font-semibold"
+                          style={{
+                            paddingRight: '2.5rem',
+                            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%)',
+                            border: '2px solid rgba(168, 85, 247, 0.4)',
+                            borderRadius: '10px',
+                            padding: '12px 2.5rem 12px 14px',
+                            fontWeight: '600',
+                            color: '#c084fc',
+                            cursor: 'pointer',
+                          }}
+                          onFocus={(e) => e.target.style.borderColor = '#a855f7'}
+                          onBlur={(e) => e.target.style.borderColor = 'rgba(168, 85, 247, 0.4)'}
                           value={formData.checkinEnd}
                           onChange={(e) => setFormData({ ...formData, checkinEnd: e.target.value })}
                           min={formData.checkinStart || new Date().toISOString().slice(0, 16)}
@@ -419,7 +461,7 @@ export default function CreateTournamentPage() {
                           <Calendar className="w-4 h-4 text-purple-500" />
                         </div>
                       </div>
-                      <p className="text-xs text-purple-400 mt-1">📅 Clic para seleccionar</p>
+                      <p className="text-xs text-purple-400 mt-1">📅 Click en el campo</p>
                     </div>
                   </div>
                 </div>
