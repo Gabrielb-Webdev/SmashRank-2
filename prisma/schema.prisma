@@ -189,7 +189,6 @@ model Bracket {
 
   // Relaciones
   tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  matches    Match[]
 
   @@index([tournamentId])
 }
