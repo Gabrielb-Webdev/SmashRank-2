@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Trophy, Calendar, MapPin, Users, Check, X, Edit, Trash2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import toast from 'react-hot-toast';
-import CharacterSelector from '@/components/tournaments/CharacterSelector';
 import Link from 'next/link';
 
 export default function TournamentDetailPage({ params }: { params: { id: string } }) {
@@ -16,7 +15,6 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   const router = useRouter();
   const [tournament, setTournament] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showCharacterSelector, setShowCharacterSelector] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [canCheckIn, setCanCheckIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
@@ -63,12 +61,14 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     }
   };
 
-  const handleRegister = async (characterId: string, skinId: string) => {
+  const handleRegister = async () => {
+    if (!confirm('¿Confirmas tu inscripción al torneo?')) return;
+
     try {
       const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ characterId, skinId }),
+        body: JSON.stringify({}),
       });
 
       const data = await response.json();
@@ -78,7 +78,6 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
       }
 
       toast.success('¡Inscripción exitosa!');
-      setShowCharacterSelector(false);
       fetchTournament();
     } catch (error: any) {
       toast.error(error.message);
@@ -381,7 +380,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setShowCharacterSelector(true)} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}>
+                <button onClick={handleRegister} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}>
                   🏆 Inscribirse Ahora
                 </button>
               )}
@@ -394,42 +393,15 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                 Fechas Importantes
               </h3>
               <div className="space-y-4">
-                <div className="p-3 rounded-lg" style={{background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)'}}>
+                <div className="p-3 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
                   <p className="text-xs text-slate-400 uppercase mb-1 flex items-center gap-2">
-                    <span>✅</span> Inscripciones Abren
+                    <span>🏁</span> Inicio del Torneo
                   </p>
-                  <p className="text-white font-bold">{formatDate(tournament.registrationStart)}</p>
+                  <p className="text-white font-bold">{formatDate(tournament.startDate)}</p>
                 </div>
-                <div className="p-3 rounded-lg" style={{background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)'}}>
-                  <p className="text-xs text-slate-400 uppercase mb-1 flex items-center gap-2">
-                    <span>🚫</span> Inscripciones Cierran
-                  </p>
-                  <p className="text-white font-bold">{formatDate(tournament.registrationEnd)}</p>
-                </div>
-                <div className="p-3 rounded-lg" style={{background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)'}}>
-                  <p className="text-xs text-slate-400 uppercase mb-1 flex items-center gap-2">
-                    <span>⏰</span> Check-in Abre
-                  </p>
-                  <p className="text-white font-bold">{formatDate(tournament.checkinStart)}</p>
-                </div>
-                <div className="p-3 rounded-lg" style={{background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.3)'}}>
-                  <p className="text-xs text-slate-400 uppercase mb-1 flex items-center gap-2">
-                    <span>⛔</span> Check-in Cierra
-                  </p>
-                  <p className="text-white font-bold">{formatDate(tournament.checkinEnd)}</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
-
-        {/* Character Selector Modal */}
-        {showCharacterSelector && (
-          <CharacterSelector
-            onSelect={handleRegister}
-            onClose={() => setShowCharacterSelector(false)}
-          />
-        )}
       </div>
     </div>
   );

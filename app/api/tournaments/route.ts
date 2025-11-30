@@ -12,10 +12,6 @@ const tournamentSchema = z.object({
   format: z.enum(['SINGLE_ELIMINATION', 'DOUBLE_ELIMINATION', 'ROUND_ROBIN', 'SWISS', 'CREW_BATTLE']),
   maxParticipants: z.number(),
   startDate: z.string(),
-  registrationStart: z.string(),
-  registrationEnd: z.string(),
-  checkinStart: z.string(),
-  checkinEnd: z.string(),
   rules: z.string().optional(),
   stageList: z.string().optional(),
   ruleset: z.any().optional(),
@@ -101,6 +97,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Calcular fechas automáticamente
+    const startDate = new Date(validatedData.startDate);
+    const now = new Date();
+    
+    // Las inscripciones y check-in se abren inmediatamente y cierran cuando inicia el torneo
+    const registrationStart = now;
+    const registrationEnd = startDate;
+    const checkinStart = now;
+    const checkinEnd = startDate;
+
     const tournament = await prisma.tournament.create({
       data: {
         name: validatedData.name,
@@ -110,11 +116,11 @@ export async function POST(req: NextRequest) {
         isOnline: true,
         format: validatedData.format,
         maxParticipants: validatedData.maxParticipants,
-        startDate: new Date(validatedData.startDate),
-        registrationStart: new Date(validatedData.registrationStart),
-        registrationEnd: new Date(validatedData.registrationEnd),
-        checkinStart: new Date(validatedData.checkinStart),
-        checkinEnd: new Date(validatedData.checkinEnd),
+        startDate,
+        registrationStart,
+        registrationEnd,
+        checkinStart,
+        checkinEnd,
         rules: validatedData.rules,
         stageList: validatedData.stageList,
         ruleset: validatedData.ruleset,

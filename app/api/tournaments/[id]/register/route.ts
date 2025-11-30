@@ -21,12 +21,7 @@ export async function POST(
     const body = await request.json();
     const { characterId, skinId } = body;
 
-    if (!characterId || !skinId) {
-      return NextResponse.json(
-        { error: 'Debes seleccionar un personaje y skin' },
-        { status: 400 }
-      );
-    }
+    // Personaje y skin son opcionales ahora
 
     // Verificar que el torneo existe y está abierto para inscripciones
     const tournament = await prisma.tournament.findUnique({
@@ -85,24 +80,26 @@ export async function POST(
       );
     }
 
-    // Verificar que el personaje y skin existen
-    const [character, skin] = await Promise.all([
-      prisma.character.findUnique({ where: { id: characterId } }),
-      prisma.characterSkin.findUnique({ where: { id: skinId } }),
-    ]);
+    // Verificar que el personaje y skin existen (si se proporcionan)
+    if (characterId && skinId) {
+      const [character, skin] = await Promise.all([
+        prisma.character.findUnique({ where: { id: characterId } }),
+        prisma.characterSkin.findUnique({ where: { id: skinId } }),
+      ]);
 
-    if (!character || !skin) {
-      return NextResponse.json(
-        { error: 'Personaje o skin inválido' },
-        { status: 400 }
-      );
-    }
+      if (!character || !skin) {
+        return NextResponse.json(
+          { error: 'Personaje o skin inválido' },
+          { status: 400 }
+        );
+      }
 
-    if (skin.characterId !== characterId) {
-      return NextResponse.json(
-        { error: 'El skin no pertenece al personaje seleccionado' },
-        { status: 400 }
-      );
+      if (skin.characterId !== characterId) {
+        return NextResponse.json(
+          { error: 'El skin no pertenece al personaje seleccionado' },
+          { status: 400 }
+        );
+      }
     }
 
     // Crear inscripción
@@ -110,8 +107,8 @@ export async function POST(
       data: {
         tournamentId: params.id,
         userId: session.user.id,
-        characterId,
-        skinId,
+        ...(characterId && { characterId }),
+        ...(skinId && { skinId }),
         checkedIn: false,
       },
       include: {

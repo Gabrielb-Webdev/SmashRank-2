@@ -101,16 +101,20 @@ export async function PUT(
       description,
       format,
       maxParticipants,
-      province,
-      isOnline,
       startDate,
-      registrationStart,
-      registrationEnd,
-      checkinStart,
-      checkinEnd,
       rules,
       stageList,
     } = body;
+
+    // Calcular fechas automáticamente basadas en la nueva fecha de inicio
+    const newStartDate = new Date(startDate);
+    const now = new Date();
+    
+    // Las inscripciones y check-in se mantienen abiertas hasta que inicie el torneo
+    const registrationStart = now;
+    const registrationEnd = newStartDate;
+    const checkinStart = now;
+    const checkinEnd = newStartDate;
 
     const updatedTournament = await prisma.tournament.update({
       where: { id: params.id },
@@ -119,13 +123,13 @@ export async function PUT(
         description,
         format,
         maxParticipants: maxParticipants ? parseInt(maxParticipants) : null,
-        province,
-        isOnline,
-        startDate: new Date(startDate),
-        registrationStart: new Date(registrationStart),
-        registrationEnd: new Date(registrationEnd),
-        checkinStart: new Date(checkinStart),
-        checkinEnd: new Date(checkinEnd),
+        province: 'Online',
+        isOnline: true,
+        startDate: newStartDate,
+        registrationStart,
+        registrationEnd,
+        checkinStart,
+        checkinEnd,
         rules,
         stageList,
       },
