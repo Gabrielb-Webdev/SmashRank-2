@@ -1,31 +1,63 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { User, Mail, MapPin, Shield, Edit, Trophy, Target } from 'lucide-react';
+import prisma from '@/lib/prisma';
 
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { User, Mail, MapPin, Calendar, Shield, Edit } from 'lucide-react';
+async function getUserStats(userId: string) {
+  try {
+    const [user, tournamentsCount, matchesWon] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          registrations: {
+            include: {
+              tournament: true
+            }
+          }
+        }
+      }),
+      prisma.registration.count({
+        where: { userId }
+      }),
+      prisma.match.count({
+        where: {
+          OR: [
+            { player1Id: userId, winnerId: userId },
+            { player2Id: userId, winnerId: userId }
+          ]
+        }
+      })
+    ]);
 
-export default function ProfilePage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+    // Calcular puntos según el sistema de ranking
+    const points = (matchesWon * 100) + (tournamentsCount * 10);
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-    }
-  }, [session, status, router]);
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="spinner"></div>
-      </div>
-    );
+    return {
+      user,
+      tournaments: tournamentsCount,
+      wins: matchesWon,
+      points
+    };
+  } catch (error) {
+    console.error('Error fetching user stats:', error);
+    return {
+      user: null,
+      tournaments: 0,
+      wins: 0,
+      points: 0
+    };
   }
+}
+
+export default async function ProfilePage() {
+  const session = await getServerSession(authOptions);
 
   if (!session) {
-    return null;
+    redirect('/auth/signin');
   }
+
+  const stats = await getUserStats(session.user.id);
 
   return (
     <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
@@ -87,20 +119,35 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Stats */}
+          {/* Stats - DATOS REALES */}
           <div className="card p-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            <h2 className="text-xl font-bold text-white mb-6">Estadísticas</h2>
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Trophy className="w-6 h-6" style={{color: '#ffd700'}} />
+              Estadísticas
+            </h2>
             <div className="grid grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-black text-white mb-1">0</div>
-                <div className="text-sm text-slate-400">Torneos</div>
+              <div className="text-center p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                <div className="text-3xl font-black mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                  {stats.tournaments}
+                </div>
+                <div className="text-sm text-slate-400 flex items-center justify-center gap-1">
+                  <Target className="w-3 h-3" />
+                  Torneos
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-black text-white mb-1">0</div>
-                <div className="text-sm text-slate-400">Victorias</div>
+              <div className="text-center p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                <div className="text-3xl font-black mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                  {stats.wins}
+                </div>
+                <div className="text-sm text-slate-400 flex items-center justify-center gap-1">
+                  <Trophy className="w-3 h-3" />
+                  Victorias
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-black text-white mb-1">0</div>
+              <div className="text-center p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                <div className="text-3xl font-black mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                  {stats.points}
+                </div>
                 <div className="text-sm text-slate-400">Puntos</div>
               </div>
             </div>

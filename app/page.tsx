@@ -1,8 +1,40 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Trophy, Users, Calendar, Target, Shield, Zap, MapPin, Award, TrendingUp, Gamepad2 } from 'lucide-react';
+import prisma from '@/lib/prisma';
 
-export default function HomePage() {
+async function getStats() {
+  try {
+    const [tournamentsCount, usersCount, charactersCount, activeProvinces] = await Promise.all([
+      prisma.tournament.count(),
+      prisma.user.count(),
+      prisma.character.count(),
+      prisma.user.findMany({
+        select: { province: true },
+        distinct: ['province'],
+      }),
+    ]);
+
+    return {
+      tournaments: tournamentsCount,
+      users: usersCount,
+      characters: charactersCount,
+      provinces: activeProvinces.length,
+    };
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    return {
+      tournaments: 0,
+      users: 0,
+      characters: 0,
+      provinces: 0,
+    };
+  }
+}
+
+export default async function HomePage() {
+  const stats = await getStats();
+
   return (
     <div className="relative overflow-hidden">
       
@@ -71,24 +103,30 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Mini Stats */}
+              {/* Mini Stats - DATOS REALES */}
               <div className="flex gap-8 pt-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>89</div>
+                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                    {stats.characters}
+                  </div>
                   <div className="text-xs text-slate-400 uppercase font-semibold flex items-center justify-center gap-1">
                     <Gamepad2 className="w-3 h-3" />
                     Personajes
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>24</div>
+                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                    {stats.provinces}
+                  </div>
                   <div className="text-xs text-slate-400 uppercase font-semibold flex items-center justify-center gap-1">
                     <MapPin className="w-3 h-3" />
                     Provincias
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>∞</div>
+                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                    {stats.tournaments}
+                  </div>
                   <div className="text-xs text-slate-400 uppercase font-semibold flex items-center justify-center gap-1">
                     <Trophy className="w-3 h-3" />
                     Torneos
@@ -97,44 +135,52 @@ export default function HomePage() {
               </div>
             </div>
             
-            {/* Columna Derecha - Visual */}
+            {/* Columna Derecha - Visual con DATOS REALES */}
             <div className="relative animate-scale-in animate-delay-200 hidden lg:block">
               <div className="relative glass-container rounded-2xl p-8">
-                {/* Mockup de bracket */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-white mb-6">
                     <span className="text-xl font-bold flex items-center gap-2">
                       <Trophy className="w-6 h-6" style={{color: '#ffd700'}} />
-                      Grand Finals
+                      Estadísticas
                     </span>
-                    <span className="badge-live">EN VIVO</span>
                   </div>
                   
-                  <div className="bracket-match">
-                    <div className="bracket-player bracket-player-winner">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">🦊</span>
-                        <span className="font-semibold text-white">Player1</span>
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Trophy className="w-8 h-8" style={{color: '#ffd700'}} />
+                          <div>
+                            <div className="text-2xl font-black text-white">{stats.tournaments}</div>
+                            <div className="text-xs text-slate-400">Torneos Creados</div>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-green-400 font-bold text-xl">3</span>
                     </div>
-                    <div className="bracket-player bracket-player-loser">
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl">⚡</span>
-                        <span className="font-semibold text-slate-400">Player2</span>
+                    
+                    <div className="p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Users className="w-8 h-8" style={{color: '#ffd700'}} />
+                          <div>
+                            <div className="text-2xl font-black text-white">{stats.users}</div>
+                            <div className="text-xs text-slate-400">Jugadores Registrados</div>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-slate-500 text-xl">1</span>
                     </div>
-                  </div>
-                  
-                  <div className="flex gap-4 mt-6">
-                    <div className="flex-1 text-center p-3 bg-slate-900/50 rounded-lg">
-                      <div className="text-2xl font-bold text-white">156</div>
-                      <div className="text-xs text-slate-400">Jugadores</div>
-                    </div>
-                    <div className="flex-1 text-center p-3 bg-slate-900/50 rounded-lg">
-                      <div className="text-2xl font-bold text-white">12</div>
-                      <div className="text-xs text-slate-400">Comunidades</div>
+
+                    <div className="p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Gamepad2 className="w-8 h-8" style={{color: '#ffd700'}} />
+                          <div>
+                            <div className="text-2xl font-black text-white">{stats.characters}</div>
+                            <div className="text-xs text-slate-400">Personajes Disponibles</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -152,26 +198,26 @@ export default function HomePage() {
       </section>
 
       {/* ============================================
-          📊 STATS SECTION
+          📊 STATS SECTION - DATOS REALES
           ============================================ */}
-      <section className="py-16 bg-slate-800/50">
+      <section className="py-16" style={{background: 'rgba(26, 10, 10, 0.3)'}}>
         <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="stat-card animate-fade-in-up">
-              <div className="stat-number">89</div>
-              <div className="stat-label">Torneos Realizados</div>
+              <div className="stat-number">{stats.tournaments}</div>
+              <div className="stat-label">Torneos Creados</div>
             </div>
             <div className="stat-card animate-fade-in-up animate-delay-100">
-              <div className="stat-number">24</div>
+              <div className="stat-number">{stats.provinces}</div>
               <div className="stat-label">Provincias Activas</div>
             </div>
             <div className="stat-card animate-fade-in-up animate-delay-200">
-              <div className="stat-number">156</div>
+              <div className="stat-number">{stats.users}</div>
               <div className="stat-label">Jugadores Registrados</div>
             </div>
             <div className="stat-card animate-fade-in-up animate-delay-300">
-              <div className="stat-number">12</div>
-              <div className="stat-label">Comunidades Activas</div>
+              <div className="stat-number">{stats.characters}</div>
+              <div className="stat-label">Personajes Disponibles</div>
             </div>
           </div>
         </div>
