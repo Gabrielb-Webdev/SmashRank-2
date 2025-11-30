@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Trophy, Users, Calendar, Target, Shield, Zap, MapPin, Award, TrendingUp, Gamepad2 } from 'lucide-react';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 async function getStats() {
   try {

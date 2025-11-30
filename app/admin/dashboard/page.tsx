@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import Link from 'next/link';
 import { Trophy, Users, Calendar, Settings, BarChart3, Shield, Gamepad2 } from 'lucide-react';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 async function getAdminStats() {
   try {
