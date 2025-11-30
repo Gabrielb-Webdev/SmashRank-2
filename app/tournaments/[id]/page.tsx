@@ -193,7 +193,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
               </div>
               {canEdit && (
                 <div className="flex gap-2">
-                  <Link href={`/tournaments/${tournament.slug}/edit`}>
+                  <Link href={`/tournaments/${tournamentId}/edit`}>
                     <button className="px-4 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-white font-semibold transition-all flex items-center gap-2 border border-slate-700">
                       <Edit className="w-4 h-4" />
                       Editar
@@ -317,15 +317,26 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                             #{index + 1}
                           </div>
                         </div>
-                        <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{background: 'rgba(220, 20, 60, 0.1)', border: '2px solid rgba(220, 20, 60, 0.3)'}}>
-                          {reg.character.name[0]}
-                        </div>
-                        <div>
-                          <p className="text-white font-bold text-lg">{reg.user.username}</p>
-                          <p className="text-sm text-slate-400">
-                            <span className="text-yellow-400">⚡</span> {reg.character.name} · Skin {reg.skin.number}
-                          </p>
-                        </div>
+                        {reg.character ? (
+                          <>
+                            <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl" style={{background: 'rgba(220, 20, 60, 0.1)', border: '2px solid rgba(220, 20, 60, 0.3)'}}>
+                              {reg.character.name[0]}
+                            </div>
+                            <div>
+                              <p className="text-white font-bold text-lg">{reg.user.username}</p>
+                              <p className="text-sm text-slate-400">
+                                <span className="text-yellow-400">⚡</span> {reg.character.name} · Skin {reg.skin.number}
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          <div>
+                            <p className="text-white font-bold text-lg">{reg.user.username}</p>
+                            <p className="text-sm text-slate-400">
+                              <span className="text-yellow-400">⚡</span> Personaje por definir
+                            </p>
+                          </div>
+                        )}
                       </div>
                       {reg.checkedIn && (
                         <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{background: 'rgba(34, 197, 94, 0.2)', border: '1px solid rgba(34, 197, 94, 0.4)'}}>
@@ -399,6 +410,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                   </p>
                   <p className="text-white font-bold">{formatDate(tournament.startDate)}</p>
                 </div>
+              </div>
             </div>
           </div>
         </div>
