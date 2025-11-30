@@ -190,25 +190,46 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    // 5. Crear un torneo de prueba
-    const tournament = await prisma.tournament.create({
+    // 5. Crear torneos de prueba
+    const tournament1 = await prisma.tournament.create({
       data: {
-        name: 'Torneo de Prueba Buenos Aires',
-        slug: 'torneo-de-prueba-buenos-aires',
-        description: 'Torneo de prueba para testing de la plataforma',
-        province: 'Buenos Aires',
-        isOnline: false,
-        format: 'SINGLE_ELIMINATION',
+        name: 'SmashRank Argentina - Torneo Nacional #1',
+        slug: 'smashrank-argentina-torneo-nacional-1',
+        description: 'Primer torneo oficial de SmashRank Argentina. ¡Todos los jugadores del país están invitados!',
+        province: 'Online',
+        isOnline: true,
+        format: 'DOUBLE_ELIMINATION',
         status: 'REGISTRATION_OPEN',
-        maxParticipants: 32,
+        maxParticipants: 64,
         startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // En 7 días
         registrationStart: new Date(),
         registrationEnd: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // En 5 días
         checkinStart: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
         checkinEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        rules: 'Reglas estándar de Smash Ultimate. 3 stocks, 7 minutos.',
-        stageList: 'Battlefield, Final Destination, Small Battlefield',
+        rules: 'Reglas estándar competitivas: 3 stocks, 7 minutos, stage list legal.',
+        stageList: 'Battlefield, Final Destination, Small Battlefield, Pokemon Stadium 2',
         createdById: users[0].id, // Admin
+      },
+    });
+
+    const tournament2 = await prisma.tournament.create({
+      data: {
+        name: 'Weekly Smash Online - Edición #5',
+        slug: 'weekly-smash-online-edicion-5',
+        description: 'Torneo semanal casual. Perfecto para practicar y conocer jugadores nuevos.',
+        province: 'Online',
+        isOnline: true,
+        format: 'SINGLE_ELIMINATION',
+        status: 'REGISTRATION_OPEN',
+        maxParticipants: 32,
+        startDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // En 3 días
+        registrationStart: new Date(),
+        registrationEnd: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+        checkinStart: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 20 * 60 * 60 * 1000),
+        checkinEnd: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        rules: 'Torneo casual: 3 stocks, sin restricciones de personajes.',
+        stageList: 'Battlefield, Final Destination, Smashville',
+        createdById: users[0].id,
       },
     });
 
