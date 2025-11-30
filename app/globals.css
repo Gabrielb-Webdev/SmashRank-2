@@ -1,406 +1,357 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Inter:wght@400;500;600;700;800&display=swap');
+/* ============================================
+   🎨 SISTEMA DE DISEÑO - SMASHRANK DARK MODE
+   ============================================ */
 
 :root {
-  --background: 0 0% 98%;
-  --foreground: 0 0% 5%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 5%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 5%;
-  --primary: 0 0% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 20%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 40%;
-  --accent: 354 100% 50%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 84% 50%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 15%;
-  --input: 0 0% 15%;
-  --ring: 0 0% 10%;
-  --radius: 0.5rem;
-
-  --font-inter: 'Inter', sans-serif;
-  --font-bangers: 'Bangers', cursive;
-  --font-permanent-marker: 'Permanent Marker', cursive;
+  /* Backgrounds */
+  --bg-primary: #0f172a;      /* slate-900 */
+  --bg-secondary: #1e293b;    /* slate-800 */
+  --bg-tertiary: #334155;     /* slate-700 */
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;  /* slate-300 */
+  --text-muted: #94a3b8;      /* slate-400 */
+  
+  /* Accent Colors */
+  --accent-primary: #ef4444;   /* red-600 */
+  --accent-secondary: #f97316; /* orange-600 */
+  --accent-success: #10b981;   /* green-500 */
+  --accent-warning: #f59e0b;   /* amber-500 */
+  --accent-info: #3b82f6;      /* blue-500 */
+  
+  /* Borders */
+  --border-default: #334155;   /* slate-700 */
+  --border-hover: #ef4444;     /* red-500 */
+  
+  /* Fonts */
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
-.dark {
-  --background: 0 0% 98%;
-  --foreground: 0 0% 5%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 5%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 5%;
-  --primary: 0 0% 10%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 20%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 40%;
-  --accent: 354 100% 50%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 84% 50%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 15%;
-  --input: 0 0% 15%;
-  --ring: 0 0% 10%;
-}
+/* ============================================
+   🌐 BASE STYLES
+   ============================================ */
 
 * {
   @apply border-border;
 }
 
 body {
-  @apply bg-white text-black;
-  font-family: var(--font-inter);
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-  background-image: 
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  @apply bg-slate-900 text-slate-100;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Personajes animados de fondo */
-.character-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  @apply font-bold text-white;
 }
 
-.floating-character {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  opacity: 0.08;
-  filter: grayscale(100%) contrast(150%);
-  animation: floatCharacter 20s infinite ease-in-out;
+/* ============================================
+   🎯 UTILITY CLASSES
+   ============================================ */
+
+.container {
+  @apply mx-auto px-4 max-w-7xl;
 }
 
-.floating-character:nth-child(1) {
-  top: 10%;
-  left: 5%;
-  animation-delay: 0s;
-  animation-duration: 15s;
+.section {
+  @apply py-20;
 }
 
-.floating-character:nth-child(2) {
-  top: 60%;
-  right: 10%;
-  animation-delay: 3s;
-  animation-duration: 18s;
+.section-title {
+  @apply text-4xl md:text-5xl font-black text-white mb-4;
+  font-family: var(--font-heading);
 }
 
-.floating-character:nth-child(3) {
-  bottom: 15%;
-  left: 15%;
-  animation-delay: 6s;
-  animation-duration: 22s;
+.section-subtitle {
+  @apply text-xl text-slate-400 max-w-3xl mx-auto;
+  font-family: var(--font-body);
 }
 
-.floating-character:nth-child(4) {
-  top: 30%;
-  right: 20%;
-  animation-delay: 9s;
-  animation-duration: 20s;
-}
+/* ============================================
+   🔘 BUTTONS
+   ============================================ */
 
-@keyframes floatCharacter {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translate(20px, -30px) rotate(5deg) scale(1.1);
-  }
-  50% {
-    transform: translate(-10px, 20px) rotate(-3deg) scale(0.95);
-  }
-  75% {
-    transform: translate(30px, 10px) rotate(7deg) scale(1.05);
-  }
-}
-
-/* Efectos manga japonés */
-.speed-lines {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.speed-line {
-  position: absolute;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.8), transparent);
-  animation: speedLine 0.5s ease-out forwards;
-}
-
-@keyframes speedLine {
-  0% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
-/* Efecto halftone manga */
-.manga-halftone {
-  background-image: radial-gradient(circle, black 1px, transparent 1px);
-  background-size: 4px 4px;
-  opacity: 0.1;
-}
-
-/* Botones estilo manga japonés */
-.btn-manga {
-  @apply relative font-bold uppercase tracking-wider px-6 py-3 rounded-none;
-  @apply bg-black text-white;
-  @apply border-4 border-black;
-  @apply transition-all duration-150 ease-out;
-  @apply hover:bg-white hover:text-black;
-  @apply active:translate-x-1 active:translate-y-1;
-  box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
-}
-
-.btn-manga:hover {
-  box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
-}
-
-.btn-manga:active {
-  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1);
-}
-
-.btn-manga-secondary {
-  @apply relative font-bold uppercase tracking-wider px-6 py-3 rounded-none;
-  @apply bg-white text-black;
-  @apply border-4 border-black;
-  @apply transition-all duration-150 ease-out;
-  @apply hover:bg-black hover:text-white;
-  @apply active:translate-x-1 active:translate-y-1;
-  box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
-}
-
-.btn-manga-secondary:hover {
-  box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
-}
-
-.btn-manga-secondary:active {
-  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1);
-}
-
-/* Card estilo manga japonés */
-.card-manga {
-  @apply bg-white;
-  @apply border-4 border-black rounded-none;
+.btn-primary {
+  @apply px-6 py-3 rounded-lg font-semibold text-white;
+  @apply bg-gradient-to-r from-red-600 to-orange-600;
+  @apply hover:shadow-lg hover:shadow-red-500/50;
+  @apply hover:scale-105 active:scale-95;
   @apply transition-all duration-300;
-  @apply hover:translate-x-1 hover:translate-y-1;
-  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
-  position: relative;
+  font-family: var(--font-body);
 }
 
-.card-manga::before {
+.btn-secondary {
+  @apply px-6 py-3 rounded-lg font-semibold;
+  @apply border-2 border-slate-600 text-slate-300;
+  @apply hover:border-white hover:text-white;
+  @apply transition-all duration-300;
+  font-family: var(--font-body);
+}
+
+.btn-ghost {
+  @apply px-4 py-2 rounded-lg font-semibold;
+  @apply text-slate-400 hover:text-white hover:bg-slate-800;
+  @apply transition-all duration-300;
+  font-family: var(--font-body);
+}
+
+.btn-icon {
+  @apply p-3 rounded-lg;
+  @apply bg-slate-800 text-slate-400;
+  @apply hover:bg-slate-700 hover:text-white;
+  @apply transition-all duration-200;
+}
+
+/* ============================================
+   🃏 CARDS
+   ============================================ */
+
+.card {
+  @apply bg-slate-800/50 backdrop-blur-sm;
+  @apply border border-slate-700/50 rounded-xl;
+  @apply hover:border-red-500/50;
+  @apply hover:shadow-lg hover:shadow-red-500/10;
+  @apply transition-all duration-300;
+}
+
+.card-hover {
+  @apply card hover:scale-105 hover:shadow-xl;
+}
+
+.feature-card {
+  @apply card p-6;
+}
+
+.tournament-card {
+  @apply bg-slate-800 rounded-xl overflow-hidden shadow-lg;
+  @apply hover:scale-105 transform;
+  @apply transition-all duration-300;
+}
+
+/* ============================================
+   📊 STATS CARD
+   ============================================ */
+
+.stat-card {
+  @apply text-center p-6;
+  @apply bg-slate-800/50 backdrop-blur-sm;
+  @apply border border-slate-700 rounded-lg;
+  @apply hover:border-red-500/50;
+  @apply transition-all duration-300;
+}
+
+.stat-number {
+  @apply text-6xl font-bold bg-gradient-to-r from-red-500 to-orange-500;
+  @apply bg-clip-text text-transparent;
+}
+
+.stat-label {
+  @apply text-sm text-slate-400 uppercase tracking-wide mt-2;
+}
+
+/* ============================================
+   🎨 GRADIENTS & BACKGROUNDS
+   ============================================ */
+
+.gradient-primary {
+  @apply bg-gradient-to-r from-red-600 to-orange-600;
+}
+
+.gradient-dark {
+  @apply bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900;
+}
+
+.glass {
+  @apply bg-slate-900/80 backdrop-blur-lg;
+  @apply border border-slate-800;
+}
+
+/* Grid Pattern Background */
+.grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgb(51 65 85 / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(51 65 85 / 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Dot Pattern Background */
+.dot-pattern {
+  background-image: radial-gradient(rgb(51 65 85 / 0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ============================================
+   🌟 HERO SECTION
+   ============================================ */
+
+.hero {
+  @apply relative min-h-[90vh] flex items-center;
+  @apply bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
   content: '';
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  bottom: -2px;
-  left: -2px;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 10px,
-    rgba(0, 0, 0, 0.03) 10px,
-    rgba(0, 0, 0, 0.03) 20px
-  );
-  pointer-events: none;
-  z-index: -1;
+  @apply absolute inset-0 grid-pattern;
+  opacity: 0.5;
 }
 
-.card-manga:hover {
-  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+.hero-title {
+  @apply text-5xl md:text-7xl font-black text-white mb-6;
+  font-family: var(--font-heading);
+  line-height: 1.1;
 }
 
-/* Títulos estilo manga japonés */
-.title-smash {
-  font-family: var(--font-permanent-marker);
-  @apply text-5xl md:text-6xl lg:text-7xl;
-  @apply text-black;
-  position: relative;
-  display: inline-block;
-  text-shadow: 
-    -3px -3px 0 #fff,
-    3px -3px 0 #fff,
-    -3px 3px 0 #fff,
-    3px 3px 0 #fff,
-    -6px 0 0 #fff,
-    6px 0 0 #fff,
-    0 -6px 0 #fff,
-    0 6px 0 #fff;
+.hero-subtitle {
+  @apply text-xl md:text-2xl text-slate-400 mb-8 max-w-2xl;
+  font-family: var(--font-body);
 }
 
-.title-manga {
-  font-family: var(--font-bangers);
-  @apply text-4xl md:text-5xl lg:text-6xl;
-  @apply text-black;
-  letter-spacing: 0.1em;
-  position: relative;
-  display: inline-block;
-  text-shadow: 
-    -2px -2px 0 #fff,
-    2px -2px 0 #fff,
-    -2px 2px 0 #fff,
-    2px 2px 0 #fff;
+/* ============================================
+   📱 NAVBAR
+   ============================================ */
+
+.navbar {
+  @apply sticky top-0 z-50;
+  @apply bg-slate-900/95 backdrop-blur-lg;
+  @apply border-b border-slate-800;
+  @apply transition-all duration-300;
 }
 
-.title-manga::after {
+.navbar-scrolled {
+  @apply shadow-lg shadow-slate-900/50;
+}
+
+.nav-link {
+  @apply text-slate-300 hover:text-white;
+  @apply px-4 py-2 rounded-lg;
+  @apply transition-all duration-200;
+  @apply relative;
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+.nav-link::after {
   content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: black;
+  @apply absolute bottom-0 left-0 w-0 h-0.5;
+  @apply bg-gradient-to-r from-red-500 to-orange-500;
+  @apply transition-all duration-300;
 }
 
-/* Efectos de impacto manga */
-.impact-text {
-  position: relative;
-  display: inline-block;
-  font-weight: 900;
-  color: black;
+.nav-link:hover::after {
+  @apply w-full;
 }
 
-.impact-text::before {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  text-shadow: 
-    -3px -3px 0 #fff,
-    3px -3px 0 #fff,
-    -3px 3px 0 #fff,
-    3px 3px 0 #fff,
-    -6px 0 0 #fff,
-    6px 0 0 #fff,
-    0 -6px 0 #fff,
-    0 6px 0 #fff;
+.nav-link-active {
+  @apply text-white;
 }
 
-/* Líneas de énfasis manga */
-.manga-emphasis {
-  position: relative;
+.nav-link-active::after {
+  @apply w-full;
 }
 
-.manga-emphasis::before,
-.manga-emphasis::after {
-  content: '⚡';
-  position: absolute;
-  font-size: 2rem;
-  color: black;
-  animation: pulse 1s infinite;
+/* ============================================
+   🏆 TOURNAMENT BADGE
+   ============================================ */
+
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full;
+  @apply text-xs font-semibold uppercase tracking-wide;
+  @apply transition-all duration-200;
 }
 
-.manga-emphasis::before {
-  left: -2rem;
-  top: 50%;
-  transform: translateY(-50%) rotate(-15deg);
+.badge-live {
+  @apply bg-red-600/20 text-red-400 border border-red-600/50;
+  animation: pulse-badge 2s ease-in-out infinite;
 }
 
-.manga-emphasis::after {
-  right: -2rem;
-  top: 50%;
-  transform: translateY(-50%) rotate(15deg);
+.badge-open {
+  @apply bg-green-600/20 text-green-400 border border-green-600/50;
 }
 
-@keyframes pulse {
+.badge-upcoming {
+  @apply bg-blue-600/20 text-blue-400 border border-blue-600/50;
+}
+
+.badge-completed {
+  @apply bg-slate-600/20 text-slate-400 border border-slate-600/50;
+}
+
+@keyframes pulse-badge {
   0%, 100% {
     opacity: 1;
-    transform: translateY(-50%) scale(1);
   }
   50% {
-    opacity: 0.5;
-    transform: translateY(-50%) scale(1.2);
+    opacity: 0.6;
   }
 }
 
-/* Scrollbar estilo manga */
-::-webkit-scrollbar {
-  width: 16px;
+/* ============================================
+   📊 RANKING STYLES
+   ============================================ */
+
+.rank-medal {
+  @apply inline-flex items-center justify-center;
+  @apply w-10 h-10 rounded-full font-black;
+  font-family: var(--font-heading);
 }
 
-::-webkit-scrollbar-track {
-  background: white;
-  border-left: 2px solid black;
+.rank-1 {
+  @apply bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900;
 }
 
-::-webkit-scrollbar-thumb {
-  background: black;
-  border: 3px solid white;
+.rank-2 {
+  @apply bg-gradient-to-br from-gray-300 to-gray-500 text-gray-900;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #333;
+.rank-3 {
+  @apply bg-gradient-to-br from-orange-400 to-orange-600 text-orange-900;
 }
 
-/* Loading animation manga */
-.loader {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-top: 4px solid black;
-  border-radius: 0;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.3);
+/* ============================================
+   🎮 BRACKET STYLES
+   ============================================ */
+
+.bracket-match {
+  @apply bg-slate-800 border border-slate-700 rounded-lg p-4;
+  @apply hover:border-red-500/50;
+  @apply transition-all duration-300;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.bracket-player {
+  @apply flex items-center justify-between;
+  @apply py-2 px-3 rounded;
+  @apply hover:bg-slate-700/50;
+  @apply transition-all duration-200;
 }
 
-/* Patrón de puntos manga (screentone) */
-.manga-dots {
-  background-image: radial-gradient(circle, black 1px, transparent 1px);
-  background-size: 6px 6px;
-  opacity: 0.15;
+.bracket-player-winner {
+  @apply bg-green-900/20 border-l-4 border-green-500;
 }
 
-/* Líneas diagonales manga */
-.manga-lines {
-  background-image: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 5px,
-    rgba(0, 0, 0, 0.1) 5px,
-    rgba(0, 0, 0, 0.1) 6px
-  );
+.bracket-player-loser {
+  @apply opacity-60;
 }
 
-/* Animación de entrada */
-@keyframes fadeInUp {
+/* ============================================
+   ⚡ ANIMATIONS
+   ============================================ */
+
+@keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -408,58 +359,199 @@ body {
   }
 }
 
-/* Efecto de golpe manga */
-.manga-impact {
-  position: relative;
-  animation: impact 0.3s ease-out;
-}
-
-@keyframes impact {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Bordes de panel manga */
-.manga-panel {
-  border: 4px solid black;
-  box-shadow: 
-    inset 0 0 0 2px white,
-    8px 8px 0 0 black;
-  background: white;
-}
-
-/* Efecto de onomatopeya */
-.manga-sound {
-  font-family: var(--font-bangers);
-  font-size: 3rem;
-  color: black;
-  text-shadow: 
-    -2px -2px 0 white,
-    2px -2px 0 white,
-    -2px 2px 0 white,
-    2px 2px 0 white,
-    4px 4px 0 rgba(0, 0, 0, 0.3);
-  transform: rotate(-5deg);
-  animation: soundEffect 0.5s ease-out;
-}
-
-@keyframes soundEffect {
-  0% {
-    transform: scale(0) rotate(-5deg);
+@keyframes scale-in {
+  from {
     opacity: 0;
+    transform: scale(0.95);
   }
-  50% {
-    transform: scale(1.2) rotate(-5deg);
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.5s ease-out;
+}
+
+/* Stagger animation delays */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+/* ============================================
+   📱 RESPONSIVE UTILITIES
+   ============================================ */
+
+@media (max-width: 768px) {
+  .hero-title {
+    @apply text-4xl;
+  }
+  
+  .section-title {
+    @apply text-3xl;
+  }
+  
+  .stat-number {
+    @apply text-4xl;
+  }
+}
+
+/* ============================================
+   🎯 FOCUS & ACCESSIBILITY
+   ============================================ */
+
+*:focus-visible {
+  @apply outline-none ring-2 ring-red-500 ring-offset-2 ring-offset-slate-900;
+}
+
+/* ============================================
+   📜 SCROLLBAR CUSTOM
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700 rounded-full;
+  @apply hover:bg-slate-600;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-600;
+}
+
+/* ============================================
+   ✨ SPECIAL EFFECTS
+   ============================================ */
+
+/* Glowing text effect */
+.glow-text {
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+/* Glassmorphism container */
+.glass-container {
+  @apply bg-slate-900/40 backdrop-blur-xl;
+  @apply border border-slate-800/50;
+  @apply shadow-2xl;
+}
+
+/* Gradient border effect */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    theme('colors.red.600'),
+    theme('colors.orange.600'),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: gradient-border-flow 3s linear infinite;
+}
+
+@keyframes gradient-border-flow {
+  0% {
+    background-position: 200% 0;
   }
   100% {
-    transform: scale(1) rotate(-5deg);
-    opacity: 1;
+    background-position: -200% 0;
   }
+}
+
+/* ============================================
+   🏁 LOADING STATES
+   ============================================ */
+
+.skeleton {
+  @apply bg-slate-800 animate-pulse rounded;
+}
+
+.spinner {
+  @apply inline-block w-6 h-6 border-4 border-slate-700;
+  @apply border-t-red-500 rounded-full animate-spin;
+}
+
+/* ============================================
+   🎨 FORM STYLES
+   ============================================ */
+
+.input {
+  @apply w-full px-4 py-3 rounded-lg;
+  @apply bg-slate-800 border border-slate-700;
+  @apply text-white placeholder-slate-500;
+  @apply focus:border-red-500 focus:ring-2 focus:ring-red-500/50;
+  @apply transition-all duration-200;
+}
+
+.input-error {
+  @apply border-red-500 focus:border-red-500 focus:ring-red-500/50;
+}
+
+.label {
+  @apply block text-sm font-semibold text-slate-300 mb-2;
+}
+
+.error-message {
+  @apply text-sm text-red-400 mt-1;
+}
+
+/* ============================================
+   🔔 NOTIFICATIONS / TOASTS
+   ============================================ */
+
+.toast {
+  @apply bg-slate-800 border border-slate-700;
+  @apply text-white p-4 rounded-lg shadow-xl;
+  @apply backdrop-blur-sm;
+}
+
+.toast-success {
+  @apply border-green-500/50 bg-green-900/20;
+}
+
+.toast-error {
+  @apply border-red-500/50 bg-red-900/20;
+}
+
+.toast-warning {
+  @apply border-amber-500/50 bg-amber-900/20;
+}
+
+.toast-info {
+  @apply border-blue-500/50 bg-blue-900/20;
 }
