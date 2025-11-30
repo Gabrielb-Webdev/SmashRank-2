@@ -75,12 +75,19 @@ export default function TournamentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800">
+    <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
           <div>
-            <h1 className="text-5xl font-black text-white mb-2">Torneos</h1>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3" style={{background: 'rgba(220, 20, 60, 0.2)', border: '1px solid rgba(255, 215, 0, 0.4)'}}>
+              <Gamepad2 className="w-4 h-4" style={{color: '#ffd700'}} />
+              <span className="text-xs font-bold uppercase tracking-wide" style={{color: '#ffd700'}}>Super Smash Bros Ultimate</span>
+            </div>
+            <h1 className="text-5xl font-black text-white mb-2 flex items-center gap-3">
+              <Trophy className="w-12 h-12" style={{color: '#ffd700'}} />
+              Torneos
+            </h1>
             <p className="text-xl text-slate-400">Compite en los mejores torneos online de Argentina</p>
           </div>
           
@@ -156,18 +163,23 @@ export default function TournamentsPage() {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {/* Header con badge de estado */}
-                <div className="p-6 pb-4">
-                  <div className="flex items-start justify-between mb-4">
+                <div className="relative p-6 pb-4">
+                  {/* Character decoration */}
+                  <div className="absolute top-4 right-4 text-4xl opacity-20">
+                    {['🦊', '⚡', '🔥', '⭐', '🌟', '💥', '⚔️', '🎮'][index % 8]}
+                  </div>
+                  
+                  <div className="flex items-start justify-between mb-4 relative z-10">
                     <span className={`badge text-xs font-bold uppercase tracking-wide border ${getStatusColor(tournament.status)}`}>
                       {getStatusLabel(tournament.status)}
                     </span>
-                    <Trophy className="w-6 h-6 text-red-500" />
+                    <Trophy className="w-6 h-6" style={{color: '#ffd700'}} />
                   </div>
                   
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors relative z-10">
                     {tournament.name}
                   </h3>
-                  <p className="text-sm text-slate-400 line-clamp-2 mb-4">
+                  <p className="text-sm text-slate-400 line-clamp-2 mb-4 relative z-10">
                     {tournament.description || 'Torneo de Super Smash Bros Ultimate'}
                   </p>
                 </div>

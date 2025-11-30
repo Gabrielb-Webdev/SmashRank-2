@@ -28,9 +28,14 @@ export default function Navbar() {
             <div className="w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 20px rgba(220, 20, 60, 0.5)'}}>
               <Trophy className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-black text-white transition-colors" style={{textShadow: '0 0 20px rgba(220, 20, 60, 0.3)'}}>
-              SmashRank
-            </span>
+            <div className="flex flex-col">
+              <span className="text-2xl font-black text-white transition-colors leading-none" style={{textShadow: '0 0 20px rgba(220, 20, 60, 0.3)'}}>
+                SmashRank
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider leading-none" style={{color: '#ffd700', textShadow: '0 0 10px rgba(255, 215, 0, 0.5)'}}>
+                Ultimate
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Menu */}

@@ -28,20 +28,25 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800">
+    <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="card p-8 mb-6 animate-fade-in-up">
-            <div className="flex items-start justify-between">
+          <div className="card p-8 mb-6 animate-fade-in-up relative overflow-hidden">
+            {/* Character decoration */}
+            <div className="absolute top-4 right-4 text-6xl opacity-10">
+              🎮
+            </div>
+            
+            <div className="flex items-start justify-between relative z-10">
               <div className="flex items-center gap-6">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                <div className="w-24 h-24 rounded-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 0 30px rgba(220, 20, 60, 0.5)'}}>
                   <User className="w-12 h-12 text-white" />
                 </div>
                 <div>
                   <h1 className="text-3xl font-black text-white mb-2">{session.user.username}</h1>
                   {session.user.role === 'ADMIN' && (
-                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/20 border border-red-500 text-red-400 text-sm font-bold">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-bold" style={{background: 'rgba(220, 20, 60, 0.2)', border: '1px solid rgba(255, 215, 0, 0.5)', color: '#ffd700'}}>
                       <Shield className="w-4 h-4" />
                       Administrador
                     </span>

@@ -43,12 +43,16 @@ export default function HomePage() {
             {/* Columna Izquierda - Texto */}
             <div className="space-y-8 animate-fade-in-up">
               <div>
+                <div className="inline-flex items-center gap-3 mb-4 px-4 py-2 rounded-full" style={{background: 'rgba(220, 20, 60, 0.2)', border: '2px solid rgba(255, 215, 0, 0.4)'}}>
+                  <Gamepad2 className="w-5 h-5" style={{color: '#ffd700'}} />
+                  <span className="text-sm font-bold" style={{color: '#ffd700'}}>SUPER SMASH BROS ULTIMATE</span>
+                </div>
                 <h1 className="hero-title">
-                  COMPITE EN LOS <span style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 20px rgba(220, 20, 60, 0.6))'}}>MEJORES TORNEOS</span> DE SMASH
+                  COMPITE EN LOS <span style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 20px rgba(220, 20, 60, 0.6))'}}>MEJORES TORNEOS</span> DE ARGENTINA
                 </h1>
                 <p className="hero-subtitle">
-                  La plataforma definitiva para torneos de Super Smash Bros Ultimate en Argentina. 
-                  Profesional, rápida y hecha para competidores.
+                  La plataforma definitiva para la escena competitiva de Smash Bros Ultimate. 
+                  Profesional, rápida y hecha para competidores argentinos.
                 </p>
               </div>
               
@@ -69,17 +73,26 @@ export default function HomePage() {
 
               {/* Mini Stats */}
               <div className="flex gap-8 pt-4">
-                <div>
-                  <div className="text-3xl font-bold text-white">89</div>
-                  <div className="text-sm text-slate-400">Personajes</div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>89</div>
+                  <div className="text-xs text-slate-400 uppercase font-semibold flex items-center justify-center gap-1">
+                    <Gamepad2 className="w-3 h-3" />
+                    Personajes
+                  </div>
                 </div>
-                <div>
-                  <div className="text-3xl font-bold text-white">24</div>
-                  <div className="text-sm text-slate-400">Provincias</div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>24</div>
+                  <div className="text-xs text-slate-400 uppercase font-semibold flex items-center justify-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    Provincias
+                  </div>
                 </div>
-                <div>
-                  <div className="text-3xl font-bold text-white">∞</div>
-                  <div className="text-sm text-slate-400">Torneos</div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold mb-1" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>∞</div>
+                  <div className="text-xs text-slate-400 uppercase font-semibold flex items-center justify-center gap-1">
+                    <Trophy className="w-3 h-3" />
+                    Torneos
+                  </div>
                 </div>
               </div>
             </div>
@@ -90,18 +103,27 @@ export default function HomePage() {
                 {/* Mockup de bracket */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-white mb-6">
-                    <span className="text-xl font-bold">🏆 Grand Finals</span>
+                    <span className="text-xl font-bold flex items-center gap-2">
+                      <Trophy className="w-6 h-6" style={{color: '#ffd700'}} />
+                      Grand Finals
+                    </span>
                     <span className="badge-live">EN VIVO</span>
                   </div>
                   
                   <div className="bracket-match">
                     <div className="bracket-player bracket-player-winner">
-                      <span className="font-semibold text-white">🔥 Player1</span>
-                      <span className="text-green-400 font-bold">3</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">🦊</span>
+                        <span className="font-semibold text-white">Player1</span>
+                      </div>
+                      <span className="text-green-400 font-bold text-xl">3</span>
                     </div>
                     <div className="bracket-player bracket-player-loser">
-                      <span className="font-semibold text-slate-400">Player2</span>
-                      <span className="text-slate-500">1</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">⚡</span>
+                        <span className="font-semibold text-slate-400">Player2</span>
+                      </div>
+                      <span className="text-slate-500 text-xl">1</span>
                     </div>
                   </div>
                   

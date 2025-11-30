@@ -19,15 +19,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'SmashRank Argentina - Torneos de Super Smash Bros Ultimate',
-  description: 'La plataforma definitiva para torneos de Super Smash Bros Ultimate en Argentina. Brackets en tiempo real, rankings y más.',
+  title: 'SmashRank Argentina | Torneos de Super Smash Bros Ultimate 🎮',
+  description: 'La plataforma definitiva para torneos competitivos de Super Smash Bros Ultimate en Argentina. Brackets en tiempo real, rankings provinciales y nacionales, sistema de puntos y más. Únete a la comunidad Smash más grande del país.',
+  keywords: ['Super Smash Bros', 'Smash Ultimate', 'torneos', 'Argentina', 'brackets', 'rankings', 'competitivo', 'esports', 'Nintendo', 'gaming'],
   manifest: '/manifest.json',
-  themeColor: '#0f172a',
+  themeColor: '#dc143c',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'SmashRank AR',
+    title: 'SmashRank AR 🎮',
+  },
+  openGraph: {
+    title: 'SmashRank Argentina - Torneos de Smash Bros Ultimate',
+    description: 'Plataforma de torneos competitivos de Super Smash Bros Ultimate en Argentina',
+    type: 'website',
+    locale: 'es_AR',
   },
 };
 
@@ -47,21 +54,30 @@ export default function RootLayout({
             </main>
             
             {/* Footer Profesional */}
-            <footer className="bg-slate-900 border-t border-slate-800 mt-20">
+            <footer className="border-t mt-20" style={{background: 'rgba(10, 10, 10, 0.95)', borderColor: 'rgba(220, 20, 60, 0.3)'}}>
               <div className="container py-16">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                   
                   {/* Columna 1 - Logo */}
                   <div>
                     <div className="flex items-center space-x-2 mb-4">
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-                        <span className="text-white font-bold text-xl">SR</span>
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}>
+                        <span className="text-white font-bold text-xl">🎮</span>
                       </div>
-                      <span className="text-xl font-black text-white">SmashRank</span>
+                      <div className="flex flex-col">
+                        <span className="text-xl font-black text-white leading-none">SmashRank</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider leading-none" style={{color: '#ffd700'}}>Ultimate</span>
+                      </div>
                     </div>
                     <p className="text-slate-400 text-sm">
                       La plataforma definitiva para torneos de Super Smash Bros Ultimate en Argentina.
                     </p>
+                    <div className="mt-4 flex gap-2 text-2xl">
+                      <span>🦊</span>
+                      <span>⚡</span>
+                      <span>🔥</span>
+                      <span>⭐</span>
+                    </div>
                   </div>
                   
                   {/* Columna 2 */}
@@ -96,8 +112,11 @@ export default function RootLayout({
                 </div>
                 
                 {/* Bottom bar */}
-                <div className="pt-8 border-t border-slate-800 text-center text-slate-400 text-sm">
-                  <p>© 2024 SmashRank Argentina • Hecho con ❤️ para la comunidad argentina de Smash</p>
+                <div className="pt-8 text-center text-slate-400 text-sm" style={{borderTop: '1px solid rgba(220, 20, 60, 0.2)'}}>
+                  <p className="mb-2">© 2024 SmashRank Argentina • Hecho con ❤️ para la comunidad argentina de Smash</p>
+                  <p className="text-xs" style={{color: '#c79da0'}}>
+                    Super Smash Bros™ Ultimate es una marca registrada de Nintendo. Esta plataforma no está afiliada con Nintendo.
+                  </p>
                 </div>
               </div>
             </footer>
