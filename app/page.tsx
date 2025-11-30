@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Trophy, Users, Calendar, Target, Shield, Zap, MapPin, Award, TrendingUp, Gamepad2 } from 'lucide-react';
 
 export default function HomePage() {
@@ -8,7 +9,34 @@ export default function HomePage() {
       {/* ============================================
           🎯 HERO SECTION
           ============================================ */}
-      <section className="hero">
+      <section className="hero relative">
+        {/* Background Characters */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Banjo Kazooie - Left side */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-auto opacity-20 hidden lg:block">
+            <Image 
+              src="/banjo-kazooie.png" 
+              alt="Banjo Kazooie"
+              width={500}
+              height={500}
+              className="object-contain animate-fade-in-up"
+              priority
+            />
+          </div>
+          
+          {/* Terry Bogard - Right side */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-auto opacity-20 hidden lg:block">
+            <Image 
+              src="/terry-bogard.png" 
+              alt="Terry Bogard"
+              width={500}
+              height={500}
+              className="object-contain animate-fade-in-up animate-delay-200"
+              priority
+            />
+          </div>
+        </div>
+
         <div className="container relative z-10 py-20 md:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             
