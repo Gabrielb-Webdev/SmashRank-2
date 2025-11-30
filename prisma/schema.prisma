@@ -54,6 +54,7 @@ model User {
   registrations      Registration[]
   matchesAsPlayer1   Match[]          @relation("Player1")
   matchesAsPlayer2   Match[]          @relation("Player2")
+  matchesWon         Match[]          @relation("MatchWinner")
   rankings           Ranking[]
 
   @@index([username])
@@ -146,6 +147,7 @@ model Tournament {
   creator       User           @relation("TournamentCreator", fields: [createdById], references: [id])
   registrations Registration[]
   brackets      Bracket[]
+  matches       Match[]
   rankings      Ranking[]
 
   @@index([slug])
@@ -193,27 +195,34 @@ model Bracket {
 }
 
 model Match {
-  id          String      @id @default(cuid())
-  bracketId   String
-  round       Int
-  position    Int
-  player1Id   String?
-  player2Id   String?
-  winnerId    String?
-  score       String?     // "3-1", "2-0", etc.
-  status      MatchStatus @default(PENDING)
-  notes       String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id               String      @id @default(cuid())
+  tournamentId     String
+  bracketType      String      // "WINNERS", "LOSERS", "GRANDS"
+  round            Int
+  matchNumber      Int
+  player1Id        String?
+  player2Id        String?
+  player1Score     Int         @default(0)
+  player2Score     Int         @default(0)
+  winnerId         String?
+  status           String      @default("PENDING") // "PENDING", "ONGOING", "COMPLETED"
+  nextMatchId      String?
+  loserNextMatchId String?
+  completedAt      DateTime?
+  notes            String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 
   // Relaciones
-  bracket Bracket @relation(fields: [bracketId], references: [id], onDelete: Cascade)
-  player1 User?   @relation("Player1", fields: [player1Id], references: [id])
-  player2 User?   @relation("Player2", fields: [player2Id], references: [id])
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  player1    User?      @relation("Player1", fields: [player1Id], references: [id])
+  player2    User?      @relation("Player2", fields: [player2Id], references: [id])
+  winner     User?      @relation("MatchWinner", fields: [winnerId], references: [id])
 
-  @@index([bracketId])
+  @@index([tournamentId])
   @@index([player1Id])
   @@index([player2Id])
+  @@index([winnerId])
 }
 
 model Ranking {
