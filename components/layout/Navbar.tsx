@@ -25,10 +25,10 @@ export default function Navbar() {
           
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg shadow-red-500/50">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 20px rgba(220, 20, 60, 0.5)'}}>
               <Trophy className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-black text-white group-hover:text-red-400 transition-colors">
+            <span className="text-2xl font-black text-white transition-colors" style={{textShadow: '0 0 20px rgba(220, 20, 60, 0.3)'}}>
               SmashRank
             </span>
           </Link>
@@ -48,17 +48,17 @@ export default function Navbar() {
               <>
                 {session.user.role === 'ADMIN' && (
                   <Link href="/admin/dashboard">
-                    <div className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-600/20 to-orange-600/20 border border-red-500/30 hover:border-red-500 transition-all group">
-                      <LayoutDashboard className="inline w-4 h-4 mr-2 text-red-400" />
-                      <span className="font-semibold text-red-400 group-hover:text-red-300">Admin</span>
+                    <div className="px-4 py-2 rounded-lg transition-all group" style={{background: 'rgba(220, 20, 60, 0.15)', border: '1px solid rgba(220, 20, 60, 0.4)'}}>
+                      <LayoutDashboard className="inline w-4 h-4 mr-2" style={{color: '#ffd700'}} />
+                      <span className="font-semibold" style={{color: '#ffd700'}}>Admin</span>
                     </div>
                   </Link>
                 )}
                 
                 <div className="ml-4 flex items-center gap-2">
                   <Link href="/profile">
-                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all border border-slate-700 hover:border-slate-600">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all" style={{background: 'rgba(26, 10, 10, 0.8)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 0 15px rgba(220, 20, 60, 0.5)'}}>
                         <User className="w-4 h-4 text-white" />
                       </div>
                       <span className="font-semibold text-white">{session.user.username}</span>
@@ -66,10 +66,11 @@ export default function Navbar() {
                   </Link>
                   <button 
                     onClick={() => signOut()}
-                    className="p-2 rounded-lg bg-slate-800 hover:bg-red-600 border border-slate-700 hover:border-red-500 transition-all group"
+                    className="p-2 rounded-lg transition-all group"
+                    style={{background: 'rgba(26, 10, 10, 0.8)', border: '1px solid rgba(220, 20, 60, 0.3)'}}
                     title="Cerrar sesión"
                   >
-                    <LogOut className="w-5 h-5 text-slate-400 group-hover:text-white" />
+                    <LogOut className="w-5 h-5 group-hover:text-white" style={{color: '#c79da0'}} />
                   </button>
                 </div>
               </>
@@ -121,9 +122,9 @@ export default function Navbar() {
             {session ? (
               <div className="space-y-2 pt-4 border-t border-slate-800">
                 {/* User Info */}
-                <div className="px-4 py-3 bg-slate-800/50 rounded-lg mb-3">
+                <div className="px-4 py-3 rounded-lg mb-3" style={{background: 'rgba(26, 10, 10, 0.6)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 0 15px rgba(220, 20, 60, 0.5)'}}>
                       <User className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -135,20 +136,21 @@ export default function Navbar() {
 
                 {session.user.role === 'ADMIN' && (
                   <Link href="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
-                    <button className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-red-600/20 to-orange-600/20 border border-red-500/30 text-red-400 font-semibold text-left hover:border-red-500 transition-all">
+                    <button className="w-full px-4 py-3 rounded-lg font-semibold text-left transition-all" style={{background: 'rgba(220, 20, 60, 0.15)', border: '1px solid rgba(220, 20, 60, 0.4)', color: '#ffd700'}}>
                       <LayoutDashboard className="inline w-5 h-5 mr-3" />
                       Panel de Admin
                     </button>
                   </Link>
                 )}
                 <Link href="/profile" onClick={() => setIsMenuOpen(false)}>
-                  <button className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white font-semibold text-left hover:bg-slate-700 transition-all">
+                  <button className="w-full px-4 py-3 rounded-lg text-white font-semibold text-left transition-all" style={{background: 'rgba(26, 10, 10, 0.8)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
                     <User className="inline w-5 h-5 mr-3" />
                     Mi Perfil
                   </button>
                 </Link>
                 <button 
-                  className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:border-red-500 hover:bg-red-600/10 hover:text-red-400 font-semibold text-left transition-all"
+                  className="w-full px-4 py-3 rounded-lg font-semibold text-left transition-all"
+                  style={{background: 'rgba(26, 10, 10, 0.8)', border: '1px solid rgba(220, 20, 60, 0.3)', color: '#f8d7da'}}
                   onClick={() => {
                     signOut();
                     setIsMenuOpen(false);

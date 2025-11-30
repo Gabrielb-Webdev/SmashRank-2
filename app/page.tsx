@@ -44,7 +44,7 @@ export default function HomePage() {
             <div className="space-y-8 animate-fade-in-up">
               <div>
                 <h1 className="hero-title">
-                  COMPITE EN LOS <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">MEJORES TORNEOS</span> DE SMASH
+                  COMPITE EN LOS <span style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 20px rgba(220, 20, 60, 0.6))'}}>MEJORES TORNEOS</span> DE SMASH
                 </h1>
                 <p className="hero-subtitle">
                   La plataforma definitiva para torneos de Super Smash Bros Ultimate en Argentina. 
