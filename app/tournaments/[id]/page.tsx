@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import CharacterSelector from '@/components/tournaments/CharacterSelector';
 import Link from 'next/link';
 
-export default function TournamentDetailPage({ params }: { params: { slug: string } }) {
+export default function TournamentDetailPage({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [tournament, setTournament] = useState<any>(null);
@@ -23,12 +23,12 @@ export default function TournamentDetailPage({ params }: { params: { slug: strin
 
   useEffect(() => {
     fetchTournament();
-  }, [params.slug]);
+  }, [params.id]);
 
   const fetchTournament = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/tournaments/${params.slug}`);
+      const response = await fetch(`/api/tournaments/${params.id}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -64,7 +64,7 @@ export default function TournamentDetailPage({ params }: { params: { slug: strin
 
   const handleRegister = async (characterId: string, skinId: string) => {
     try {
-      const response = await fetch(`/api/tournaments/${params.slug}/register`, {
+      const response = await fetch(`/api/tournaments/${params.id}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ characterId, skinId }),
@@ -88,7 +88,7 @@ export default function TournamentDetailPage({ params }: { params: { slug: strin
     if (!confirm('¿Estás seguro de cancelar tu inscripción?')) return;
 
     try {
-      const response = await fetch(`/api/tournaments/${params.slug}/register`, {
+      const response = await fetch(`/api/tournaments/${params.id}/register`, {
         method: 'DELETE',
       });
 
@@ -106,7 +106,7 @@ export default function TournamentDetailPage({ params }: { params: { slug: strin
 
   const handleCheckIn = async () => {
     try {
-      const response = await fetch(`/api/tournaments/${params.slug}/checkin`, {
+      const response = await fetch(`/api/tournaments/${params.id}/checkin`, {
         method: 'POST',
       });
 
@@ -127,7 +127,7 @@ export default function TournamentDetailPage({ params }: { params: { slug: strin
     if (!confirm('¿Estás seguro de eliminar este torneo? Esta acción no se puede deshacer.')) return;
 
     try {
-      const response = await fetch(`/api/tournaments/${params.slug}`, {
+      const response = await fetch(`/api/tournaments/${params.id}`, {
         method: 'DELETE',
       });
 
