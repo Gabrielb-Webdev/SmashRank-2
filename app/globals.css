@@ -61,8 +61,74 @@ body {
   @apply bg-white text-black;
   font-family: var(--font-inter);
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
   background-image: 
     repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* Personajes animados de fondo */
+.character-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floating-character {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  opacity: 0.08;
+  filter: grayscale(100%) contrast(150%);
+  animation: floatCharacter 20s infinite ease-in-out;
+}
+
+.floating-character:nth-child(1) {
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
+  animation-duration: 15s;
+}
+
+.floating-character:nth-child(2) {
+  top: 60%;
+  right: 10%;
+  animation-delay: 3s;
+  animation-duration: 18s;
+}
+
+.floating-character:nth-child(3) {
+  bottom: 15%;
+  left: 15%;
+  animation-delay: 6s;
+  animation-duration: 22s;
+}
+
+.floating-character:nth-child(4) {
+  top: 30%;
+  right: 20%;
+  animation-delay: 9s;
+  animation-duration: 20s;
+}
+
+@keyframes floatCharacter {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(20px, -30px) rotate(5deg) scale(1.1);
+  }
+  50% {
+    transform: translate(-10px, 20px) rotate(-3deg) scale(0.95);
+  }
+  75% {
+    transform: translate(30px, 10px) rotate(7deg) scale(1.05);
+  }
 }
 
 /* Efectos manga japonés */
@@ -123,6 +189,24 @@ body {
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1);
 }
 
+.btn-manga-secondary {
+  @apply relative font-bold uppercase tracking-wider px-6 py-3 rounded-none;
+  @apply bg-white text-black;
+  @apply border-4 border-black;
+  @apply transition-all duration-150 ease-out;
+  @apply hover:bg-black hover:text-white;
+  @apply active:translate-x-1 active:translate-y-1;
+  box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.btn-manga-secondary:hover {
+  box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.btn-manga-secondary:active {
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 1);
+}
+
 /* Card estilo manga japonés */
 .card-manga {
   @apply bg-white;
@@ -150,6 +234,11 @@ body {
   pointer-events: none;
   z-index: -1;
 }
+
+.card-manga:hover {
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+}
+
 /* Títulos estilo manga japonés */
 .title-smash {
   font-family: var(--font-permanent-marker);
@@ -184,6 +273,14 @@ body {
 
 .title-manga::after {
   content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: black;
+}
+
 /* Efectos de impacto manga */
 .impact-text {
   position: relative;
@@ -230,6 +327,22 @@ body {
 }
 
 .manga-emphasis::after {
+  right: -2rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(15deg);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-50%) scale(1.2);
+  }
+}
+
 /* Scrollbar estilo manga */
 ::-webkit-scrollbar {
   width: 16px;
@@ -247,33 +360,8 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #333;
-}keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
-/* Efectos de impacto */
-.impact-text {
-  position: relative;
-  display: inline-block;
-}
-
-.impact-text::before {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  text-shadow: 
-    -2px -2px 0 #fff,
-    2px -2px 0 #fff,
-    -2px 2px 0 #fff,
 /* Loading animation manga */
 .loader {
   border: 4px solid rgba(0, 0, 0, 0.1);
@@ -306,31 +394,72 @@ body {
     rgba(0, 0, 0, 0.1) 5px,
     rgba(0, 0, 0, 0.1) 6px
   );
-} @apply bg-gray-900;
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-primary to-secondary;
-  @apply rounded-full;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+/* Animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gradient-to-b from-secondary to-primary;
+/* Efecto de golpe manga */
+.manga-impact {
+  position: relative;
+  animation: impact 0.3s ease-out;
 }
 
-/* Loading animation */
-.loader {
-  border: 4px solid rgba(255, 70, 85, 0.2);
-  border-top: 4px solid #FF4655;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
+@keyframes impact {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Bordes de panel manga */
+.manga-panel {
+  border: 4px solid black;
+  box-shadow: 
+    inset 0 0 0 2px white,
+    8px 8px 0 0 black;
+  background: white;
+}
+
+/* Efecto de onomatopeya */
+.manga-sound {
+  font-family: var(--font-bangers);
+  font-size: 3rem;
+  color: black;
+  text-shadow: 
+    -2px -2px 0 white,
+    2px -2px 0 white,
+    -2px 2px 0 white,
+    2px 2px 0 white,
+    4px 4px 0 rgba(0, 0, 0, 0.3);
+  transform: rotate(-5deg);
+  animation: soundEffect 0.5s ease-out;
+}
+
+@keyframes soundEffect {
+  0% {
+    transform: scale(0) rotate(-5deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(-5deg);
+    opacity: 1;
+  }
 }
