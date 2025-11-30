@@ -102,17 +102,13 @@ export async function POST(
     }
 
     // Si el perdedor fue eliminado en single elimination, marcarlo
-    if (match.tournament.format === 'SINGLE' && !match.loserNextMatchId) {
-      await prisma.tournamentParticipant.updateMany({
-        where: {
-          tournamentId: match.tournamentId,
-          userId: loserId!,
-        },
-        data: {
-          status: 'ELIMINATED',
-        },
-      });
+    // Nota: La tabla Registration no tiene campo 'status', así que este código está comentado por ahora
+    // TODO: Implementar sistema de eliminación si es necesario
+    /*
+    if (match.tournament.format === 'SINGLE_ELIMINATION' && !match.loserNextMatchId) {
+      // Aquí iría la lógica de eliminación si se agrega el campo status a Registration
     }
+    */
 
     return NextResponse.json({
       message: 'Resultado reportado exitosamente',
