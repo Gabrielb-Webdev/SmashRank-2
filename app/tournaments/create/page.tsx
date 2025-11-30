@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { TOURNAMENT_FORMATS } from '@/lib/constants';
 import toast from 'react-hot-toast';
 import { Trophy, Calendar, MapPin, Users, Settings, Wifi, Info, CheckCircle2, AlertCircle } from 'lucide-react';
+import DateTimePicker from '@/components/DateTimePicker';
 
 export default function CreateTournamentPage() {
   const { data: session } = useSession();
@@ -281,188 +282,59 @@ export default function CreateTournamentPage() {
                     </div>
                   </div>
 
-                  <div className="p-5 rounded-xl" style={{background: 'rgba(220, 20, 60, 0.05)', border: '2px solid rgba(220, 20, 60, 0.2)'}}>
-                    <label className="label flex items-center gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-                        <Calendar className="w-4 h-4 text-white" />
-                      </div>
-                      <span className="text-base">🏁 Fecha y Hora de Inicio del Torneo *</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="datetime-local"
-                        className="input text-lg font-semibold"
-                        style={{
-                          paddingRight: '3rem',
-                          background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(255, 69, 0, 0.1) 100%)',
-                          border: '2px solid rgba(220, 20, 60, 0.3)',
-                          borderRadius: '12px',
-                          padding: '14px 3rem 14px 16px',
-                          fontSize: '18px',
-                          fontWeight: '600',
-                          color: '#ffd700',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                        }}
-                        onFocus={(e) => e.target.style.borderColor = '#dc143c'}
-                        onBlur={(e) => e.target.style.borderColor = 'rgba(220, 20, 60, 0.3)'}
-                        value={formData.startDate}
-                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                        min={new Date().toISOString().slice(0, 16)}
-                        required
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-gradient-to-br from-red-500/20 to-orange-500/20 flex items-center justify-center pointer-events-none">
-                        <Calendar className="w-5 h-5" style={{color: '#dc143c'}} />
-                      </div>
-                    </div>
-                    <p className="text-xs mt-2 flex items-center gap-1" style={{color: '#ffd700'}}>
-                      📅 Click en el campo para seleccionar fecha y hora
-                    </p>
+                  <DateTimePicker
+                    label="🏁 Fecha y Hora de Inicio del Torneo"
+                    value={formData.startDate}
+                    onChange={(value) => setFormData({ ...formData, startDate: value })}
+                    color="red"
+                    icon={<Calendar className="w-4 h-4 text-white" />}
+                    min={new Date().toISOString().slice(0, 16)}
+                    required
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <DateTimePicker
+                      label="Inscripciones Abren"
+                      value={formData.registrationStart}
+                      onChange={(value) => setFormData({ ...formData, registrationStart: value })}
+                      color="green"
+                      icon={<span className="text-xs">✅</span>}
+                      min={new Date().toISOString().slice(0, 16)}
+                      required
+                    />
+
+                    <DateTimePicker
+                      label="Inscripciones Cierran"
+                      value={formData.registrationEnd}
+                      onChange={(value) => setFormData({ ...formData, registrationEnd: value })}
+                      color="red"
+                      icon={<span className="text-xs">🚫</span>}
+                      min={formData.registrationStart || new Date().toISOString().slice(0, 16)}
+                      required
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(34, 197, 94, 0.05)', border: '2px solid rgba(34, 197, 94, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                          <span className="text-xs">✅</span>
-                        </div>
-                        <span>Inscripciones Abren *</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="datetime-local"
-                          className="input font-semibold"
-                          style={{
-                            paddingRight: '2.5rem',
-                            background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%)',
-                            border: '2px solid rgba(34, 197, 94, 0.4)',
-                            borderRadius: '10px',
-                            padding: '12px 2.5rem 12px 14px',
-                            fontWeight: '600',
-                            color: '#4ade80',
-                            cursor: 'pointer',
-                          }}
-                          onFocus={(e) => e.target.style.borderColor = '#22c55e'}
-                          onBlur={(e) => e.target.style.borderColor = 'rgba(34, 197, 94, 0.4)'}
-                          value={formData.registrationStart}
-                          onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
-                          min={new Date().toISOString().slice(0, 16)}
-                          required
-                        />
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center pointer-events-none">
-                          <Calendar className="w-4 h-4 text-green-500" />
-                        </div>
-                      </div>
-                      <p className="text-xs text-green-400 mt-1">📅 Click en el campo</p>
-                    </div>
+                    <DateTimePicker
+                      label="Check-in Abre"
+                      value={formData.checkinStart}
+                      onChange={(value) => setFormData({ ...formData, checkinStart: value })}
+                      color="blue"
+                      icon={<span className="text-xs">⏰</span>}
+                      min={formData.registrationEnd || new Date().toISOString().slice(0, 16)}
+                      required
+                    />
 
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(239, 68, 68, 0.05)', border: '2px solid rgba(239, 68, 68, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-500 to-rose-500 flex items-center justify-center">
-                          <span className="text-xs">🚫</span>
-                        </div>
-                        <span>Inscripciones Cierran *</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="datetime-local"
-                          className="input font-semibold"
-                          style={{
-                            paddingRight: '2.5rem',
-                            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(225, 29, 72, 0.15) 100%)',
-                            border: '2px solid rgba(239, 68, 68, 0.4)',
-                            borderRadius: '10px',
-                            padding: '12px 2.5rem 12px 14px',
-                            fontWeight: '600',
-                            color: '#f87171',
-                            cursor: 'pointer',
-                          }}
-                          onFocus={(e) => e.target.style.borderColor = '#ef4444'}
-                          onBlur={(e) => e.target.style.borderColor = 'rgba(239, 68, 68, 0.4)'}
-                          value={formData.registrationEnd}
-                          onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
-                          min={formData.registrationStart || new Date().toISOString().slice(0, 16)}
-                          required
-                        />
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center pointer-events-none">
-                          <Calendar className="w-4 h-4 text-red-500" />
-                        </div>
-                      </div>
-                      <p className="text-xs text-red-400 mt-1">📅 Click en el campo</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(59, 130, 246, 0.05)', border: '2px solid rgba(59, 130, 246, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                          <span className="text-xs">⏰</span>
-                        </div>
-                        <span>Check-in Abre *</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="datetime-local"
-                          className="input font-semibold"
-                          style={{
-                            paddingRight: '2.5rem',
-                            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%)',
-                            border: '2px solid rgba(59, 130, 246, 0.4)',
-                            borderRadius: '10px',
-                            padding: '12px 2.5rem 12px 14px',
-                            fontWeight: '600',
-                            color: '#60a5fa',
-                            cursor: 'pointer',
-                          }}
-                          onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                          onBlur={(e) => e.target.style.borderColor = 'rgba(59, 130, 246, 0.4)'}
-                          value={formData.checkinStart}
-                          onChange={(e) => setFormData({ ...formData, checkinStart: e.target.value })}
-                          min={formData.registrationEnd || new Date().toISOString().slice(0, 16)}
-                          required
-                        />
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center pointer-events-none">
-                          <Calendar className="w-4 h-4 text-blue-500" />
-                        </div>
-                      </div>
-                      <p className="text-xs text-blue-400 mt-1">📅 Click en el campo</p>
-                    </div>
-
-                    <div className="p-4 rounded-xl" style={{background: 'rgba(168, 85, 247, 0.05)', border: '2px solid rgba(168, 85, 247, 0.2)'}}>
-                      <label className="label flex items-center gap-2 mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                          <span className="text-xs">⛔</span>
-                        </div>
-                        <span>Check-in Cierra *</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="datetime-local"
-                          className="input font-semibold"
-                          style={{
-                            paddingRight: '2.5rem',
-                            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%)',
-                            border: '2px solid rgba(168, 85, 247, 0.4)',
-                            borderRadius: '10px',
-                            padding: '12px 2.5rem 12px 14px',
-                            fontWeight: '600',
-                            color: '#c084fc',
-                            cursor: 'pointer',
-                          }}
-                          onFocus={(e) => e.target.style.borderColor = '#a855f7'}
-                          onBlur={(e) => e.target.style.borderColor = 'rgba(168, 85, 247, 0.4)'}
-                          value={formData.checkinEnd}
-                          onChange={(e) => setFormData({ ...formData, checkinEnd: e.target.value })}
-                          min={formData.checkinStart || new Date().toISOString().slice(0, 16)}
-                          max={formData.startDate}
-                          required
-                        />
-                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center pointer-events-none">
-                          <Calendar className="w-4 h-4 text-purple-500" />
-                        </div>
-                      </div>
-                      <p className="text-xs text-purple-400 mt-1">📅 Click en el campo</p>
-                    </div>
+                    <DateTimePicker
+                      label="Check-in Cierra"
+                      value={formData.checkinEnd}
+                      onChange={(value) => setFormData({ ...formData, checkinEnd: value })}
+                      color="purple"
+                      icon={<span className="text-xs">⛔</span>}
+                      min={formData.checkinStart || new Date().toISOString().slice(0, 16)}
+                      max={formData.startDate}
+                      required
+                    />
                   </div>
                 </div>
               </div>
