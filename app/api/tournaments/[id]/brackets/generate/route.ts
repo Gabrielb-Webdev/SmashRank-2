@@ -96,7 +96,7 @@ export async function POST(
     // Actualizar el estado del torneo
     await prisma.tournament.update({
       where: { id: tournamentId },
-      data: { status: 'ONGOING' },
+      data: { status: 'IN_PROGRESS' },
     });
 
     return NextResponse.json({
