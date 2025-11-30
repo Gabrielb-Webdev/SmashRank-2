@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { Button } from '../ui/button';
-import { Menu, X, Trophy, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, Trophy, User, LogOut, LayoutDashboard, Award } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navbar() {
@@ -11,63 +10,66 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-gray-900/95 backdrop-blur-sm border-b-4 border-primary sticky top-0 z-50 shadow-neon">
+    <nav className="bg-white border-b-8 border-black sticky top-0 z-50" style={{ boxShadow: '0 8px 0 0 rgba(0, 0, 0, 0.2)' }}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative">
-              <Trophy className="w-10 h-10 text-primary group-hover:text-secondary transition-colors" />
-              <div className="absolute inset-0 bg-primary/20 blur-xl group-hover:bg-secondary/20 transition-colors" />
-            </div>
-            <span className="font-smash text-2xl md:text-3xl bg-gradient-to-r from-primary via-manga-yellow to-secondary bg-clip-text text-transparent">
+            <Trophy className="w-10 h-10 text-black" />
+            <span className="text-3xl md:text-4xl font-black uppercase tracking-tight">
               SmashRank
             </span>
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/tournaments" className="text-white hover:text-primary transition-colors font-bold uppercase tracking-wide">
+          <div className="hidden md:flex items-center space-x-2">
+            <Link 
+              href="/tournaments" 
+              className="px-4 py-2 font-bold uppercase tracking-wide hover:bg-black hover:text-white transition-all border-2 border-transparent hover:border-black"
+            >
               Torneos
             </Link>
-            <Link href="/rankings" className="text-white hover:text-primary transition-colors font-bold uppercase tracking-wide">
+            <Link 
+              href="/rankings" 
+              className="px-4 py-2 font-bold uppercase tracking-wide hover:bg-black hover:text-white transition-all border-2 border-transparent hover:border-black"
+            >
               Rankings
-            </Link>
-            <Link href="/players" className="text-white hover:text-primary transition-colors font-bold uppercase tracking-wide">
-              Jugadores
             </Link>
             
             {session ? (
               <>
                 {session.user.role === 'ADMIN' && (
                   <Link href="/admin/dashboard">
-                    <Button variant="outline" size="sm">
-                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                    <button className="px-4 py-2 bg-black text-white font-bold uppercase border-4 border-black hover:bg-white hover:text-black transition-all">
+                      <LayoutDashboard className="inline w-4 h-4 mr-2" />
                       Admin
-                    </Button>
+                    </button>
                   </Link>
                 )}
                 <Link href="/profile">
-                  <Button variant="secondary" size="sm">
-                    <User className="w-4 h-4 mr-2" />
+                  <button className="px-4 py-2 bg-white border-4 border-black font-bold uppercase hover:bg-black hover:text-white transition-all">
+                    <User className="inline w-4 h-4 mr-2" />
                     {session.user.username}
-                  </Button>
+                  </button>
                 </Link>
-                <Button variant="ghost" size="sm" onClick={() => signOut()}>
-                  <LogOut className="w-4 h-4" />
-                </Button>
+                <button 
+                  onClick={() => signOut()}
+                  className="p-2 border-4 border-black hover:bg-black hover:text-white transition-all"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
               </>
             ) : (
               <>
                 <Link href="/auth/signin">
-                  <Button variant="outline" size="sm">
-                    Ingresar
-                  </Button>
+                  <button className="px-6 py-2 bg-white border-4 border-black font-bold uppercase hover:bg-black hover:text-white transition-all">
+                    INGRESAR
+                  </button>
                 </Link>
                 <Link href="/auth/signup">
-                  <Button size="sm">
-                    Registrarse
-                  </Button>
+                  <button className="px-6 py-2 bg-black text-white border-4 border-black font-bold uppercase hover:bg-white hover:text-black transition-all">
+                    REGISTRARSE
+                  </button>
                 </Link>
               </>
             )}
@@ -84,69 +86,60 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-4 border-t border-primary/30 animate-slide-in-right">
+          <div className="md:hidden py-4 space-y-3 border-t-4 border-black bg-white">
             <Link 
               href="/tournaments" 
-              className="block text-white hover:text-primary transition-colors font-bold uppercase"
+              className="block px-4 py-3 border-4 border-black font-bold uppercase hover:bg-black hover:text-white transition-all"
               onClick={() => setIsMenuOpen(false)}
             >
               Torneos
             </Link>
             <Link 
               href="/rankings" 
-              className="block text-white hover:text-primary transition-colors font-bold uppercase"
+              className="block px-4 py-3 border-4 border-black font-bold uppercase hover:bg-black hover:text-white transition-all"
               onClick={() => setIsMenuOpen(false)}
             >
               Rankings
             </Link>
-            <Link 
-              href="/players" 
-              className="block text-white hover:text-primary transition-colors font-bold uppercase"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Jugadores
-            </Link>
             
             {session ? (
-              <div className="space-y-4 pt-4 border-t border-primary/30">
+              <div className="space-y-3 pt-4 border-t-4 border-black">
                 {session.user.role === 'ADMIN' && (
                   <Link href="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full">
-                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                    <button className="w-full px-4 py-3 bg-black text-white border-4 border-black font-bold uppercase">
+                      <LayoutDashboard className="inline w-4 h-4 mr-2" />
                       Admin Dashboard
-                    </Button>
+                    </button>
                   </Link>
                 )}
                 <Link href="/profile" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="secondary" size="sm" className="w-full">
-                    <User className="w-4 h-4 mr-2" />
+                  <button className="w-full px-4 py-3 bg-white border-4 border-black font-bold uppercase hover:bg-black hover:text-white transition-all">
+                    <User className="inline w-4 h-4 mr-2" />
                     Mi Perfil
-                  </Button>
+                  </button>
                 </Link>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-full"
+                <button 
+                  className="w-full px-4 py-3 border-4 border-black font-bold uppercase hover:bg-black hover:text-white transition-all"
                   onClick={() => {
                     signOut();
                     setIsMenuOpen(false);
                   }}
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="inline w-4 h-4 mr-2" />
                   Cerrar Sesión
-                </Button>
+                </button>
               </div>
             ) : (
-              <div className="space-y-4 pt-4 border-t border-primary/30">
+              <div className="space-y-3 pt-4 border-t-4 border-black">
                 <Link href="/auth/signin" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full">
-                    Ingresar
-                  </Button>
+                  <button className="w-full px-4 py-3 bg-white border-4 border-black font-bold uppercase hover:bg-black hover:text-white transition-all">
+                    INGRESAR
+                  </button>
                 </Link>
                 <Link href="/auth/signup" onClick={() => setIsMenuOpen(false)}>
-                  <Button size="sm" className="w-full">
-                    Registrarse
-                  </Button>
+                  <button className="w-full px-4 py-3 bg-black text-white border-4 border-black font-bold uppercase hover:bg-white hover:text-black transition-all">
+                    REGISTRARSE
+                  </button>
                 </Link>
               </div>
             )}
