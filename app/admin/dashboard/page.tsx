@@ -81,8 +81,8 @@ export default async function AdminDashboard() {
   const quickActions = [
     { label: 'Crear Torneo', href: '/tournaments/create', icon: Trophy, description: 'Organiza un nuevo torneo' },
     { label: 'Ver Torneos', href: '/tournaments', icon: Calendar, description: 'Gestionar torneos existentes' },
+    { label: 'Gestionar Usuarios', href: '/admin/users', icon: Users, description: 'Administrar usuarios del sistema' },
     { label: 'Rankings', href: '/rankings', icon: BarChart3, description: 'Ver clasificaciones' },
-    { label: 'Configuración', href: '/admin/settings', icon: Settings, description: 'Ajustes del sistema' },
   ];
 
   return (

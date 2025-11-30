@@ -42,19 +42,31 @@ export default async function HomePage() {
           🎯 HERO SECTION
           ============================================ */}
       <section className="hero relative">
-        {/* Banner Background */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <Image 
-            src="/banner.png" 
-            alt="SmashRank Banner"
-            fill
-            className="object-cover opacity-25"
-            priority
-            style={{ objectPosition: 'center' }}
-          />
-          {/* Gradient overlays para mejor legibilidad */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
-          <div className="absolute inset-0 bg-gradient-to-r from-crimson/10 via-transparent to-crimson/10" />
+        {/* Background Characters */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Banjo Kazooie - Left side */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-auto opacity-20 hidden lg:block">
+            <Image 
+              src="/banjo-kazooie.png" 
+              alt="Banjo Kazooie"
+              width={500}
+              height={500}
+              className="object-contain animate-fade-in-up"
+              priority
+            />
+          </div>
+          
+          {/* Terry Bogard - Right side */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-auto opacity-20 hidden lg:block">
+            <Image 
+              src="/terry-bogard.png" 
+              alt="Terry Bogard"
+              width={500}
+              height={500}
+              className="object-contain animate-fade-in-up animate-delay-200"
+              priority
+            />
+          </div>
         </div>
 
         <div className="container relative z-10 py-20 md:py-32">

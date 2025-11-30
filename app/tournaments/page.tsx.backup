@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Trophy, Calendar, Users, Plus, Filter, Wifi, Gamepad2 } from 'lucide-react';
+import { Trophy, Calendar, Users, Plus, Filter, Wifi, Clock, Gamepad2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { TOURNAMENT_FORMATS, TOURNAMENT_STATUSES } from '@/lib/constants';
 
@@ -76,20 +76,59 @@ export default function TournamentsPage() {
 
   return (
     <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
-      <div className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3" style={{background: 'rgba(220, 20, 60, 0.2)', border: '1px solid rgba(255, 215, 0, 0.4)'}}>
-              <Gamepad2 className="w-4 h-4" style={{color: '#ffd700'}} />
-              <span className="text-xs font-bold uppercase tracking-wide" style={{color: '#ffd700'}}>Super Smash Bros Ultimate</span>
+      {/* Banner Header */}
+      <div className="relative h-64 md:h-80 overflow-hidden border-b-4" style={{borderColor: '#dc143c'}}>
+        <Image 
+          src="/banner.png" 
+          alt="Torneos SmashRank"
+          fill
+          className="object-cover"
+          priority
+          style={{ objectPosition: 'center' }}
+        />
+        {/* Overlay oscuro para legibilidad */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-crimson/20 via-transparent to-gold/20" />
+        
+        {/* Contenido del header sobre el banner */}
+        <div className="container mx-auto px-4 h-full flex items-center justify-between relative z-10">
+          <div className="animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4" style={{background: 'rgba(220, 20, 60, 0.3)', border: '2px solid rgba(255, 215, 0, 0.6)', backdropFilter: 'blur(8px)'}}>
+              <Gamepad2 className="w-5 h-5" style={{color: '#ffd700'}} />
+              <span className="text-sm font-bold uppercase tracking-wide" style={{color: '#ffd700'}}>Super Smash Bros Ultimate</span>
             </div>
-            <h1 className="text-5xl font-black text-white mb-2 flex items-center gap-3">
-              <Trophy className="w-12 h-12" style={{color: '#ffd700'}} />
+            <h1 className="text-5xl md:text-6xl font-black text-white mb-3 flex items-center gap-4 drop-shadow-2xl">
+              <Trophy className="w-14 h-14" style={{color: '#ffd700'}} />
               Torneos
             </h1>
-            <p className="text-xl text-slate-400">Compite en los mejores torneos online de Argentina</p>
+            <p className="text-xl md:text-2xl text-slate-200 drop-shadow-lg">Compite en los mejores torneos online de Argentina</p>
           </div>
+          
+          {session?.user.role === 'ADMIN' && (
+            <Link href="/tournaments/create" className="hidden md:block animate-fade-in-up animate-delay-200">
+              <button className="btn-primary text-lg px-6 py-3 shadow-2xl">
+                <Plus className="w-5 h-5 mr-2 inline" />
+                Crear Torneo
+              </button>
+            </Link>
+          )}
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-12">
+        {/* Bot\u00f3n crear torneo mobile */}
+        {session?.user.role === 'ADMIN' && (
+          <div className="md:hidden mb-6">
+            <Link href="/tournaments/create">
+              <button className="btn-primary text-lg px-6 py-3 w-full">
+                <Plus className="w-5 h-5 mr-2 inline" />
+                Crear Torneo
+              </button>
+            </Link>
+          </div>
+        )}
+
+        <div>
           
           {session?.user.role === 'ADMIN' && (
             <Link href="/tournaments/create">
