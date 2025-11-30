@@ -25,7 +25,7 @@ export async function GET(
             skin: true,
           },
         },
-        createdBy: {
+        creator: {
           select: {
             id: true,
             username: true,
