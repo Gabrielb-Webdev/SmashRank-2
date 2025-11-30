@@ -3,10 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { PROVINCES, TOURNAMENT_FORMATS } from '@/lib/constants';
 import toast from 'react-hot-toast';
 import { Trophy, Calendar, MapPin, Users, Settings, Wifi, Info, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -66,6 +62,8 @@ export default function CreateTournamentPage() {
   if (session?.user.role !== 'ADMIN') {
     router.push('/tournaments');
     return null;
+  }
+
   const steps = [
     { id: 1, name: 'Información Básica', icon: Info },
     { id: 2, name: 'Fechas y Horarios', icon: Calendar },
@@ -97,6 +95,36 @@ export default function CreateTournamentPage() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/tournaments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success('¡Torneo creado exitosamente!');
+        router.push('/tournaments');
+        router.refresh();
+      } else {
+        toast.error(data.error || 'Error al crear el torneo');
+      }
+    } catch (error) {
+      toast.error('Error al conectar con el servidor');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
       <div className="container mx-auto px-4 py-12">
@@ -111,6 +139,41 @@ export default function CreateTournamentPage() {
             <h1 className="text-4xl font-black text-white mb-2">Crear Torneo</h1>
             <p className="text-slate-400">Configura tu nuevo torneo de Super Smash Bros Ultimate</p>
           </div>
+
+          {/* Progress Steps */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center flex-1">
+                  <div className="flex flex-col items-center flex-1">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all ${
+                      currentStep >= step.id 
+                        ? 'bg-gradient-to-br from-red-500 to-orange-500 text-white' 
+                        : 'bg-slate-800 text-slate-500'
+                    }`}>
+                      {currentStep > step.id ? (
+                        <CheckCircle2 className="w-6 h-6" />
+                      ) : (
+                        <step.icon className="w-6 h-6" />
+                      )}
+                    </div>
+                    <span className={`text-sm font-semibold text-center ${
+                      currentStep >= step.id ? 'text-white' : 'text-slate-500'
+                    }`}>
+                      {step.name}
+                    </span>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${
+                      currentStep > step.id ? 'bg-gradient-to-r from-red-500 to-orange-500' : 'bg-slate-800'
+                    }`} />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit}>
             {/* Step 1: Información Básica */}
             {currentStep === 1 && (
               <div className="card p-6 animate-fade-in-up">
@@ -123,59 +186,49 @@ export default function CreateTournamentPage() {
 
                 <div className="space-y-6">
                   <div>
-                    <label className="label flex items-center gap-2">
-                      <Trophy className="w-4 h-4" style={{color: '#ffd700'}} />
-                      Nombre del Torneo *
-                    </label>
+                    <label className="label">🏆 Nombre del Torneo *</label>
                     <input
                       type="text"
                       className="input"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="SmashRank Argentina - Regional CABA"
+                      placeholder="Ej: Torneo Smash Argentina 2024"
                       required
                     />
-                    <p className="text-xs text-slate-500 mt-1">Este será el título principal del torneo</p>
+                    <p className="text-xs text-slate-500 mt-1">El nombre aparecerá en el listado de torneos</p>
                   </div>
 
                   <div>
-                    <label className="label">Descripción</label>
+                    <label className="label">📝 Descripción</label>
                     <textarea
                       className="input min-h-[100px]"
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="Torneo de prueba para testing de la plataforma"
+                      placeholder="Describe tu torneo..."
                     />
-                    <p className="text-xs text-slate-500 mt-1">Describe de qué trata tu torneo</p>
+                    <p className="text-xs text-slate-500 mt-1">Información adicional sobre el torneo</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="label flex items-center gap-2">
-                        <MapPin className="w-4 h-4" style={{color: '#ffd700'}} />
-                        Provincia *
-                      </label>
+                      <label className="label">📍 Provincia *</label>
                       <select
                         className="input"
                         value={formData.province}
                         onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                        required
                       >
-                        {PROVINCES.map((province) => (
-                          <option key={province} value={province}>
-                            {province}
-                          </option>
+                        {PROVINCES.map((prov) => (
+                          <option key={prov} value={prov}>{prov}</option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="label">Formato de Competencia *</label>
+                      <label className="label">🎮 Formato *</label>
                       <select
                         className="input"
                         value={formData.format}
                         onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-                        required
                       >
                         {TOURNAMENT_FORMATS.map((format) => (
                           <option key={format.value} value={format.value}>
@@ -187,37 +240,56 @@ export default function CreateTournamentPage() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex items-center gap-3 p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-slate-800/50">
+                      <Wifi className="w-5 h-5 text-blue-400" />
+                      <div className="flex-1">
+                        <label className="label mb-0">Torneo Online</label>
+                        <p className="text-xs text-slate-500">Se juega por internet</p>
+                      </div>
                       <input
                         type="checkbox"
-                        id="isOnline"
                         checked={formData.isOnline}
                         onChange={(e) => setFormData({ ...formData, isOnline: e.target.checked })}
                         className="w-5 h-5 rounded accent-red-500"
                       />
-                      <div className="flex items-center gap-2">
-                        <Wifi className="w-5 h-5 text-green-400" />
-                        <label htmlFor="isOnline" className="text-white font-semibold cursor-pointer">
-                          Torneo Online
-                        </label>
-                      </div>
+                    </div>
+
+                    <div>
+                      <label className="label">👥 Máximo de Participantes</label>
+                      <input
+                        type="number"
+                        className="input"
+                        value={formData.maxParticipants}
+                        onChange={(e) => setFormData({ ...formData, maxParticipants: e.target.value })}
+                        placeholder="32"
+                        min="2"
+                      />
+                      <p className="text-xs text-slate-500 mt-1">Opcional - Deja vacío para ilimitado</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Step 2: Fechas y Horarios */}
             {currentStep === 2 && (
               <div className="card p-6 animate-fade-in-up">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white">Fechas y Horarios</h2>
                 </div>
 
                 <div className="space-y-6">
-                  <div className="p-4 rounded-lg" style={{background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)'}}>
+                  <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                      <Info className="w-5 h-5 text-blue-400 mt-0.5" />
                       <div>
-                        <p className="text-blue-400 font-semibold mb-1">Fechas sugeridas configuradas</p>
-                        <p className="text-sm text-slate-300">Hemos pre-configurado fechas recomendadas. Puedes ajustarlas según necesites.</p>
+                        <p className="text-sm text-blue-300 font-semibold mb-1">💡 Fechas Pre-cargadas</p>
+                        <p className="text-xs text-slate-400">
+                          Hemos configurado fechas sugeridas automáticamente. Puedes modificarlas según necesites.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -231,12 +303,12 @@ export default function CreateTournamentPage() {
                       onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                       required
                     />
-                    <p className="text-xs text-slate-500 mt-1">Cuándo comienza el torneo</p>
+                    <p className="text-xs text-slate-500 mt-1">Cuándo empieza el torneo</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="label">📝 Inscripciones Abren *</label>
+                      <label className="label">✅ Inscripciones Abren *</label>
                       <input
                         type="datetime-local"
                         className="input"
@@ -244,7 +316,7 @@ export default function CreateTournamentPage() {
                         onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
                         required
                       />
-                      <p className="text-xs text-slate-500 mt-1">Los usuarios pueden registrarse</p>
+                      <p className="text-xs text-slate-500 mt-1">Inicio de inscripciones</p>
                     </div>
 
                     <div>
@@ -256,13 +328,13 @@ export default function CreateTournamentPage() {
                         onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
                         required
                       />
-                      <p className="text-xs text-slate-500 mt-1">Última oportunidad para inscribirse</p>
+                      <p className="text-xs text-slate-500 mt-1">Cierre de inscripciones</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="label">✅ Check-in Abre *</label>
+                      <label className="label">⏰ Check-in Abre *</label>
                       <input
                         type="datetime-local"
                         className="input"
@@ -270,11 +342,11 @@ export default function CreateTournamentPage() {
                         onChange={(e) => setFormData({ ...formData, checkinStart: e.target.value })}
                         required
                       />
-                      <p className="text-xs text-slate-500 mt-1">Los jugadores confirman asistencia</p>
+                      <p className="text-xs text-slate-500 mt-1">Inicio de check-in</p>
                     </div>
 
                     <div>
-                      <label className="label">⏰ Check-in Cierra *</label>
+                      <label className="label">⛔ Check-in Cierra *</label>
                       <input
                         type="datetime-local"
                         className="input"
@@ -287,57 +359,13 @@ export default function CreateTournamentPage() {
                   </div>
                 </div>
               </div>
-            )}div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="isOnline"
-                    checked={formData.isOnline}
-                    onChange={(e) => setFormData({ ...formData, isOnline: e.target.checked })}
-                    className="w-5 h-5"
-                  />
-                  <Label htmlFor="isOnline" className="mb-0">Torneo Online</Label>
-                </div>
+            )}
 
-                <div>
-                  <Label htmlFor="maxParticipants">Máximo de Participantes</Label>
-                  <Input
-                    id="maxParticipants"
-                    type="number"
-                    value={formData.maxParticipants}
-                    onChange={(e) => setFormData({ ...formData, maxParticipants: e.target.value })}
-                    placeholder="32"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Fechas y Horarios</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="startDate">Fecha y Hora de Inicio *</Label>
-                <Input
-                  id="startDate"
-                  type="datetime-local"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="registrationStart">Inscripciones Abren *</Label>
-                  <Input
-                    id="registrationStart"
             {/* Step 3: Reglas y Configuración */}
             {currentStep === 3 && (
               <div className="card p-6 animate-fade-in-up">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
                     <Settings className="w-5 h-5 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white">Reglas y Configuración</h2>
@@ -450,53 +478,9 @@ export default function CreateTournamentPage() {
               >
                 Cancelar
               </button>
-            </div></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Reglas y Configuración</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="rules">Reglas del Torneo</Label>
-                <textarea
-                  id="rules"
-                  className="flex w-full rounded-lg border-2 border-primary bg-gray-800/50 px-4 py-2 text-sm text-white placeholder:text-gray-400 focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/50 min-h-[100px]"
-                  value={formData.rules}
-                  onChange={(e) => setFormData({ ...formData, rules: e.target.value })}
-                  placeholder="3 stocks, 7 minutos, sin items..."
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="stageList">Lista de Escenarios</Label>
-                <Input
-                  id="stageList"
-                  value={formData.stageList}
-                  onChange={(e) => setFormData({ ...formData, stageList: e.target.value })}
-                  placeholder="Battlefield, Final Destination, Smashville..."
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="mt-8 flex gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => router.back()}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" className="flex-1" disabled={loading}>
-              {loading ? 'Creando...' : 'Crear Torneo'}
-            </Button>
-          </div>
-        </form>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
