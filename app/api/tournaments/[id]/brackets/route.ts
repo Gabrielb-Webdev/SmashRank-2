@@ -13,20 +13,22 @@ export async function GET(
       include: {
         player1: {
           include: {
-            participants: {
+            registrations: {
               where: { tournamentId },
               include: {
                 character: true,
+                skin: true,
               },
             },
           },
         },
         player2: {
           include: {
-            participants: {
+            registrations: {
               where: { tournamentId },
               include: {
                 character: true,
+                skin: true,
               },
             },
           },

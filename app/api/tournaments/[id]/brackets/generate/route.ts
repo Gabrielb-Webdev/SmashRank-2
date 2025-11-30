@@ -30,10 +30,9 @@ export async function POST(
     const tournament = await prisma.tournament.findUnique({
       where: { id: tournamentId },
       include: {
-        participants: {
+        registrations: {
           where: {
             checkedIn: true,
-            status: 'ACTIVE',
           },
           include: {
             user: true,
@@ -48,7 +47,7 @@ export async function POST(
     }
 
     // Verificar que haya participantes con check-in
-    if (tournament.participants.length < 2) {
+    if (tournament.registrations.length < 2) {
       return NextResponse.json(
         { error: 'Se necesitan al menos 2 participantes con check-in para generar el bracket' },
         { status: 400 }
@@ -56,7 +55,7 @@ export async function POST(
     }
 
     // Asignar seeds aleatorios si no los tienen
-    const participantsWithSeeds = tournament.participants.map((p, idx) => ({
+    const participantsWithSeeds = tournament.registrations.map((p, idx) => ({
       id: p.id,
       userId: p.userId,
       seed: p.seed || idx + 1,
