@@ -1,0 +1,48 @@
+{
+  "name": "SmashRank Argentina",
+  "short_name": "SmashRank",
+  "description": "Plataforma de torneos de Super Smash Bros Ultimate para Argentina",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1F2937",
+  "theme_color": "#FF4655",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "sports"],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ver Torneos",
+      "short_name": "Torneos",
+      "description": "Ver todos los torneos disponibles",
+      "url": "/tournaments",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Rankings",
+      "short_name": "Rankings",
+      "description": "Ver rankings de jugadores",
+      "url": "/rankings",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
