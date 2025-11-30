@@ -28,7 +28,10 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'SmashRank AR 🎮',
+    title: 'SmashRank AR',
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
   },
   openGraph: {
     title: 'SmashRank Argentina - Torneos de Smash Bros Ultimate',

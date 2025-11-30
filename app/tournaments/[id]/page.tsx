@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import CharacterSelector from '@/components/tournaments/CharacterSelector';
 import Link from 'next/link';
 
-export default function TournamentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function TournamentDetailPage({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [tournament, setTournament] = useState<any>(null);
@@ -20,16 +20,10 @@ export default function TournamentDetailPage({ params }: { params: Promise<{ id:
   const [isRegistered, setIsRegistered] = useState(false);
   const [canCheckIn, setCanCheckIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
-  const [tournamentId, setTournamentId] = useState<string>('');
+  const tournamentId = params.id;
 
   useEffect(() => {
-    params.then((p) => setTournamentId(p.id));
-  }, [params]);
-
-  useEffect(() => {
-    if (tournamentId) {
-      fetchTournament();
-    }
+    fetchTournament();
   }, [tournamentId]);
 
   const fetchTournament = async () => {
