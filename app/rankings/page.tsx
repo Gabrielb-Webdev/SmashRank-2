@@ -74,7 +74,7 @@ export default function RankingsPage() {
   };
 
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen py-12" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
         <motion.div
@@ -82,34 +82,40 @@ export default function RankingsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="title-smash mb-4">RANKINGS</h1>
-          <p className="text-xl">Los mejores jugadores de Super Smash Bros Ultimate en Argentina</p>
+          <h1 className="text-5xl md:text-6xl font-black mb-4" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 20px rgba(220, 20, 60, 0.6))'}}>
+            RANKINGS
+          </h1>
+          <p className="text-xl text-slate-300">Los mejores jugadores de Super Smash Bros Ultimate en Argentina</p>
         </motion.div>
 
         {/* Filters */}
         <div className="mb-8 space-y-4">
           {/* View Mode Toggle */}
-          <div className="flex gap-4 justify-center border-b-4 border-black pb-4">
+          <div className="flex gap-4 justify-center pb-4" style={{borderBottom: '2px solid rgba(220, 20, 60, 0.3)'}}>
             <button
               onClick={() => {
                 setViewMode('national');
                 setSelectedProvince('Todas');
               }}
-              className={`px-8 py-3 font-bold text-lg transition-all ${
-                viewMode === 'national'
-                  ? 'bg-black text-white border-4 border-black'
-                  : 'bg-white text-black border-4 border-black'
-              }`}
+              className="px-8 py-3 font-bold text-lg transition-all rounded-lg"
+              style={{
+                background: viewMode === 'national' ? 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)' : 'rgba(26, 10, 10, 0.6)',
+                color: 'white',
+                border: viewMode === 'national' ? '2px solid #dc143c' : '2px solid rgba(220, 20, 60, 0.3)',
+                boxShadow: viewMode === 'national' ? '0 4px 20px rgba(220, 20, 60, 0.4)' : 'none'
+              }}
             >
               🏆 RANKING NACIONAL
             </button>
             <button
               onClick={() => setViewMode('provincial')}
-              className={`px-8 py-3 font-bold text-lg transition-all ${
-                viewMode === 'provincial'
-                  ? 'bg-black text-white border-4 border-black'
-                  : 'bg-white text-black border-4 border-black'
-              }`}
+              className="px-8 py-3 font-bold text-lg transition-all rounded-lg"
+              style={{
+                background: viewMode === 'provincial' ? 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)' : 'rgba(26, 10, 10, 0.6)',
+                color: 'white',
+                border: viewMode === 'provincial' ? '2px solid #dc143c' : '2px solid rgba(220, 20, 60, 0.3)',
+                boxShadow: viewMode === 'provincial' ? '0 4px 20px rgba(220, 20, 60, 0.4)' : 'none'
+              }}
             >
               📍 RANKING PROVINCIAL
             </button>
@@ -117,12 +123,13 @@ export default function RankingsPage() {
 
           {/* Province Selector */}
           {viewMode === 'provincial' && (
-            <div className="bg-white border-4 border-black p-6">
-              <label className="block font-bold mb-3 text-lg">Seleccionar Provincia:</label>
+            <div className="p-6 rounded-lg" style={{background: 'rgba(26, 10, 10, 0.6)', border: '2px solid rgba(220, 20, 60, 0.3)'}}>
+              <label className="block font-bold mb-3 text-lg text-white">Seleccionar Provincia:</label>
               <select
                 value={selectedProvince}
                 onChange={(e) => setSelectedProvince(e.target.value)}
-                className="w-full border-4 border-black p-3 text-lg font-bold"
+                className="w-full p-3 text-lg font-bold rounded-lg text-white"
+                style={{background: 'rgba(10, 10, 10, 0.8)', border: '2px solid rgba(220, 20, 60, 0.4)'}}
               >
                 {PROVINCIAS.map((provincia) => (
                   <option key={provincia} value={provincia}>
@@ -141,9 +148,9 @@ export default function RankingsPage() {
           </div>
         ) : rankings.length === 0 ? (
           <div className="text-center py-20">
-            <div className="manga-panel p-8 max-w-md mx-auto">
-              <p className="text-2xl font-bold mb-4">Sin datos</p>
-              <p className="text-gray-600">
+            <div className="p-8 max-w-md mx-auto rounded-lg" style={{background: 'rgba(26, 10, 10, 0.6)', border: '2px solid rgba(220, 20, 60, 0.3)'}}>
+              <p className="text-2xl font-bold mb-4 text-white">Sin datos</p>
+              <p className="text-slate-400">
                 No hay jugadores registrados en esta región todavía.
               </p>
             </div>
@@ -160,30 +167,37 @@ export default function RankingsPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white border-4 border-black p-6 transition-all hover:translate-x-1 hover:translate-y-1"
+                className="p-6 transition-all hover:scale-105 rounded-lg"
                 style={{
-                  boxShadow: '6px 6px 0px 0px rgba(0, 0, 0, 1)',
+                  background: 'rgba(26, 10, 10, 0.8)',
+                  border: entry.rank <= 3 ? '2px solid #ffd700' : '2px solid rgba(220, 20, 60, 0.3)',
+                  boxShadow: entry.rank <= 3 
+                    ? '0 8px 30px rgba(255, 215, 0, 0.3), 0 0 20px rgba(220, 20, 60, 0.2)'
+                    : '0 4px 20px rgba(220, 20, 60, 0.2)',
                 }}
               >
                 <div className="flex items-center gap-6">
                   {/* Rank Badge */}
                   <div className="text-4xl font-bold min-w-[80px] text-center">
-                    <div className={`${
-                      entry.rank <= 3 ? 'text-5xl' : 'text-3xl'
-                    }`}>
+                    <div 
+                      className={entry.rank <= 3 ? 'text-5xl' : 'text-3xl'}
+                      style={{
+                        filter: entry.rank <= 3 ? 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.8))' : 'none'
+                      }}
+                    >
                       {getRankBadge(entry.rank)}
                     </div>
                   </div>
 
                   {/* Player Info */}
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold mb-2">{entry.username}</h3>
+                    <h3 className="text-2xl font-bold mb-2 text-white">{entry.username}</h3>
                     <div className="flex items-center gap-4 text-sm">
-                      <span className="px-3 py-1 bg-black text-white font-bold">
+                      <span className="px-3 py-1 font-bold rounded" style={{background: 'rgba(220, 20, 60, 0.2)', border: '1px solid rgba(220, 20, 60, 0.4)', color: '#ffd700'}}>
                         📍 {entry.province}
                       </span>
                       {entry.mainCharacter && (
-                        <span className="px-3 py-1 border-2 border-black font-bold">
+                        <span className="px-3 py-1 font-bold rounded" style={{background: 'rgba(10, 10, 10, 0.6)', border: '1px solid rgba(255, 215, 0, 0.4)', color: '#ffd700'}}>
                           🎮 {entry.mainCharacter}
                         </span>
                       )}
@@ -193,16 +207,16 @@ export default function RankingsPage() {
                   {/* Stats */}
                   <div className="flex gap-8 text-center">
                     <div className="min-w-[100px]">
-                      <div className="text-3xl font-black">{entry.points}</div>
-                      <div className="text-xs font-bold uppercase">Puntos</div>
+                      <div className="text-3xl font-black" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>{entry.points}</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Puntos</div>
                     </div>
                     <div className="min-w-[100px]">
-                      <div className="text-3xl font-black">{entry.wins}</div>
-                      <div className="text-xs font-bold uppercase">Victorias</div>
+                      <div className="text-3xl font-black" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>{entry.wins}</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Victorias</div>
                     </div>
                     <div className="min-w-[100px]">
-                      <div className="text-3xl font-black">{entry.tournaments}</div>
-                      <div className="text-xs font-bold uppercase">Torneos</div>
+                      <div className="text-3xl font-black" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>{entry.tournaments}</div>
+                      <div className="text-xs font-bold uppercase text-slate-400">Torneos</div>
                     </div>
                   </div>
                 </div>
@@ -212,19 +226,19 @@ export default function RankingsPage() {
         )}
 
         {/* Legend */}
-        <div className="mt-12 bg-white border-4 border-black p-6">
-          <h3 className="font-bold text-xl mb-4">📊 Cómo se calculan los puntos</h3>
-          <ul className="space-y-2 text-sm">
+        <div className="mt-12 p-6 rounded-lg" style={{background: 'rgba(26, 10, 10, 0.6)', border: '2px solid rgba(220, 20, 60, 0.3)'}}>
+          <h3 className="font-bold text-xl mb-4 text-white">📊 Cómo se calculan los puntos</h3>
+          <ul className="space-y-2 text-sm text-slate-300">
             <li className="flex items-start gap-2">
-              <span className="font-bold">•</span>
-              <span><strong>100 puntos</strong> por torneo ganado</span>
+              <span className="font-bold" style={{color: '#dc143c'}}>•</span>
+              <span><strong style={{color: '#ffd700'}}>100 puntos</strong> por torneo ganado</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="font-bold">•</span>
-              <span><strong>10 puntos</strong> por participación en torneo</span>
+              <span className="font-bold" style={{color: '#dc143c'}}>•</span>
+              <span><strong style={{color: '#ffd700'}}>10 puntos</strong> por participación en torneo</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="font-bold">•</span>
+              <span className="font-bold" style={{color: '#dc143c'}}>•</span>
               <span>Los rankings se actualizan automáticamente después de cada torneo</span>
             </li>
           </ul>
