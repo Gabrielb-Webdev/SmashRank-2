@@ -9,7 +9,7 @@ const tournamentSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
   description: z.string().optional(),
   isOnline: z.boolean().default(true),
-  format: z.enum(['SINGLE_ELIMINATION', 'DOUBLE_ELIMINATION', 'ROUND_ROBIN', 'SWISS']),
+  format: z.enum(['SINGLE_ELIMINATION', 'DOUBLE_ELIMINATION', 'ROUND_ROBIN', 'SWISS', 'CREW_BATTLE']),
   maxParticipants: z.number(),
   startDate: z.string(),
   registrationStart: z.string(),

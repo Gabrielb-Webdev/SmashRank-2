@@ -17,6 +17,7 @@ enum TournamentFormat {
   DOUBLE_ELIMINATION
   ROUND_ROBIN
   SWISS
+  CREW_BATTLE
 }
 
 enum TournamentStatus {

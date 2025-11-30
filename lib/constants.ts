@@ -28,10 +28,11 @@ export const PROVINCES = [
 export type Province = typeof PROVINCES[number];
 
 export const TOURNAMENT_FORMATS = [
-  { value: 'SINGLE_ELIMINATION', label: 'Single Elimination' },
-  { value: 'DOUBLE_ELIMINATION', label: 'Double Elimination' },
-  { value: 'ROUND_ROBIN', label: 'Round Robin' },
-  { value: 'SWISS', label: 'Swiss' },
+  { value: 'SINGLE_ELIMINATION', label: 'Single Elimination', icon: '🏆', description: 'Eliminación directa' },
+  { value: 'DOUBLE_ELIMINATION', label: 'Double Elimination', icon: '⚔️', description: 'Doble eliminación' },
+  { value: 'ROUND_ROBIN', label: 'Round Robin', icon: '🔄', description: 'Todos contra todos' },
+  { value: 'SWISS', label: 'Swiss', icon: '♟️', description: 'Sistema suizo' },
+  { value: 'CREW_BATTLE', label: 'Crew Battle', icon: '👥', description: 'Batalla de equipos' },
 ] as const;
 
 export const TOURNAMENT_STATUSES = [

@@ -214,13 +214,13 @@ export default function CreateTournamentPage() {
                     <div>
                       <label className="label">🎮 Formato *</label>
                       <select
-                        className="input"
+                        className="input text-base font-semibold"
                         value={formData.format}
                         onChange={(e) => setFormData({ ...formData, format: e.target.value })}
                       >
                         {TOURNAMENT_FORMATS.map((format) => (
                           <option key={format.value} value={format.value}>
-                            {format.label}
+                            {format.icon} {format.label}
                           </option>
                         ))}
                       </select>
@@ -281,88 +281,130 @@ export default function CreateTournamentPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="label">🏁 Fecha y Hora de Inicio del Torneo *</label>
+                  <div className="p-5 rounded-xl" style={{background: 'rgba(220, 20, 60, 0.05)', border: '2px solid rgba(220, 20, 60, 0.2)'}}>
+                    <label className="label flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-base">🏁 Fecha y Hora de Inicio del Torneo *</span>
+                    </label>
                     <div className="relative">
                       <input
                         type="datetime-local"
-                        className="input"
+                        className="input text-lg font-semibold"
+                        style={{paddingRight: '3rem'}}
                         value={formData.startDate}
                         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                         min={new Date().toISOString().slice(0, 16)}
                         required
                       />
-                      <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-gradient-to-br from-red-500/20 to-orange-500/20 flex items-center justify-center pointer-events-none">
+                        <Calendar className="w-5 h-5" style={{color: '#dc143c'}} />
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">Cuándo empieza el torneo (debe ser fecha futura)</p>
+                    <p className="text-xs mt-2 flex items-center gap-1" style={{color: '#ffd700'}}>
+                      ⚠️ Cuándo empieza el torneo (debe ser fecha futura)
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="label">✅ Inscripciones Abren *</label>
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(34, 197, 94, 0.05)', border: '2px solid rgba(34, 197, 94, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                          <span className="text-xs">✅</span>
+                        </div>
+                        <span>Inscripciones Abren *</span>
+                      </label>
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input"
+                          className="input font-semibold"
+                          style={{paddingRight: '2.5rem'}}
                           value={formData.registrationStart}
                           onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
                           min={new Date().toISOString().slice(0, 16)}
                           required
                         />
-                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center pointer-events-none">
+                          <Calendar className="w-4 h-4 text-green-500" />
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Inicio de inscripciones</p>
+                      <p className="text-xs text-green-400 mt-1">📅 Inicio de inscripciones</p>
                     </div>
 
-                    <div>
-                      <label className="label">🚫 Inscripciones Cierran *</label>
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(239, 68, 68, 0.05)', border: '2px solid rgba(239, 68, 68, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-500 to-rose-500 flex items-center justify-center">
+                          <span className="text-xs">🚫</span>
+                        </div>
+                        <span>Inscripciones Cierran *</span>
+                      </label>
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input"
+                          className="input font-semibold"
+                          style={{paddingRight: '2.5rem'}}
                           value={formData.registrationEnd}
                           onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
                           min={formData.registrationStart || new Date().toISOString().slice(0, 16)}
                           required
                         />
-                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center pointer-events-none">
+                          <Calendar className="w-4 h-4 text-red-500" />
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Cierre de inscripciones (antes del inicio)</p>
+                      <p className="text-xs text-red-400 mt-1">⏰ Cierre de inscripciones</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="label">⏰ Check-in Abre *</label>
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(59, 130, 246, 0.05)', border: '2px solid rgba(59, 130, 246, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                          <span className="text-xs">⏰</span>
+                        </div>
+                        <span>Check-in Abre *</span>
+                      </label>
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input"
+                          className="input font-semibold"
+                          style={{paddingRight: '2.5rem'}}
                           value={formData.checkinStart}
                           onChange={(e) => setFormData({ ...formData, checkinStart: e.target.value })}
                           min={formData.registrationEnd || new Date().toISOString().slice(0, 16)}
                           required
                         />
-                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center pointer-events-none">
+                          <Calendar className="w-4 h-4 text-blue-500" />
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Inicio de check-in (después del cierre de inscripciones)</p>
+                      <p className="text-xs text-blue-400 mt-1">🔓 Inicio de check-in</p>
                     </div>
 
-                    <div>
-                      <label className="label">⛔ Check-in Cierra *</label>
+                    <div className="p-4 rounded-xl" style={{background: 'rgba(168, 85, 247, 0.05)', border: '2px solid rgba(168, 85, 247, 0.2)'}}>
+                      <label className="label flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                          <span className="text-xs">⛔</span>
+                        </div>
+                        <span>Check-in Cierra *</span>
+                      </label>
                       <div className="relative">
                         <input
                           type="datetime-local"
-                          className="input"
+                          className="input font-semibold"
+                          style={{paddingRight: '2.5rem'}}
                           value={formData.checkinEnd}
                           onChange={(e) => setFormData({ ...formData, checkinEnd: e.target.value })}
                           min={formData.checkinStart || new Date().toISOString().slice(0, 16)}
                           max={formData.startDate}
                           required
                         />
-                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 pointer-events-none" />
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center pointer-events-none">
+                          <Calendar className="w-4 h-4 text-purple-500" />
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Cierre de check-in (antes del inicio del torneo)</p>
+                      <p className="text-xs text-purple-400 mt-1">🔒 Cierre de check-in</p>
                     </div>
                   </div>
                 </div>
