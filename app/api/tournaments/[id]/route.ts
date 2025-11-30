@@ -110,8 +110,6 @@ export async function PUT(
       checkinEnd,
       rules,
       stageList,
-      streamUrl,
-      discordUrl,
     } = body;
 
     const updatedTournament = await prisma.tournament.update({
@@ -130,8 +128,6 @@ export async function PUT(
         checkinEnd: new Date(checkinEnd),
         rules,
         stageList,
-        streamUrl,
-        discordUrl,
       },
     });
 
