@@ -45,24 +45,35 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{
+      background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(255, 215, 0, 0.1) 100%)'
+    }}>
       <div className="w-full max-w-md">
-        <Card className="fade-in-up">
+        <Card className="fade-in-up" style={{
+          background: 'rgba(0, 0, 0, 0.8)',
+          border: '2px solid rgba(220, 20, 60, 0.3)',
+          backdropFilter: 'blur(10px)'
+        }}>
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-neon">
-                <Trophy className="w-8 h-8 text-white" />
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-orange-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                <div className="relative w-20 h-20 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+                  <Trophy className="w-10 h-10 text-white" />
+                </div>
               </div>
             </div>
-            <CardTitle className="text-3xl">¡Bienvenido de Vuelta!</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent mb-3">
+              ¡Bienvenido de Vuelta!
+            </CardTitle>
+            <CardDescription className="text-base text-gray-300">
               Inicia sesión para continuar tu camino al top
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-200 mb-2 block">EMAIL</Label>
                 <Input
                   id="email"
                   type="email"
@@ -70,11 +81,22 @@ export default function SignInPage() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
+                  style={{
+                    background: 'rgba(220, 20, 60, 0.1)',
+                    border: '2px solid rgba(220, 20, 60, 0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#dc143c'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(220, 20, 60, 0.3)'}
                 />
               </div>
 
               <div>
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password" className="text-sm font-semibold text-gray-200 mb-2 block">CONTRASEÑA</Label>
                 <Input
                   id="password"
                   type="password"
@@ -82,26 +104,43 @@ export default function SignInPage() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
+                  style={{
+                    background: 'rgba(220, 20, 60, 0.1)',
+                    border: '2px solid rgba(220, 20, 60, 0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#dc143c'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(220, 20, 60, 0.3)'}
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+              <Button 
+                type="submit" 
+                className="w-full font-bold text-lg" 
+                disabled={loading}
+                style={{
+                  background: 'linear-gradient(135deg, #dc143c 0%, #ff4500 100%)',
+                  padding: '14px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {loading ? '🔄 Iniciando sesión...' : '🚀 INICIAR SESIÓN'}
               </Button>
 
-              <p className="text-center text-sm text-gray-400">
+              <p className="text-center text-base text-gray-300 mt-4">
                 ¿No tienes cuenta?{' '}
-                <Link href="/auth/signup" className="text-primary hover:text-secondary transition-colors font-bold">
-                  Regístrate
+                <Link href="/auth/signup" className="text-transparent bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text hover:from-orange-500 hover:to-yellow-500 transition-all font-bold">
+                  Regístrate aquí
                 </Link>
               </p>
             </form>
-
-            <div className="mt-8 p-4 bg-gray-800/50 rounded-lg border border-primary/30">
-              <p className="text-xs text-gray-400 mb-2 font-bold">Cuentas de prueba:</p>
-              <p className="text-xs text-gray-400">Admin: admin@smashrank.ar / admin123</p>
-              <p className="text-xs text-gray-400">Usuario: user1@smashrank.ar / user123</p>
-            </div>
           </CardContent>
         </Card>
       </div>

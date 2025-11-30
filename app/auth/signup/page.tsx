@@ -65,24 +65,35 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{
+      background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(220, 20, 60, 0.1) 100%)'
+    }}>
       <div className="w-full max-w-md">
-        <Card className="fade-in-up">
+        <Card className="fade-in-up" style={{
+          background: 'rgba(0, 0, 0, 0.8)',
+          border: '2px solid rgba(255, 215, 0, 0.3)',
+          backdropFilter: 'blur(10px)'
+        }}>
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-neon">
-                <Zap className="w-8 h-8 text-white" />
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                <div className="relative w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl">
+                  <Zap className="w-10 h-10 text-white" />
+                </div>
               </div>
             </div>
-            <CardTitle className="text-3xl">¡Únete a la Batalla!</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-clip-text text-transparent mb-3">
+              ¡Únete a la Batalla!
+            </CardTitle>
+            <CardDescription className="text-base text-gray-300">
               Crea tu cuenta y comienza a competir en torneos
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-200 mb-2 block">EMAIL</Label>
                 <Input
                   id="email"
                   type="email"
@@ -90,11 +101,21 @@ export default function SignUpPage() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    border: '2px solid rgba(255, 215, 0, 0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#ffd700'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(255, 215, 0, 0.3)'}
                 />
               </div>
 
               <div>
-                <Label htmlFor="username">Nombre de Usuario / Tag</Label>
+                <Label htmlFor="username" className="text-sm font-semibold text-gray-200 mb-2 block">NOMBRE DE USUARIO / TAG</Label>
                 <Input
                   id="username"
                   type="text"
@@ -102,21 +123,42 @@ export default function SignUpPage() {
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   required
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    border: '2px solid rgba(255, 215, 0, 0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#ffd700'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(255, 215, 0, 0.3)'}
                 />
               </div>
 
               <div>
-                <Label htmlFor="province">Provincia</Label>
+                <Label htmlFor="province" className="text-sm font-semibold text-gray-200 mb-2 block">PROVINCIA</Label>
                 <select
                   id="province"
-                  className="flex h-11 w-full rounded-lg border-2 border-primary bg-gray-800/50 px-4 py-2 text-sm text-white focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
                   value={formData.province}
                   onChange={(e) => setFormData({ ...formData, province: e.target.value })}
                   required
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    border: '2px solid rgba(255, 215, 0, 0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white',
+                    width: '100%',
+                    cursor: 'pointer'
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = '#ffd700'}
+                  onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 215, 0, 0.3)'}
                 >
-                  <option value="">Selecciona tu provincia</option>
+                  <option value="" style={{background: '#1a1a1a'}}>Selecciona tu provincia</option>
                   {PROVINCES.map((province) => (
-                    <option key={province} value={province}>
+                    <option key={province} value={province} style={{background: '#1a1a1a'}}>
                       {province}
                     </option>
                   ))}
@@ -124,7 +166,7 @@ export default function SignUpPage() {
               </div>
 
               <div>
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password" className="text-sm font-semibold text-gray-200 mb-2 block">CONTRASEÑA</Label>
                 <Input
                   id="password"
                   type="password"
@@ -132,11 +174,21 @@ export default function SignUpPage() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    border: '2px solid rgba(255, 215, 0, 0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#ffd700'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(255, 215, 0, 0.3)'}
                 />
               </div>
 
               <div>
-                <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+                <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-200 mb-2 block">CONFIRMAR CONTRASEÑA</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -144,17 +196,40 @@ export default function SignUpPage() {
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   required
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    border: '2px solid rgba(255, 215, 0, 0.3)',
+                    borderRadius: '12px',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#ffd700'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(255, 215, 0, 0.3)'}
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
+              <Button 
+                type="submit" 
+                className="w-full font-bold text-lg" 
+                disabled={loading}
+                style={{
+                  background: 'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)',
+                  padding: '14px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  color: '#000',
+                  boxShadow: '0 4px 15px rgba(255, 215, 0, 0.4)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {loading ? '🔄 Creando cuenta...' : '⚡ CREAR CUENTA'}
               </Button>
 
-              <p className="text-center text-sm text-gray-400">
+              <p className="text-center text-base text-gray-300 mt-4">
                 ¿Ya tienes cuenta?{' '}
-                <Link href="/auth/signin" className="text-primary hover:text-secondary transition-colors font-bold">
-                  Inicia Sesión
+                <Link href="/auth/signin" className="text-transparent bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text hover:from-orange-500 hover:to-red-500 transition-all font-bold">
+                  Inicia Sesión aquí
                 </Link>
               </p>
             </form>
