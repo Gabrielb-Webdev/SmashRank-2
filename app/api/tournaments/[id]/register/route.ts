@@ -88,7 +88,7 @@ export async function POST(
     // Verificar que el personaje y skin existen
     const [character, skin] = await Promise.all([
       prisma.character.findUnique({ where: { id: characterId } }),
-      prisma.skin.findUnique({ where: { id: skinId } }),
+      prisma.characterSkin.findUnique({ where: { id: skinId } }),
     ]);
 
     if (!character || !skin) {
