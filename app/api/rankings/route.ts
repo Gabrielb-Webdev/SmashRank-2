@@ -19,15 +19,21 @@ export async function GET(request: NextRequest) {
     const users = await prisma.user.findMany({
       where: whereConditions,
       include: {
-        participants: {
+        registrations: {
           include: {
             tournament: true,
             character: true,
           },
         },
+        matchesWon: {
+          include: {
+            tournament: true,
+          },
+        },
         _count: {
           select: {
-            participants: true,
+            registrations: true,
+            matchesWon: true,
           },
         },
       },
@@ -36,22 +42,17 @@ export async function GET(request: NextRequest) {
 
     // Calcular puntos y estadísticas para cada usuario
     const rankings = users.map((user) => {
-      const tournaments = user.participants.length;
-      
-      // Contar victorias (participantes que ganaron torneos)
-      const wins = user.participants.filter((p) => {
-        // Un participante ganó si existe un match donde es el ganador en la final
-        return p.status === 'ACTIVE'; // Simplificación, deberías verificar matches ganados
-      }).length;
+      const tournaments = user.registrations.length;
+      const wins = user.matchesWon.length;
 
-      // Calcular puntos (sistema simple: 100 por torneo ganado, 50 por participación)
+      // Calcular puntos (sistema: 100 por victoria + 10 por participación en torneo)
       const points = (wins * 100) + (tournaments * 10);
 
       // Personaje más usado
       const characterCounts: Record<string, number> = {};
-      user.participants.forEach((p) => {
-        if (p.character) {
-          characterCounts[p.character.name] = (characterCounts[p.character.name] || 0) + 1;
+      user.registrations.forEach((reg) => {
+        if (reg.character) {
+          characterCounts[reg.character.name] = (characterCounts[reg.character.name] || 0) + 1;
         }
       });
       
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
     let filteredRankings = rankings;
     if (characterId) {
       filteredRankings = rankings.filter((r) => {
-        const userChar = users.find(u => u.id === r.userId)?.participants.find(p => p.characterId === characterId);
+        const userChar = users.find(u => u.id === r.userId)?.registrations.find(reg => reg.characterId === characterId);
         return !!userChar;
       });
     }
