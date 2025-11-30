@@ -182,31 +182,22 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
 
         {isOpen && (
           <div 
-            className="fixed z-[100] rounded-xl shadow-2xl animate-scale-in custom-scrollbar"
+            className="absolute z-[100] rounded-xl shadow-2xl animate-scale-in"
             style={{
               background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(10, 10, 10, 0.98) 100%)',
               border: `2px solid ${styles.borderFocus}`,
               backdropFilter: 'blur(10px)',
-              width: '340px',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              ...(position === 'bottom' 
-                ? { 
-                    top: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().bottom + 8}px` : '100%',
-                    left: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().left}px` : '0'
-                  } 
-                : { 
-                    bottom: buttonRef.current ? `${window.innerHeight - buttonRef.current.getBoundingClientRect().top + 8}px` : '100%',
-                    left: buttonRef.current ? `${buttonRef.current.getBoundingClientRect().left}px` : '0'
-                  })
+              width: '600px',
+              maxWidth: '95vw',
+              top: '100%',
+              marginTop: '8px',
+              left: '0'
             }}
           >
-            {/* Header del calendario */}
-            <div className="p-4 border-b sticky top-0 z-10" style={{ 
-              borderColor: styles.border,
-              background: 'linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(10, 10, 10, 0.98) 100%)'
-            }}>
-              <div className="flex items-center justify-between mb-4">
+            <div className="flex">
+              {/* Panel izquierdo - Calendario */}
+              <div className="flex-1 p-4 border-r" style={{ borderColor: styles.border }}>
+                <div className="flex items-center justify-between mb-4">
                 <button
                   type="button"
                   onClick={() => changeMonth(-1)}
@@ -259,63 +250,67 @@ export default function DateTimePicker({ value, onChange, label, icon, color, mi
                   );
                 })}
               </div>
-            </div>
-
-              {/* Selector de hora */}
-            <div className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Clock className="w-4 h-4" style={{ color: styles.text }} />
-                <span className="font-semibold">Hora</span>
               </div>
-              <div className="flex gap-4">
-                {/* Horas */}
-                <div className="flex-1">
-                  <label className="text-xs text-gray-400 mb-2 block">Hora</label>
-                  <div className="h-32 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
-                    {Array.from({ length: 24 }, (_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => handleTimeChange('hour', i)}
-                        className={`w-full p-2 text-left text-sm font-semibold transition-colors ${
-                          selectedDate.getHours() === i 
-                            ? `bg-gradient-to-br ${styles.button} text-white` 
-                            : `${styles.hover}`
-                        }`}
-                      >
-                        {String(i).padStart(2, '0')}
-                      </button>
-                    ))}
+
+              {/* Panel derecho - Hora */}
+              <div className="w-56 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock className="w-4 h-4" style={{ color: styles.text }} />
+                  <span className="font-semibold">Hora</span>
+                </div>
+                
+                <div className="flex gap-3 mb-4">
+                  {/* Horas */}
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-400 mb-2 block">Hora</label>
+                    <div className="h-48 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
+                      {Array.from({ length: 24 }, (_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => handleTimeChange('hour', i)}
+                          className={`w-full p-2 text-center text-sm font-semibold transition-colors ${
+                            selectedDate.getHours() === i 
+                              ? `bg-gradient-to-br ${styles.button} text-white` 
+                              : `${styles.hover}`
+                          }`}
+                        >
+                          {String(i).padStart(2, '0')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Minutos */}
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-400 mb-2 block">Min</label>
+                    <div className="h-48 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
+                      {Array.from({ length: 60 }, (_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => handleTimeChange('minute', i)}
+                          className={`w-full p-2 text-center text-sm font-semibold transition-colors ${
+                            selectedDate.getMinutes() === i 
+                              ? `bg-gradient-to-br ${styles.button} text-white` 
+                              : `${styles.hover}`
+                          }`}
+                        >
+                          {String(i).padStart(2, '0')}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Minutos */}
-                <div className="flex-1">
-                  <label className="text-xs text-gray-400 mb-2 block">Minutos</label>
-                  <div className="h-32 overflow-y-auto custom-scrollbar rounded-lg" style={{ background: styles.bg }}>
-                    {Array.from({ length: 60 }, (_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => handleTimeChange('minute', i)}
-                        className={`w-full p-2 text-left text-sm font-semibold transition-colors ${
-                          selectedDate.getMinutes() === i 
-                            ? `bg-gradient-to-br ${styles.button} text-white` 
-                            : `${styles.hover}`
-                        }`}
-                      >
-                        {String(i).padStart(2, '0')}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className={`w-full mt-4 py-2 px-4 rounded-lg font-bold bg-gradient-to-br ${styles.button} text-white shadow-lg hover:shadow-xl transition-all`}
-              >
-                ✓ Confirmar
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className={`w-full py-2 px-4 rounded-lg font-bold bg-gradient-to-br ${styles.button} text-white shadow-lg hover:shadow-xl transition-all`}
+                >
+                  ✓ Confirmar
+                </button>
+              </div>
             </div>
           </div>
         )}
