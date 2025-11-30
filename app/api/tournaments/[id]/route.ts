@@ -1,0 +1,199 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+
+// GET - Obtener detalles de un torneo
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const tournament = await prisma.tournament.findUnique({
+      where: { id: params.id },
+      include: {
+        registrations: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              },
+            },
+            character: true,
+            skin: true,
+          },
+        },
+        createdBy: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    if (!tournament) {
+      return NextResponse.json(
+        { error: 'Torneo no encontrado' },
+        { status: 404 }
+      );
+    }
+
+    // Agregar currentParticipants
+    const tournamentWithParticipants = {
+      ...tournament,
+      currentParticipants: tournament.registrations.length,
+    };
+
+    return NextResponse.json(tournamentWithParticipants);
+  } catch (error) {
+    console.error('Error al obtener torneo:', error);
+    return NextResponse.json(
+      { error: 'Error al obtener el torneo' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT - Actualizar un torneo
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: 'No autenticado' },
+        { status: 401 }
+      );
+    }
+
+    const tournament = await prisma.tournament.findUnique({
+      where: { id: params.id },
+      select: { createdById: true },
+    });
+
+    if (!tournament) {
+      return NextResponse.json(
+        { error: 'Torneo no encontrado' },
+        { status: 404 }
+      );
+    }
+
+    // Verificar permisos
+    if (
+      tournament.createdById !== session.user.id &&
+      session.user.role !== 'ADMIN'
+    ) {
+      return NextResponse.json(
+        { error: 'No tienes permisos para editar este torneo' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const {
+      name,
+      description,
+      format,
+      maxParticipants,
+      province,
+      isOnline,
+      startDate,
+      registrationStart,
+      registrationEnd,
+      checkinStart,
+      checkinEnd,
+      rules,
+      stageList,
+      streamUrl,
+      discordUrl,
+    } = body;
+
+    const updatedTournament = await prisma.tournament.update({
+      where: { id: params.id },
+      data: {
+        name,
+        description,
+        format,
+        maxParticipants: maxParticipants ? parseInt(maxParticipants) : null,
+        province,
+        isOnline,
+        startDate: new Date(startDate),
+        registrationStart: new Date(registrationStart),
+        registrationEnd: new Date(registrationEnd),
+        checkinStart: new Date(checkinStart),
+        checkinEnd: new Date(checkinEnd),
+        rules,
+        stageList,
+        streamUrl,
+        discordUrl,
+      },
+    });
+
+    return NextResponse.json(updatedTournament);
+  } catch (error) {
+    console.error('Error al actualizar torneo:', error);
+    return NextResponse.json(
+      { error: 'Error al actualizar el torneo' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE - Eliminar un torneo
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: 'No autenticado' },
+        { status: 401 }
+      );
+    }
+
+    const tournament = await prisma.tournament.findUnique({
+      where: { id: params.id },
+      select: { createdById: true },
+    });
+
+    if (!tournament) {
+      return NextResponse.json(
+        { error: 'Torneo no encontrado' },
+        { status: 404 }
+      );
+    }
+
+    // Verificar permisos
+    if (
+      tournament.createdById !== session.user.id &&
+      session.user.role !== 'ADMIN'
+    ) {
+      return NextResponse.json(
+        { error: 'No tienes permisos para eliminar este torneo' },
+        { status: 403 }
+      );
+    }
+
+    // Eliminar el torneo (las relaciones se eliminan en cascada según el schema)
+    await prisma.tournament.delete({
+      where: { id: params.id },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error al eliminar torneo:', error);
+    return NextResponse.json(
+      { error: 'Error al eliminar el torneo' },
+      { status: 500 }
+    );
+  }
+}

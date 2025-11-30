@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import CharacterSelector from '@/components/tournaments/CharacterSelector';
 import Link from 'next/link';
 
-export default function TournamentDetailPage({ params }: { params: { id: string } }) {
+export default function TournamentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [tournament, setTournament] = useState<any>(null);
@@ -20,15 +20,22 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   const [isRegistered, setIsRegistered] = useState(false);
   const [canCheckIn, setCanCheckIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
+  const [tournamentId, setTournamentId] = useState<string>('');
 
   useEffect(() => {
-    fetchTournament();
-  }, [params.id]);
+    params.then((p) => setTournamentId(p.id));
+  }, [params]);
+
+  useEffect(() => {
+    if (tournamentId) {
+      fetchTournament();
+    }
+  }, [tournamentId]);
 
   const fetchTournament = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/tournaments/${params.id}`);
+      const response = await fetch(`/api/tournaments/${tournamentId}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -64,7 +71,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
 
   const handleRegister = async (characterId: string, skinId: string) => {
     try {
-      const response = await fetch(`/api/tournaments/${params.id}/register`, {
+      const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ characterId, skinId }),
@@ -88,7 +95,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     if (!confirm('¿Estás seguro de cancelar tu inscripción?')) return;
 
     try {
-      const response = await fetch(`/api/tournaments/${params.id}/register`, {
+      const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
         method: 'DELETE',
       });
 
@@ -106,7 +113,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
 
   const handleCheckIn = async () => {
     try {
-      const response = await fetch(`/api/tournaments/${params.id}/checkin`, {
+      const response = await fetch(`/api/tournaments/${tournamentId}/checkin`, {
         method: 'POST',
       });
 
@@ -127,7 +134,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     if (!confirm('¿Estás seguro de eliminar este torneo? Esta acción no se puede deshacer.')) return;
 
     try {
-      const response = await fetch(`/api/tournaments/${params.id}`, {
+      const response = await fetch(`/api/tournaments/${tournamentId}`, {
         method: 'DELETE',
       });
 
