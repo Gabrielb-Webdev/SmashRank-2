@@ -1,0 +1,235 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum TournamentFormat {
+  SINGLE_ELIMINATION
+  DOUBLE_ELIMINATION
+  ROUND_ROBIN
+  SWISS
+}
+
+enum TournamentStatus {
+  DRAFT
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  CHECKIN_OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MatchStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DQ
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  password      String
+  role          Role      @default(USER)
+  province      String
+  avatar        String?
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relaciones
+  mainCharacters     UserCharacter[]
+  tournamentsCreated Tournament[]     @relation("TournamentCreator")
+  registrations      Registration[]
+  matchesAsPlayer1   Match[]          @relation("Player1")
+  matchesAsPlayer2   Match[]          @relation("Player2")
+  rankings           Ranking[]
+
+  @@index([username])
+  @@index([province])
+}
+
+model Character {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  icon        String
+  series      String
+  dlc         Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  skins          CharacterSkin[]
+  userCharacters UserCharacter[]
+  registrations  Registration[]
+
+  @@index([slug])
+}
+
+model CharacterSkin {
+  id          String   @id @default(cuid())
+  characterId String
+  name        String
+  number      Int
+  image       String
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  character     Character        @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  userCharacters UserCharacter[]
+  registrations Registration[]
+
+  @@unique([characterId, number])
+  @@index([characterId])
+}
+
+model UserCharacter {
+  id         String   @id @default(cuid())
+  userId     String
+  characterId String
+  skinId     String
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  // Relaciones
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character Character     @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  skin      CharacterSkin @relation(fields: [skinId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, characterId, skinId])
+  @@index([userId])
+}
+
+model Tournament {
+  id                String           @id @default(cuid())
+  name              String
+  description       String?
+  slug              String           @unique
+  banner            String?
+  province          String
+  isOnline          Boolean          @default(false)
+  format            TournamentFormat
+  status            TournamentStatus @default(DRAFT)
+  maxParticipants   Int?
+  currentParticipants Int           @default(0)
+  
+  // Fechas
+  startDate         DateTime
+  registrationStart DateTime
+  registrationEnd   DateTime
+  checkinStart      DateTime
+  checkinEnd        DateTime
+  
+  // Reglas
+  rules             String?
+  stageList         String?
+  ruleset           Json?
+  
+  // Metadata
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  createdById       String
+
+  // Relaciones
+  creator       User           @relation("TournamentCreator", fields: [createdById], references: [id])
+  registrations Registration[]
+  brackets      Bracket[]
+  rankings      Ranking[]
+
+  @@index([slug])
+  @@index([province])
+  @@index([status])
+  @@index([startDate])
+}
+
+model Registration {
+  id             String   @id @default(cuid())
+  userId         String
+  tournamentId   String
+  characterId    String
+  skinId         String
+  checkedIn      Boolean  @default(false)
+  checkedInAt    DateTime?
+  seed           Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relaciones
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  character  Character  @relation(fields: [characterId], references: [id])
+  skin       CharacterSkin @relation(fields: [skinId], references: [id])
+
+  @@unique([userId, tournamentId])
+  @@index([tournamentId])
+  @@index([userId])
+}
+
+model Bracket {
+  id           String   @id @default(cuid())
+  tournamentId String
+  type         String   // "winners", "losers", "grand_finals"
+  data         Json     // Estructura del bracket
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  matches    Match[]
+
+  @@index([tournamentId])
+}
+
+model Match {
+  id          String      @id @default(cuid())
+  bracketId   String
+  round       Int
+  position    Int
+  player1Id   String?
+  player2Id   String?
+  winnerId    String?
+  score       String?     // "3-1", "2-0", etc.
+  status      MatchStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relaciones
+  bracket Bracket @relation(fields: [bracketId], references: [id], onDelete: Cascade)
+  player1 User?   @relation("Player1", fields: [player1Id], references: [id])
+  player2 User?   @relation("Player2", fields: [player2Id], references: [id])
+
+  @@index([bracketId])
+  @@index([player1Id])
+  @@index([player2Id])
+}
+
+model Ranking {
+  id           String   @id @default(cuid())
+  userId       String
+  tournamentId String
+  placement    Int
+  points       Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  // Relaciones
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tournamentId])
+  @@index([userId])
+  @@index([tournamentId])
+  @@index([points])
+}
