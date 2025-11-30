@@ -64,7 +64,7 @@ export async function POST(
 
     // Generar bracket según el formato
     let bracketMatches;
-    if (tournament.format === 'DOUBLE') {
+    if (tournament.format === 'DOUBLE_ELIMINATION') {
       bracketMatches = generateDoubleEliminationBracket(participantsWithSeeds, tournamentId);
     } else {
       bracketMatches = generateSingleEliminationBracket(participantsWithSeeds, tournamentId);
