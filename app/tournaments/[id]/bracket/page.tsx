@@ -222,220 +222,166 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       realMatch.player1Id === session?.user?.id || 
       realMatch.player2Id === session?.user?.id);
 
-    // Si es BYE, mostrar mensaje especial
+    // Si es BYE, mostrar card compacto verde
     if (isBye && byePlayer) {
       return (
         <div 
           key={match.id} 
-          className="mb-3 p-4 rounded-xl transition-all"
+          className="rounded-lg overflow-hidden"
           style={{
-            background: 'rgba(34, 197, 94, 0.1)',
-            border: '2px solid rgba(34, 197, 94, 0.3)',
+            background: 'rgba(22, 163, 74, 0.15)',
+            border: '2px solid rgba(34, 197, 94, 0.4)',
+            width: '280px'
           }}
         >
-          <div className="flex justify-between items-center mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
-                style={{background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'}}>
-                M{match.matchNumber}
+          <div className="p-3 flex items-center justify-between"
+            style={{background: 'rgba(34, 197, 94, 0.2)'}}>
+            <div className="flex items-center gap-2 flex-1">
+              <div className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold"
+                style={{background: '#22c55e', color: 'white'}}>
+                {byePlayer.username.charAt(0).toUpperCase()}
               </div>
-              <span className="text-xs text-green-400 font-semibold">
-                Ronda {match.roundNumber} - BYE
-              </span>
+              <span className="font-bold text-white text-sm truncate">{byePlayer.username}</span>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-3 p-3 rounded-lg"
-            style={{background: 'rgba(34, 197, 94, 0.15)', border: '2px solid rgba(34, 197, 94, 0.4)'}}>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold"
-              style={{background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)', color: 'white'}}>
-              {byePlayer.username.charAt(0).toUpperCase()}
-            </div>
-            <div className="flex-1">
-              <p className="font-bold text-white">{byePlayer.username}</p>
-              <p className="text-xs text-green-300">
-                Avanza automáticamente (sin oponente)
-              </p>
-            </div>
-            <div className="flex items-center gap-1 px-3 py-1 rounded-full" 
-              style={{background: 'rgba(34, 197, 94, 0.2)', border: '1px solid rgba(34, 197, 94, 0.4)'}}>
-              <Trophy className="w-4 h-4 text-green-400" />
-              <span className="text-xs font-bold text-green-400">Avanza</span>
-            </div>
+            <span className="text-xs font-bold text-green-400 px-2 py-1 rounded"
+              style={{background: 'rgba(34, 197, 94, 0.3)'}}>
+              BYE
+            </span>
           </div>
         </div>
       );
     }
 
+    // Match normal estilo start.gg
     return (
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`mb-3 p-4 rounded-xl transition-all ${
-          isClickable ? 'cursor-pointer hover:scale-[1.02]' : ''
+        className={`rounded-lg overflow-hidden transition-all ${
+          isClickable ? 'cursor-pointer hover:scale-[1.02] hover:shadow-xl' : ''
         }`}
         style={{
-          background: 'rgba(15, 23, 42, 0.6)',
-          border: '2px solid rgba(220, 20, 60, 0.3)',
-          boxShadow: hasWinner ? '0 4px 20px rgba(220, 20, 60, 0.2)' : 'none'
+          background: '#1e293b',
+          border: `2px solid ${hasWinner ? 'rgba(34, 197, 94, 0.5)' : 'rgba(71, 85, 105, 0.5)'}`,
+          width: '280px',
+          boxShadow: hasWinner ? '0 4px 15px rgba(34, 197, 94, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.3)'
         }}
       >
-        <div className="flex justify-between items-center mb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
-              style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)'}}>
-              M{match.matchNumber}
-            </div>
-            <span className="text-xs text-slate-400 font-semibold">
-              Ronda {match.roundNumber}
-            </span>
+        {/* Header con número de match y estado */}
+        {realMatch && (
+          <div className="px-3 py-1.5 flex items-center justify-between text-xs"
+            style={{background: 'rgba(15, 23, 42, 0.8)', borderBottom: '1px solid rgba(71, 85, 105, 0.3)'}}>
+            <span className="text-slate-400 font-semibold">Match {match.matchNumber}</span>
+            {realMatch.status === 'CHECKIN' && <span className="text-yellow-400 font-bold">⏰ Check-in</span>}
+            {realMatch.status === 'PLAYING' && <span className="text-blue-400 font-bold">🎮 En juego</span>}
+            {realMatch.status === 'COMPLETED' && <span className="text-green-400 font-bold">✓</span>}
           </div>
-          <div className="flex items-center gap-2">
-            {realMatch && (
-              <span className="text-xs font-bold px-2 py-1 rounded" 
-                style={{
-                  background: realMatch.status === 'COMPLETED' ? 'rgba(34, 197, 94, 0.1)' :
-                             realMatch.status === 'CHECKIN' ? 'rgba(255, 215, 0, 0.1)' :
-                             realMatch.status === 'PLAYING' ? 'rgba(59, 130, 246, 0.1)' :
-                             'rgba(100, 116, 139, 0.1)',
-                  color: realMatch.status === 'COMPLETED' ? '#22c55e' :
-                        realMatch.status === 'CHECKIN' ? '#ffd700' :
-                        realMatch.status === 'PLAYING' ? '#3b82f6' :
-                        '#94a3b8',
-                  border: `1px solid ${
-                    realMatch.status === 'COMPLETED' ? 'rgba(34, 197, 94, 0.3)' :
-                    realMatch.status === 'CHECKIN' ? 'rgba(255, 215, 0, 0.3)' :
-                    realMatch.status === 'PLAYING' ? 'rgba(59, 130, 246, 0.3)' :
-                    'rgba(100, 116, 139, 0.3)'
-                  }`
-                }}>
-                {realMatch.status === 'CHECKIN' ? '⏰ Check-in' :
-                 realMatch.status === 'PLAYING' ? '🎮 En juego' :
-                 realMatch.status === 'COMPLETED' ? '✓ Completado' :
-                 realMatch.status === 'DQ' ? 'DQ' :
-                 'Pendiente'}
-              </span>
-            )}
-            {realMatch && (realMatch.player1Score > 0 || realMatch.player2Score > 0) && (
-              <span className="text-xs font-bold px-2 py-1 rounded" 
-                style={{background: 'rgba(255, 215, 0, 0.1)', color: '#ffd700'}}>
-                {realMatch.player1Score} - {realMatch.player2Score}
-              </span>
-            )}
-          </div>
-        </div>
+        )}
         
-        <div className="space-y-2">
-          <div 
-            className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-              match.winnerId === match.player1Id 
-                ? 'ring-2 ring-green-500/50' 
-                : ''
-            }`}
-            style={{
-              background: match.winnerId === match.player1Id 
-                ? 'rgba(34, 197, 94, 0.15)' 
-                : 'rgba(30, 41, 59, 0.5)',
-              border: match.winnerId === match.player1Id 
-                ? '2px solid rgba(34, 197, 94, 0.4)' 
-                : '2px solid rgba(100, 116, 139, 0.3)'
-            }}
-          >
-            <div className="flex items-center gap-3">
-              {player1 ? (
-                <>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold"
-                    style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
-                    {player1.username.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-bold text-white">{player1.username}</p>
-                    <p className="text-xs text-slate-400">
-                      {player1.wins}W - {player1.losses}L · {player1.points} pts
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center"
-                    style={{background: 'rgba(100, 116, 139, 0.2)', border: '2px dashed rgba(100, 116, 139, 0.4)'}}>
-                    <span className="text-slate-500">?</span>
-                  </div>
-                  <span className="text-slate-500 italic font-medium">Por definir</span>
+        {/* Player 1 */}
+        <div 
+          className={`px-3 py-2.5 flex items-center justify-between transition-all ${
+            match.winnerId === match.player1Id ? 'bg-gradient-to-r from-green-900/30 to-green-800/20' : ''
+          }`}
+          style={{
+            borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
+            background: match.winnerId === match.player1Id 
+              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.2) 0%, rgba(22, 163, 74, 0.05) 100%)'
+              : 'rgba(30, 41, 59, 0.5)'
+          }}
+        >
+          {player1 ? (
+            <>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className={`w-7 h-7 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                  match.winnerId === match.player1Id ? 'ring-2 ring-green-400' : ''
+                }`}
+                  style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
+                  {player1.username.charAt(0).toUpperCase()}
                 </div>
-              )}
-            </div>
-            {match.winnerId === match.player1Id && (
-              <div className="flex items-center gap-1 px-3 py-1 rounded-full" 
-                style={{background: 'rgba(34, 197, 94, 0.2)', border: '1px solid rgba(34, 197, 94, 0.4)'}}>
-                <Trophy className="w-4 h-4 text-green-400" />
-                <span className="text-xs font-bold text-green-400">Ganador</span>
+                <span className={`font-semibold text-sm truncate ${
+                  match.winnerId === match.player1Id ? 'text-white' : 'text-slate-300'
+                }`}>
+                  {player1.username}
+                </span>
               </div>
-            )}
-          </div>
-
-          <div className="flex justify-center">
-            <div className="px-3 py-1 rounded-full text-xs font-bold"
-              style={{background: 'rgba(220, 20, 60, 0.1)', color: '#ffd700', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
-              VS
+              {match.winnerId === match.player1Id && (
+                <Trophy className="w-4 h-4 text-green-400 flex-shrink-0 ml-2" />
+              )}
+              {realMatch && (
+                <span className="text-white font-bold ml-2 text-sm">{realMatch.player1Score || 0}</span>
+              )}
+            </>
+          ) : (
+            <div className="flex items-center gap-2 flex-1">
+              <div className="w-7 h-7 rounded flex items-center justify-center"
+                style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+                <span className="text-slate-500 text-xs">?</span>
+              </div>
+              <span className="text-slate-500 italic text-sm">TBD</span>
             </div>
-          </div>
+          )}
+        </div>
 
-          <div 
-            className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-              match.winnerId === match.player2Id 
-                ? 'ring-2 ring-green-500/50' 
-                : ''
-            }`}
-            style={{
-              background: match.winnerId === match.player2Id 
-                ? 'rgba(34, 197, 94, 0.15)' 
-                : 'rgba(30, 41, 59, 0.5)',
-              border: match.winnerId === match.player2Id 
-                ? '2px solid rgba(34, 197, 94, 0.4)' 
-                : '2px solid rgba(100, 116, 139, 0.3)'
-            }}
-          >
-            <div className="flex items-center gap-3">
-              {player2 ? (
-                <>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold"
-                    style={{background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)', color: 'white'}}>
-                    {player2.username.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-bold text-white">{player2.username}</p>
-                    <p className="text-xs text-slate-400">
-                      {player2.wins}W - {player2.losses}L · {player2.points} pts
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center"
-                    style={{background: 'rgba(100, 116, 139, 0.2)', border: '2px dashed rgba(100, 116, 139, 0.4)'}}>
-                    <span className="text-slate-500">?</span>
-                  </div>
-                  <span className="text-slate-500 italic font-medium">Por definir</span>
+        {/* Player 2 */}
+        <div 
+          className={`px-3 py-2.5 flex items-center justify-between transition-all ${
+            match.winnerId === match.player2Id ? 'bg-gradient-to-r from-green-900/30 to-green-800/20' : ''
+          }`}
+          style={{
+            background: match.winnerId === match.player2Id 
+              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.2) 0%, rgba(22, 163, 74, 0.05) 100%)'
+              : 'rgba(30, 41, 59, 0.5)'
+          }}
+        >
+          {player2 ? (
+            <>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className={`w-7 h-7 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                  match.winnerId === match.player2Id ? 'ring-2 ring-green-400' : ''
+                }`}
+                  style={{background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)', color: 'white'}}>
+                  {player2.username.charAt(0).toUpperCase()}
                 </div>
-              )}
-            </div>
-            {match.winnerId === match.player2Id && (
-              <div className="flex items-center gap-1 px-3 py-1 rounded-full" 
-                style={{background: 'rgba(34, 197, 94, 0.2)', border: '1px solid rgba(34, 197, 94, 0.4)'}}>
-                <Trophy className="w-4 h-4 text-green-400" />
-                <span className="text-xs font-bold text-green-400">Ganador</span>
+                <span className={`font-semibold text-sm truncate ${
+                  match.winnerId === match.player2Id ? 'text-white' : 'text-slate-300'
+                }`}>
+                  {player2.username}
+                </span>
               </div>
-            )}
-          </div>
+              {match.winnerId === match.player2Id && (
+                <Trophy className="w-4 h-4 text-green-400 flex-shrink-0 ml-2" />
+              )}
+              {realMatch && (
+                <span className="text-white font-bold ml-2 text-sm">{realMatch.player2Score || 0}</span>
+              )}
+            </>
+          ) : (
+            <div className="flex items-center gap-2 flex-1">
+              <div className="w-7 h-7 rounded flex items-center justify-center"
+                style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+                <span className="text-slate-500 text-xs">?</span>
+              </div>
+              <span className="text-slate-500 italic text-sm">TBD</span>
+            </div>
+          )}
         </div>
       </div>
     );
   };
 
+  const getRoundName = (roundNum: number, totalRounds: number) => {
+    const roundsFromEnd = totalRounds - roundNum;
+    if (roundsFromEnd === 0) return 'Final';
+    if (roundsFromEnd === 1) return 'Semifinal';
+    if (roundsFromEnd === 2) return 'Cuartos';
+    return `Ronda ${roundNum}`;
+  };
+
   const renderBracketSection = (matches: Match[], title: string, icon: string, gradient: string) => {
     if (!matches || matches.length === 0) return null;
 
+    // Agrupar matches por ronda
     const rounds = matches.reduce((acc, match) => {
       if (!acc[match.roundNumber]) {
         acc[match.roundNumber] = [];
@@ -444,28 +390,58 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       return acc;
     }, {} as Record<number, Match[]>);
 
+    const totalRounds = Math.max(...Object.keys(rounds).map(Number));
+
     return (
-      <div className="mb-8">
-        <div className="mb-6 p-6 rounded-xl" 
-          style={{background: gradient, border: '2px solid rgba(220, 20, 60, 0.3)'}}>
+      <div className="mb-12">
+        {/* Título del bracket */}
+        <div className="mb-6 p-4 rounded-xl" 
+          style={{background: gradient, border: '2px solid rgba(220, 20, 60, 0.5)', boxShadow: '0 4px 20px rgba(220, 20, 60, 0.2)'}}>
           <h3 className="text-2xl font-black text-white flex items-center gap-3">
             <span className="text-3xl">{icon}</span>
             {title}
           </h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Object.entries(rounds).map(([roundNum, roundMatches]) => (
-            <div key={roundNum} className="space-y-3">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg"
-                style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
-                <Zap className="w-4 h-4 text-yellow-400" />
-                <h4 className="text-sm font-bold text-white">
-                  Ronda {roundNum}
-                </h4>
-              </div>
-              {roundMatches.map((match, idx) => renderMatch(match, idx))}
-            </div>
-          ))}
+
+        {/* Bracket horizontal tipo start.gg */}
+        <div className="overflow-x-auto pb-8">
+          <div className="flex gap-8 min-w-min">
+            {Object.entries(rounds)
+              .sort((a, b) => Number(a[0]) - Number(b[0]))
+              .map(([roundNum, roundMatches]) => {
+                const rNum = Number(roundNum);
+                // Calcular espaciado vertical que aumenta con cada ronda
+                const baseSpacing = 8;
+                const verticalGap = rNum > 1 ? baseSpacing * Math.pow(2, rNum - 1) : baseSpacing;
+
+                return (
+                  <div key={roundNum} className="flex flex-col" style={{ minWidth: '300px' }}>
+                    {/* Título de la ronda */}
+                    <div className="mb-6 p-2.5 rounded-lg text-center sticky top-0 z-10" 
+                      style={{
+                        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                        border: '2px solid rgba(220, 20, 60, 0.3)',
+                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
+                      }}>
+                      <h4 className="font-black text-white text-sm tracking-wide uppercase">
+                        {getRoundName(rNum, totalRounds)}
+                      </h4>
+                    </div>
+
+                    {/* Matches de la ronda */}
+                    <div className="flex flex-col justify-around h-full" style={{ gap: `${verticalGap}px` }}>
+                      {roundMatches
+                        .sort((a, b) => a.matchNumber - b.matchNumber)
+                        .map((match, idx) => (
+                          <div key={match.id} className="flex items-center">
+                            {renderMatch(match, idx)}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
     );
