@@ -106,6 +106,7 @@ export function generateDoubleEliminationBracket(players: Player[]): Bracket {
   // Los jugadores ya vienen con seeds asignados
   const bracketSize = nextPowerOfTwo(players.length);
   const seeding = generateSeeding(bracketSize);
+  const numByes = bracketSize - players.length; // Cantidad de BYEs necesarios
   
   // Crear array de jugadores según el seeding
   const orderedPlayers: (Player | null)[] = seeding.map(seed => {
@@ -120,6 +121,18 @@ export function generateDoubleEliminationBracket(players: Player[]): Bracket {
     const player1 = orderedPlayers[i * 2];
     const player2 = orderedPlayers[i * 2 + 1];
     
+    // Si alguno de los jugadores es null (BYE), no creamos el match de primera ronda
+    // El jugador con BYE avanza automáticamente
+    if (!player1 && !player2) {
+      // Ambos slots vacíos, no crear match
+      continue;
+    } else if (!player1 || !player2) {
+      // Un jugador tiene BYE, avanza automáticamente a ronda 2
+      // No agregamos match a ronda 1, lo manejamos en ronda 2
+      continue;
+    }
+    
+    // Match normal con ambos jugadores
     winnersMatches.push({
       id: `w-r1-m${i + 1}`,
       roundNumber: 1,
@@ -133,8 +146,55 @@ export function generateDoubleEliminationBracket(players: Player[]): Bracket {
   // Generar rondas subsecuentes del Winners Bracket
   let currentRound = 2;
   let matchesInRound = matchesFirstRound / 2;
-  let previousRoundMatches = matchesFirstRound;
+  let matchNumberOffset = 0;
   
+  // Para ronda 2, necesitamos colocar a los jugadores con BYE
+  if (currentRound === 2) {
+    for (let i = 0; i < matchesInRound; i++) {
+      const slot1Index = i * 2;
+      const slot2Index = i * 2 + 1;
+      
+      // Obtener ganadores de los matches de ronda 1 (o jugadores con BYE)
+      const player1FromR1 = orderedPlayers[slot1Index * 2]; // Posible jugador con BYE
+      const player2FromR1 = orderedPlayers[slot1Index * 2 + 1]; // Oponente de slot 1
+      const player3FromR1 = orderedPlayers[slot2Index * 2]; // Posible jugador con BYE
+      const player4FromR1 = orderedPlayers[slot2Index * 2 + 1]; // Oponente de slot 2
+      
+      // Determinar quién avanza al match de ronda 2
+      let player1R2: Player | undefined;
+      let player2R2: Player | undefined;
+      
+      // Slot 1 de ronda 2
+      if (!player1FromR1 && player2FromR1) {
+        player1R2 = player2FromR1; // BYE, avanza player2
+      } else if (player1FromR1 && !player2FromR1) {
+        player1R2 = player1FromR1; // BYE, avanza player1
+      }
+      // Si ambos existen, el ganador vendrá del match de R1
+      
+      // Slot 2 de ronda 2
+      if (!player3FromR1 && player4FromR1) {
+        player2R2 = player4FromR1; // BYE, avanza player4
+      } else if (player3FromR1 && !player4FromR1) {
+        player2R2 = player3FromR1; // BYE, avanza player3
+      }
+      // Si ambos existen, el ganador vendrá del match de R1
+      
+      winnersMatches.push({
+        id: `w-r${currentRound}-m${i + 1}`,
+        roundNumber: currentRound,
+        matchNumber: i + 1,
+        player1Id: player1R2?.id,
+        player2Id: player2R2?.id,
+        bracket: 'winners',
+      });
+    }
+    
+    currentRound++;
+    matchesInRound = Math.floor(matchesInRound / 2);
+  }
+  
+  // Resto de rondas del Winners Bracket
   while (matchesInRound >= 1) {
     for (let i = 0; i < matchesInRound; i++) {
       winnersMatches.push({
@@ -146,7 +206,6 @@ export function generateDoubleEliminationBracket(players: Player[]): Bracket {
     }
     
     currentRound++;
-    previousRoundMatches = matchesInRound;
     matchesInRound = Math.floor(matchesInRound / 2);
   }
   

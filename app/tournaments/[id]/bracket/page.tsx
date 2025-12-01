@@ -208,6 +208,10 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const player1 = getPlayerInfo(match.player1Id);
     const player2 = getPlayerInfo(match.player2Id);
     
+    // Detectar si es un BYE (un jugador sin oponente)
+    const isBye = (!player1 && player2) || (player1 && !player2);
+    const byePlayer = player1 || player2;
+    
     // Buscar match real si el torneo está en progreso
     const realMatch = tournamentStatus === 'IN_PROGRESS' 
       ? matches.find(m => m.id === match.id)
@@ -217,6 +221,51 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const isClickable = realMatch && (session?.user?.role === 'ADMIN' || 
       realMatch.player1Id === session?.user?.id || 
       realMatch.player2Id === session?.user?.id);
+
+    // Si es BYE, mostrar mensaje especial
+    if (isBye && byePlayer) {
+      return (
+        <div 
+          key={match.id} 
+          className="mb-3 p-4 rounded-xl transition-all"
+          style={{
+            background: 'rgba(34, 197, 94, 0.1)',
+            border: '2px solid rgba(34, 197, 94, 0.3)',
+          }}
+        >
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
+                style={{background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'}}>
+                M{match.matchNumber}
+              </div>
+              <span className="text-xs text-green-400 font-semibold">
+                Ronda {match.roundNumber} - BYE
+              </span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3 p-3 rounded-lg"
+            style={{background: 'rgba(34, 197, 94, 0.15)', border: '2px solid rgba(34, 197, 94, 0.4)'}}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold"
+              style={{background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)', color: 'white'}}>
+              {byePlayer.username.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1">
+              <p className="font-bold text-white">{byePlayer.username}</p>
+              <p className="text-xs text-green-300">
+                Avanza automáticamente (sin oponente)
+              </p>
+            </div>
+            <div className="flex items-center gap-1 px-3 py-1 rounded-full" 
+              style={{background: 'rgba(34, 197, 94, 0.2)', border: '1px solid rgba(34, 197, 94, 0.4)'}}>
+              <Trophy className="w-4 h-4 text-green-400" />
+              <span className="text-xs font-bold text-green-400">Avanza</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div 
