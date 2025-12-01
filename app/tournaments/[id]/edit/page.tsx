@@ -21,11 +21,37 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
     format: 'DOUBLE_ELIMINATION',
     maxParticipants: '32',
     startDate: '',
-    rules: '3 stocks, 7 minutos, sin items',
-    stageList: 'Battlefield, Final Destination, Smashville, Town & City, Pokémon Stadium 2',
+    stockCount: '3',
+    timeLimit: '7',
+    itemsRule: 'SIN_ITEMS',
+    stages: [] as string[],
   });
 
   const participantOptions = ['8', '16', '32', '64', '128', '256'];
+  const stockOptions = ['1', '2', '3', '4', '5'];
+  const timeLimitOptions = ['3', '5', '6', '7', '8', '10', '12', '15'];
+  
+  const itemsOptions = [
+    { value: 'SIN_ITEMS', label: 'Sin Items' },
+    { value: 'TODOS', label: 'Todos los Items' },
+    { value: 'SOLO_POKEBOLAS', label: 'Solo Pokébolas y Esferas Asistentes' },
+    { value: 'PERSONALIZADOS', label: 'Items Personalizados' },
+  ];
+
+  const stageOptions = [
+    'Battlefield',
+    'Final Destination',
+    'Smashville',
+    'Town & City',
+    'Pokémon Stadium 2',
+    'Kalos Pokémon League',
+    'Lylat Cruise',
+    'Yoshi\'s Story',
+    'Hollow Bastion',
+    'Northern Cave',
+    'Small Battlefield',
+  ];
+  
   const tournamentId = params.id;
 
   useEffect(() => {
@@ -38,14 +64,30 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
       const data = await response.json();
 
       if (response.ok) {
+        // Parsear reglas existentes
+        const rulesText = data.rules || '3 stocks, 7 minutos, Sin Items';
+        const stockMatch = rulesText.match(/(\d+)\s*stocks?/i);
+        const timeMatch = rulesText.match(/(\d+)\s*minutos?/i);
+        
+        let itemsRuleValue = 'SIN_ITEMS';
+        if (rulesText.toLowerCase().includes('todos')) itemsRuleValue = 'TODOS';
+        else if (rulesText.toLowerCase().includes('pokébol')) itemsRuleValue = 'SOLO_POKEBOLAS';
+        else if (rulesText.toLowerCase().includes('personalizados')) itemsRuleValue = 'PERSONALIZADOS';
+        
+        // Parsear escenarios
+        const stagesText = data.stageList || '';
+        const stagesArray = stagesText ? stagesText.split(',').map((s: string) => s.trim()).filter((s: string) => stageOptions.includes(s)) : [];
+        
         setFormData({
           name: data.name || '',
           description: data.description || '',
           format: data.format || 'DOUBLE_ELIMINATION',
           maxParticipants: String(data.maxParticipants || 32),
           startDate: formatDateTimeLocal(new Date(data.startDate)),
-          rules: data.rules || '3 stocks, 7 minutos, sin items',
-          stageList: data.stageList || 'Battlefield, Final Destination, Smashville, Town & City, Pokémon Stadium 2',
+          stockCount: stockMatch ? stockMatch[1] : '3',
+          timeLimit: timeMatch ? timeMatch[1] : '7',
+          itemsRule: itemsRuleValue,
+          stages: stagesArray,
         });
       } else {
         toast.error('Error al cargar el torneo');
@@ -132,14 +174,19 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
     setSaving(true);
     
     try {
+      // Construir reglas y stageList a partir de los campos individuales
+      const itemsLabel = itemsOptions.find(opt => opt.value === formData.itemsRule)?.label || 'Sin Items';
+      const rules = `${formData.stockCount} stocks, ${formData.timeLimit} minutos, ${itemsLabel}`;
+      const stageList = formData.stages.length > 0 ? formData.stages.join(', ') : 'Battlefield, Final Destination, Smashville, Town & City, Pokémon Stadium 2';
+
       const payload = {
         name: formData.name,
         description: formData.description || '',
         format: formData.format,
         maxParticipants: parseInt(formData.maxParticipants),
         startDate: formData.startDate,
-        rules: formData.rules || '',
-        stageList: formData.stageList || '',
+        rules,
+        stageList,
       };
 
       const response = await fetch(`/api/tournaments/${tournamentId}`, {
@@ -352,27 +399,75 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
                 </div>
 
                 <div className="space-y-6">
-                  <div>
-                    <label className="label">📋 Reglas del Torneo</label>
-                    <textarea
-                      className="input min-h-[120px]"
-                      value={formData.rules}
-                      onChange={(e) => setFormData({ ...formData, rules: e.target.value })}
-                      placeholder="3 stocks, 7 minutos, sin items..."
-                    />
-                    <p className="text-xs text-slate-500 mt-1">Define las reglas generales del torneo</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <label className="label">💪 Cantidad de Stocks</label>
+                      <select
+                        className="input"
+                        value={formData.stockCount}
+                        onChange={(e) => setFormData({ ...formData, stockCount: e.target.value })}
+                      >
+                        {stockOptions.map(stock => (
+                          <option key={stock} value={stock}>
+                            {stock} {stock === '1' ? 'stock' : 'stocks'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="label">⏱️ Tiempo Límite</label>
+                      <select
+                        className="input"
+                        value={formData.timeLimit}
+                        onChange={(e) => setFormData({ ...formData, timeLimit: e.target.value })}
+                      >
+                        {timeLimitOptions.map(time => (
+                          <option key={time} value={time}>
+                            {time} minutos
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="label">📦 Items</label>
+                      <select
+                        className="input"
+                        value={formData.itemsRule}
+                        onChange={(e) => setFormData({ ...formData, itemsRule: e.target.value })}
+                      >
+                        {itemsOptions.map(item => (
+                          <option key={item.value} value={item.value}>
+                            {item.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   <div>
-                    <label className="label">🎮 Lista de Escenarios</label>
-                    <input
-                      type="text"
-                      className="input"
-                      value={formData.stageList}
-                      onChange={(e) => setFormData({ ...formData, stageList: e.target.value })}
-                      placeholder="Battlefield, Final Destination, Smashville..."
-                    />
-                    <p className="text-xs text-slate-500 mt-1">Escenarios permitidos separados por comas</p>
+                    <label className="label">🎮 Escenarios Permitidos</label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 rounded-lg" style={{background: 'rgba(15, 23, 42, 0.6)', border: '2px solid rgba(220, 20, 60, 0.2)'}}>
+                      {stageOptions.map(stage => (
+                        <label key={stage} className="flex items-center gap-2 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            checked={formData.stages.includes(stage)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setFormData({ ...formData, stages: [...formData.stages, stage] });
+                              } else {
+                                setFormData({ ...formData, stages: formData.stages.filter(s => s !== stage) });
+                              }
+                            }}
+                            className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-800 checked:bg-gradient-to-br checked:from-red-500 checked:to-orange-500 focus:ring-2 focus:ring-red-500"
+                          />
+                          <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{stage}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <p className="text-xs text-slate-500 mt-2">Selecciona los escenarios permitidos para el torneo</p>
                   </div>
                 </div>
               </div>
