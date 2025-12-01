@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, Trophy, Users, AlertCircle, ArrowLeft, Sparkles, Zap, Target } from 'lucide-react';
@@ -66,6 +67,7 @@ interface BracketData {
 
 export default function BracketPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [bracket, setBracket] = useState<BracketData | null>(null);
@@ -346,7 +348,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           </button>
         </div>
 
-        {!bracket && (
+        {!bracket && session?.user?.role === 'ADMIN' && (
           <div className="mb-8">
             {/* Hero Section */}
             <div className="mb-8 p-8 rounded-2xl text-center relative overflow-hidden"
@@ -514,6 +516,30 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               <p className="text-center text-slate-400 mt-4 font-medium">
                 ⚠️ Se necesitan al menos 2 participantes con check-in para generar el bracket
               </p>
+            )}
+          </div>
+        )}
+
+        {!bracket && session?.user?.role !== 'ADMIN' && (
+          <div className="mb-8 p-12 rounded-2xl text-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%)',
+              border: '2px solid rgba(220, 20, 60, 0.3)'
+            }}>
+            <div className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center"
+              style={{background: 'rgba(220, 20, 60, 0.2)', border: '3px solid rgba(220, 20, 60, 0.4)'}}>
+              <Trophy className="w-12 h-12 text-slate-400" />
+            </div>
+            <h2 className="text-3xl font-black text-white mb-3">Bracket No Generado</h2>
+            <p className="text-slate-300 text-lg mb-2">El bracket para este torneo aún no ha sido creado.</p>
+            <p className="text-slate-400">Los administradores generarán el bracket una vez completado el check-in.</p>
+            {players.length > 0 && (
+              <div className="mt-6 p-4 rounded-lg inline-block" 
+                style={{background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)'}}>
+                <p className="text-green-400 font-bold">
+                  ✅ {players.length} participante{players.length !== 1 ? 's' : ''} con check-in
+                </p>
+              </div>
             )}
           </div>
         )}
