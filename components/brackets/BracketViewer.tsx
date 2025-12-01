@@ -126,172 +126,36 @@ export default function BracketViewer({ tournamentId, isAdmin }: BracketViewerPr
         </div>
       )}
 
-      {/* Bracket Display con SVG Connections */}
-      <div className="relative bracket-container">
-        <div className="overflow-x-auto pb-8 custom-scrollbar bracket-scroll-container">
-          <div className="relative inline-flex gap-12 min-w-full p-8">
-            {Array.from({ length: maxRound }, (_, i) => i + 1).map((round, roundIndex) => {
+      {/* Bracket Display - Simplified */}
+      <div className="relative">
+        <div className="overflow-x-auto pb-8 custom-scrollbar">
+          <div className="inline-flex gap-16 p-6">
+            {Array.from({ length: maxRound }, (_, i) => i + 1).map((round) => {
               const roundMatches = getRoundMatches(round, activeTab);
               if (roundMatches.length === 0) return null;
 
-              const prevRoundMatches = round > 1 ? getRoundMatches(round - 1, activeTab) : [];
-              const matchHeight = 180;
-              const matchGap = 40;
-              const roundGap = 200;
-
               return (
-                <div key={round} className="relative flex flex-col min-w-[320px]">
+                <div key={round} className="flex flex-col min-w-[280px]">
                   {/* Round Header */}
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: roundIndex * 0.1 }}
-                    className="mb-6 text-center"
-                  >
-                    <div className="inline-block px-6 py-2 bg-gradient-to-r from-red-600 to-red-700 rounded-lg shadow-lg">
-                      <h3 className="text-lg font-black text-white uppercase tracking-wider">
+                  <div className="mb-4 text-center">
+                    <div className="inline-block px-4 py-2 bg-red-600 rounded-lg">
+                      <h3 className="text-sm font-bold text-white uppercase">
                         {getRoundName(round, maxRound)}
                       </h3>
                     </div>
-                  </motion.div>
-
-                  {/* Matches */}
-                  <div className="flex flex-col justify-center gap-8 flex-1 relative" style={{ 
-                    gap: `${40 * Math.pow(2, Math.max(0, roundIndex - 1))}px` 
-                  }}>
-                    {roundMatches.map((match, matchIndex) => (
-                      <motion.div
-                        key={match.id}
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: roundIndex * 0.1 + matchIndex * 0.05 }}
-                        className="relative"
-                      >
-                        <MatchCard
-                          match={match}
-                          onClick={() => setSelectedMatch(match)}
-                          isAdmin={isAdmin}
-                        />
-                      </motion.div>
-                    ))}
                   </div>
 
-                  {/* SVG Connections - Simplified and Improved */}
-                  {round > 1 && prevRoundMatches.length > 0 && roundMatches.length > 0 && (
-                    <svg
-                      className="absolute top-0 left-0 pointer-events-none bracket-lines"
-                      style={{
-                        width: '160px',
-                        height: '100%',
-                        transform: 'translateX(-160px)',
-                        overflow: 'visible'
-                      }}
-                    >
-                      <defs>
-                        <linearGradient id={`bracket-gradient-${round}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="rgba(220, 20, 60, 0.6)" />
-                          <stop offset="100%" stopColor="rgba(220, 20, 60, 0.3)" />
-                        </linearGradient>
-                      </defs>
-                      {roundMatches.map((match, i) => {
-                        const match1Index = i * 2;
-                        const match2Index = i * 2 + 1;
-                        
-                        if (match1Index >= prevRoundMatches.length) return null;
-
-                        // Calculate positions more precisely
-                        const baseGap = 40 * Math.pow(2, Math.max(0, roundIndex - 2));
-                        const matchCardHeight = 180;
-                        
-                        // Y position for previous round matches
-                        const y1 = (match1Index * (matchCardHeight + baseGap)) + matchCardHeight / 2;
-                        const y2 = match2Index < prevRoundMatches.length 
-                          ? (match2Index * (matchCardHeight + baseGap)) + matchCardHeight / 2
-                          : y1;
-                        
-                        // Y position for current match
-                        const currentGap = 40 * Math.pow(2, Math.max(0, roundIndex - 1));
-                        const yTarget = (i * (matchCardHeight + currentGap)) + matchCardHeight / 2;
-                        
-                        const midX = 80;
-                        const startX = 160;
-
-                        return (
-                          <g key={`connector-${round}-${i}`} className="bracket-connector">
-                            {/* Horizontal line from match 1 */}
-                            <motion.path
-                              initial={{ pathLength: 0, opacity: 0 }}
-                              animate={{ pathLength: 1, opacity: 1 }}
-                              transition={{ duration: 0.5, delay: roundIndex * 0.1 }}
-                              d={`M ${startX} ${y1} L ${midX} ${y1}`}
-                              className="bracket-line"
-                              stroke={`url(#bracket-gradient-${round})`}
-                              strokeWidth="3"
-                              fill="none"
-                            />
-                            
-                            {/* Horizontal line from match 2 */}
-                            {match2Index < prevRoundMatches.length && (
-                              <motion.path
-                                initial={{ pathLength: 0, opacity: 0 }}
-                                animate={{ pathLength: 1, opacity: 1 }}
-                                transition={{ duration: 0.5, delay: roundIndex * 0.1 }}
-                                d={`M ${startX} ${y2} L ${midX} ${y2}`}
-                                className="bracket-line"
-                                stroke={`url(#bracket-gradient-${round})`}
-                                strokeWidth="3"
-                                fill="none"
-                              />
-                            )}
-                            
-                            {/* Vertical connector between matches */}
-                            <motion.path
-                              initial={{ pathLength: 0, opacity: 0 }}
-                              animate={{ pathLength: 1, opacity: 1 }}
-                              transition={{ duration: 0.5, delay: roundIndex * 0.1 + 0.15 }}
-                              d={`M ${midX} ${y1} L ${midX} ${y2}`}
-                              className="bracket-line"
-                              stroke="rgba(220, 20, 60, 0.5)"
-                              strokeWidth="3"
-                              fill="none"
-                            />
-                            
-                            {/* Line to next match */}
-                            <motion.path
-                              initial={{ pathLength: 0, opacity: 0 }}
-                              animate={{ pathLength: 1, opacity: 1 }}
-                              transition={{ duration: 0.5, delay: roundIndex * 0.1 + 0.3 }}
-                              d={`M ${midX} ${(y1 + y2) / 2} L 0 ${yTarget}`}
-                              className="bracket-line"
-                              stroke={`url(#bracket-gradient-${round})`}
-                              strokeWidth="3"
-                              fill="none"
-                            />
-                            
-                            {/* Connection dots for visual clarity */}
-                            <motion.circle
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ delay: roundIndex * 0.1 + 0.5 }}
-                              cx={midX}
-                              cy={(y1 + y2) / 2}
-                              r="5"
-                              className="bracket-connector-dot"
-                            />
-                            <motion.circle
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ delay: roundIndex * 0.1 + 0.5 }}
-                              cx="0"
-                              cy={yTarget}
-                              r="5"
-                              className="bracket-connector-dot"
-                            />
-                          </g>
-                        );
-                      })}
-                    </svg>
-                  )}
+                  {/* Matches */}
+                  <div className="flex flex-col gap-4">
+                    {roundMatches.map((match) => (
+                      <MatchCard
+                        key={match.id}
+                        match={match}
+                        onClick={() => setSelectedMatch(match)}
+                        isAdmin={isAdmin}
+                      />
+                    ))}
+                  </div>
                 </div>
               );
             })}
@@ -353,175 +217,85 @@ export default function BracketViewer({ tournamentId, isAdmin }: BracketViewerPr
 }
 
 function MatchCard({ match, onClick, isAdmin, isGrandFinal = false }: any) {
-  const getStatusStyles = () => {
-    if (match.status === 'COMPLETED') {
-      return 'bg-slate-800/50 border-slate-700';
-    }
-    if (match.status === 'ONGOING') {
-      return 'bg-red-900/20 border-red-600 shadow-lg shadow-red-600/30';
-    }
-    return 'bg-slate-900/50 border-slate-700';
-  };
-
-  const getPlayerDisplay = (player: any, isWinner: boolean, playerNum: 1 | 2) => {
-    if (!player) {
-      return (
-        <div className="flex items-center gap-3 text-slate-600">
-          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
-            <span className="text-xs font-bold">?</span>
-          </div>
-          <span className="text-sm font-medium">TBD</span>
-        </div>
-      );
-    }
-    
-    const character = player.participants?.[0]?.character;
-    
-    return (
-      <div className={`flex items-center gap-3 ${isWinner ? 'text-white' : 'text-slate-300'}`}>
-        {character && (
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-2xl ${
-            isWinner ? 'bg-gradient-to-br from-red-600 to-red-700 shadow-lg' : 'bg-slate-800'
-          }`}>
-            {getCharacterEmoji(character.name)}
-          </div>
-        )}
-        <div className="flex-1 min-w-0">
-          <p className={`truncate ${isWinner ? 'font-black text-base' : 'font-semibold text-sm'}`}>
-            {player.username}
-          </p>
-          {character && (
-            <p className="text-xs text-slate-500 truncate">{character.name}</p>
-          )}
-        </div>
-      </div>
-    );
-  };
-
   const player1IsWinner = match.winnerId === match.player1?.id;
   const player2IsWinner = match.winnerId === match.player2?.id;
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.03, y: -2 }}
-      whileTap={{ scale: 0.98 }}
-      className={`${getStatusStyles()} backdrop-blur-sm border-2 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${
-        isGrandFinal ? 'border-4 border-yellow-500 shadow-2xl shadow-yellow-500/30' : ''
-      }`}
+    <div
       onClick={onClick}
+      className={`bg-slate-900/80 border-2 rounded-xl overflow-hidden cursor-pointer hover:border-red-600 transition-all ${
+        isGrandFinal ? 'border-yellow-500' : 'border-slate-700'
+      }`}
     >
-      {/* Match Number Badge */}
-      <div className="px-3 py-1 bg-slate-900/80 flex items-center justify-between border-b border-slate-700/50">
-        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-          Match {match.matchNumber}
-        </span>
+      {/* Header */}
+      <div className="px-3 py-2 bg-slate-800/50 border-b border-slate-700 flex items-center justify-between">
+        <span className="text-xs font-bold text-slate-400">Match {match.matchNumber}</span>
         {match.status === 'ONGOING' && (
-          <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 1, repeat: Infinity }}
-            className="flex items-center gap-1"
-          >
-            <div className="w-2 h-2 rounded-full bg-red-500"></div>
-            <span className="text-xs font-bold text-red-500 uppercase">LIVE</span>
-          </motion.div>
+          <span className="flex items-center gap-1 text-xs font-bold text-red-500">
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            LIVE
+          </span>
         )}
       </div>
 
-      <div className="p-4 space-y-2">
+      {/* Players */}
+      <div className="p-3 space-y-2">
         {/* Player 1 */}
-        <motion.div 
-          whileHover={{ x: 4 }}
-          className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-            player1IsWinner 
-              ? 'bg-gradient-to-r from-red-600 to-red-700 shadow-lg shadow-red-600/30' 
-              : 'bg-slate-800/50 hover:bg-slate-800/70'
-          }`}
-        >
-          <div className="flex-1 min-w-0">
-            {getPlayerDisplay(match.player1, player1IsWinner, 1)}
-          </div>
-          <div className="ml-3 flex items-center gap-2">
-            {player1IsWinner && (
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="text-yellow-400"
-              >
-                👑
-              </motion.span>
+        <div className={`flex items-center justify-between p-2 rounded ${
+          player1IsWinner ? 'bg-red-600' : 'bg-slate-800'
+        }`}>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {match.player1?.participants?.[0]?.character && (
+              <span className="text-xl">
+                {getCharacterEmoji(match.player1.participants[0].character.name)}
+              </span>
             )}
-            <span className={`text-2xl font-black tabular-nums ${
-              player1IsWinner ? 'text-white' : 'text-slate-400'
-            }`}>
-              {match.player1Score || 0}
+            <span className={`truncate ${player1IsWinner ? 'font-bold text-white' : 'text-slate-300'}`}>
+              {match.player1?.username || 'TBD'}
             </span>
+            {player1IsWinner && <span>👑</span>}
           </div>
-        </motion.div>
-
-        {/* VS Divider */}
-        <div className="flex items-center gap-2 py-1">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
-          <span className="text-xs font-black text-slate-600 px-2">VS</span>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+          <span className={`text-xl font-bold ml-2 ${player1IsWinner ? 'text-white' : 'text-slate-500'}`}>
+            {match.player1Score || 0}
+          </span>
         </div>
+
+        {/* VS */}
+        <div className="text-center text-xs font-bold text-slate-600">VS</div>
 
         {/* Player 2 */}
-        <motion.div 
-          whileHover={{ x: 4 }}
-          className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-            player2IsWinner 
-              ? 'bg-gradient-to-r from-red-600 to-red-700 shadow-lg shadow-red-600/30' 
-              : 'bg-slate-800/50 hover:bg-slate-800/70'
-          }`}
-        >
-          <div className="flex-1 min-w-0">
-            {getPlayerDisplay(match.player2, player2IsWinner, 2)}
-          </div>
-          <div className="ml-3 flex items-center gap-2">
-            {player2IsWinner && (
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="text-yellow-400"
-              >
-                👑
-              </motion.span>
+        <div className={`flex items-center justify-between p-2 rounded ${
+          player2IsWinner ? 'bg-red-600' : 'bg-slate-800'
+        }`}>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {match.player2?.participants?.[0]?.character && (
+              <span className="text-xl">
+                {getCharacterEmoji(match.player2.participants[0].character.name)}
+              </span>
             )}
-            <span className={`text-2xl font-black tabular-nums ${
-              player2IsWinner ? 'text-white' : 'text-slate-400'
-            }`}>
-              {match.player2Score || 0}
+            <span className={`truncate ${player2IsWinner ? 'font-bold text-white' : 'text-slate-300'}`}>
+              {match.player2?.username || 'TBD'}
             </span>
+            {player2IsWinner && <span>👑</span>}
           </div>
-        </motion.div>
-      </div>
-
-      {/* Status Footer */}
-      <div className="px-3 py-2 bg-slate-900/60 border-t border-slate-700/50">
-        <div className="flex items-center justify-center">
-          {match.status === 'COMPLETED' && (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-green-400">
-              <span>✓</span> Completado
-            </span>
-          )}
-          {match.status === 'ONGOING' && (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-red-400 animate-pulse">
-              <span>⚡</span> En Vivo
-            </span>
-          )}
-          {match.status === 'PENDING' && match.player1 && match.player2 && (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-yellow-400">
-              <span>⏳</span> Pendiente
-            </span>
-          )}
-          {(!match.player1 || !match.player2) && (
-            <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-600">
-              <span>⏸</span> Esperando jugadores
-            </span>
-          )}
+          <span className={`text-xl font-bold ml-2 ${player2IsWinner ? 'text-white' : 'text-slate-500'}`}>
+            {match.player2Score || 0}
+          </span>
         </div>
       </div>
-    </motion.div>
+
+      {/* Footer */}
+      {match.status === 'COMPLETED' && (
+        <div className="px-3 py-1 bg-slate-800/50 border-t border-slate-700 text-center">
+          <span className="text-xs font-bold text-green-500">✓ Completado</span>
+        </div>
+      )}
+      {match.status === 'PENDING' && match.player1 && match.player2 && (
+        <div className="px-3 py-1 bg-slate-800/50 border-t border-slate-700 text-center">
+          <span className="text-xs font-bold text-yellow-500">⏳ Pendiente</span>
+        </div>
+      )}
+    </div>
   );
 }
 
