@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
             username,
             password: hashedPassword,
             role: 'USER',
+            province: 'Online',
             wins,
             losses,
             points: Math.max(0, points),
