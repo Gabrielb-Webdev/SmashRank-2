@@ -195,12 +195,22 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     }
   };
 
-  // Función para generar badges en formato AA, AB, AC, etc.
-  const getPlayerBadge = (matchIndex: number, playerNumber: 1 | 2) => {
-    const firstLetter = String.fromCharCode(65 + matchIndex); // A, B, C, D...
-    const secondLetter = playerNumber === 1 ? 'A' : 'B';
-    return firstLetter + secondLetter;
+  // Función para generar ID de match: A, B, C... Z, AA, AB, AC... AZ, BA, BB...
+  const getMatchLabel = (globalIndex: number) => {
+    if (globalIndex < 26) {
+      // A-Z
+      return String.fromCharCode(65 + globalIndex);
+    } else {
+      // AA, AB, AC... AZ, BA, BB...
+      const first = Math.floor(globalIndex / 26) - 1;
+      const second = globalIndex % 26;
+      return String.fromCharCode(65 + first) + String.fromCharCode(65 + second);
+    }
   };
+
+  // Mapa global de matches para tracking
+  const matchLabelMap = new Map<string, string>();
+  let globalMatchIndex = 0;
 
   const getPlayerInfo = (playerId: string | undefined) => {
     if (!playerId || !bracket) return null;
@@ -210,7 +220,14 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     return registration?.user;
   };
 
-  const renderMatch = (match: Match, index: number) => {
+  const renderMatch = (match: Match, index: number, roundMatches: Match[]) => {
+    // Asignar label al match si no existe
+    if (!matchLabelMap.has(match.id)) {
+      matchLabelMap.set(match.id, getMatchLabel(globalMatchIndex));
+      globalMatchIndex++;
+    }
+    const matchLabel = matchLabelMap.get(match.id)!;
+    
     const player1 = getPlayerInfo(match.player1Id);
     const player2 = getPlayerInfo(match.player2Id);
     
@@ -233,7 +250,10 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const hasBothPlayers = player1 && player2;
     if (!hasBothPlayers) {
       const waitingPlayer = player1 || player2;
-      if (!waitingPlayer) return null; // Safety check
+      const isPlayer1Waiting = !!player1;
+      
+      // Buscar de qué match viene el slot vacío
+      const emptySlotText = "Ganador de...";
       
       return (
         <div 
@@ -246,38 +266,69 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
           }}
         >
-          {/* Jugador esperando */}
-          <div 
-            className="px-3 py-3 flex items-center justify-between"
-            style={{
-              background: 'rgba(100, 116, 139, 0.2)',
-              borderBottom: '1px solid rgba(71, 85, 105, 0.3)'
-            }}
-          >
-            <div className="flex items-center gap-2.5 flex-1">
-              <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
-                style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
-                {waitingPlayer.username.charAt(0).toUpperCase()}
-              </div>
-              <span className="font-bold text-white text-sm">{waitingPlayer.username}</span>
-            </div>
-            <span className="text-xs font-semibold px-2 py-1 rounded"
-              style={{background: 'rgba(100, 116, 139, 0.2)', color: '#94a3b8'}}>
-              Avanza
-            </span>
+          {/* Header del match con su ID */}
+          <div className="px-2 py-1 text-center border-b border-slate-700"
+            style={{background: 'rgba(0, 0, 0, 0.3)'}}>
+            <span className="text-xs font-bold text-yellow-400">Match {matchLabel}</span>
           </div>
           
-          {/* Slot vacío - esperando */}
-          <div 
-            className="px-3 py-3 flex items-center gap-2"
-            style={{background: 'rgba(30, 41, 59, 0.5)'}}
-          >
-            <div className="w-8 h-8 rounded flex items-center justify-center"
-              style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-              <span className="text-slate-500 text-xs">?</span>
-            </div>
-            <span className="text-slate-500 italic text-sm">Esperando ganador...</span>
-          </div>
+          {/* Jugador esperando o slot esperando */}
+          {isPlayer1Waiting && waitingPlayer ? (
+            <>
+              <div 
+                className="px-3 py-3 flex items-center justify-between"
+                style={{
+                  background: 'rgba(100, 116, 139, 0.2)',
+                  borderBottom: '1px solid rgba(71, 85, 105, 0.3)'
+                }}
+              >
+                <div className="flex items-center gap-2.5 flex-1">
+                  <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
+                    style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
+                    {waitingPlayer.username.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="font-bold text-white text-sm">{waitingPlayer.username}</span>
+                </div>
+              </div>
+              <div 
+                className="px-3 py-3 flex items-center gap-2"
+                style={{background: 'rgba(30, 41, 59, 0.5)'}}
+              >
+                <div className="w-8 h-8 rounded flex items-center justify-center"
+                  style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+                  <span className="text-slate-500 text-xs">?</span>
+                </div>
+                <span className="text-slate-500 italic text-sm">{emptySlotText}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div 
+                className="px-3 py-3 flex items-center gap-2"
+                style={{background: 'rgba(30, 41, 59, 0.5)', borderBottom: '1px solid rgba(71, 85, 105, 0.3)'}}
+              >
+                <div className="w-8 h-8 rounded flex items-center justify-center"
+                  style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+                  <span className="text-slate-500 text-xs">?</span>
+                </div>
+                <span className="text-slate-500 italic text-sm">{emptySlotText}</span>
+              </div>
+              {waitingPlayer && (
+                <div 
+                  className="px-3 py-3 flex items-center justify-between"
+                  style={{background: 'rgba(100, 116, 139, 0.2)'}}
+                >
+                  <div className="flex items-center gap-2.5 flex-1">
+                    <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
+                      style={{background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)', color: 'white'}}>
+                      {waitingPlayer.username.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="font-bold text-white text-sm">{waitingPlayer.username}</span>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       );
     }
@@ -297,6 +348,12 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           boxShadow: hasWinner ? '0 4px 15px rgba(34, 197, 94, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.3)'
         }}
       >
+        {/* Header del match con su ID */}
+        <div className="px-2 py-1 text-center border-b border-slate-700"
+          style={{background: 'rgba(0, 0, 0, 0.3)'}}>
+          <span className="text-xs font-bold text-yellow-400">Match {matchLabel}</span>
+        </div>
+        
         {/* Player 1 */}
         <div 
           className={`px-3 py-3 flex items-center justify-between transition-all ${
@@ -310,15 +367,6 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           }}
         >
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            {/* Badge de letra con círculo negro */}
-            <div className="relative flex-shrink-0">
-              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
-                <span className="text-white text-xs font-bold">
-                  {getPlayerBadge(index, 1)}
-                </span>
-              </div>
-            </div>
-            
             {/* Avatar del jugador */}
             <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
               match.winnerId === match.player1Id ? 'ring-2 ring-green-400' : ''
@@ -373,15 +421,6 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           }}
         >
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            {/* Badge de letra con círculo negro */}
-            <div className="relative flex-shrink-0">
-              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
-                <span className="text-white text-xs font-bold">
-                  {getPlayerBadge(index, 2)}
-                </span>
-              </div>
-            </div>
-            
             {/* Avatar del jugador */}
             <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
               match.winnerId === match.player2Id ? 'ring-2 ring-green-400' : ''
@@ -511,7 +550,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                         .sort((a, b) => a.matchNumber - b.matchNumber)
                         .map((match, idx) => (
                           <div key={match.id} className="flex items-center">
-                            {renderMatch(match, idx)}
+                            {renderMatch(match, idx, roundMatches)}
                           </div>
                         ))}
                     </div>
@@ -929,7 +968,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                     Grand Finals
                   </h3>
                 </div>
-                {renderMatch(bracket.data.grandFinals, 0)}
+                {renderMatch(bracket.data.grandFinals, 0, [bracket.data.grandFinals])}
               </div>
             )}
           </div>
