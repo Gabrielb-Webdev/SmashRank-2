@@ -22,6 +22,8 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   const [showUnregisterModal, setShowUnregisterModal] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [timeUntilCheckin, setTimeUntilCheckin] = useState<string>('');
+  const [registrationStatus, setRegistrationStatus] = useState<string>('');
+  const [canRegister, setCanRegister] = useState(false);
   const tournamentId = params.id;
 
   useEffect(() => {
@@ -64,6 +66,48 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
 
     return () => clearInterval(interval);
   }, [tournament, isRegistered, hasCheckedIn]);
+
+  // Contador para estado de inscripciones
+  useEffect(() => {
+    if (!tournament) return;
+
+    const updateRegistrationStatus = () => {
+      const now = new Date();
+      const registrationEnd = new Date(tournament.registrationEnd);
+      const startDate = new Date(tournament.startDate);
+
+      if (now < tournament.registrationStart) {
+        setRegistrationStatus('Las inscripciones aún no abren');
+        setCanRegister(false);
+      } else if (now >= tournament.registrationStart && now < registrationEnd) {
+        // Durante las inscripciones
+        const diff = registrationEnd.getTime() - now.getTime();
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        if (hours > 0) {
+          setRegistrationStatus(`Inscripciones cierran en ${hours}h ${minutes}m`);
+        } else if (minutes > 0) {
+          setRegistrationStatus(`Inscripciones cierran en ${minutes}m ${seconds}s`);
+        } else {
+          setRegistrationStatus(`Inscripciones cierran en ${seconds}s`);
+        }
+        setCanRegister(true);
+      } else if (now >= registrationEnd && now < startDate) {
+        setRegistrationStatus('Inscripciones cerradas - Check-in abierto');
+        setCanRegister(false);
+      } else {
+        setRegistrationStatus('Torneo iniciado');
+        setCanRegister(false);
+      }
+    };
+
+    updateRegistrationStatus();
+    const interval = setInterval(updateRegistrationStatus, 1000);
+
+    return () => clearInterval(interval);
+  }, [tournament]);
 
   const fetchTournament = async () => {
     setLoading(true);
@@ -418,6 +462,12 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                     <p className="text-green-400 font-bold">¡Estás inscrito!</p>
                   </div>
                   
+                  {registrationStatus && (
+                    <div className="p-3 rounded-lg text-center" style={{background: 'rgba(255, 215, 0, 0.1)', border: '1px solid rgba(255, 215, 0, 0.3)'}}>
+                      <p className="text-yellow-400 text-xs font-semibold">{registrationStatus}</p>
+                    </div>
+                  )}
+                  
                   {hasCheckedIn ? (
                     <div className="p-4 rounded-lg text-center" style={{background: 'rgba(59, 130, 246, 0.2)', border: '2px solid rgba(59, 130, 246, 0.4)'}}>
                       <Check className="w-8 h-8 text-blue-400 mx-auto mb-2" />
@@ -444,9 +494,23 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setShowRegisterModal(true)} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}>
-                  🏆 Inscribirse Ahora
-                </button>
+                <>
+                  {registrationStatus && (
+                    <div className="mb-3 p-3 rounded-lg text-center" style={{background: 'rgba(255, 215, 0, 0.1)', border: '1px solid rgba(255, 215, 0, 0.3)'}}>
+                      <p className="text-yellow-400 text-xs font-semibold">{registrationStatus}</p>
+                    </div>
+                  )}
+                  
+                  {canRegister ? (
+                    <button onClick={() => setShowRegisterModal(true)} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}>
+                      🏆 Inscribirse Ahora
+                    </button>
+                  ) : (
+                    <button disabled className="w-full py-3 rounded-lg font-bold text-gray-500 cursor-not-allowed" style={{background: 'rgba(100, 100, 100, 0.2)', border: '2px solid rgba(100, 100, 100, 0.3)'}}>
+                      Inscripciones Cerradas
+                    </button>
+                  )}
+                </>
               )}
             </div>
 
