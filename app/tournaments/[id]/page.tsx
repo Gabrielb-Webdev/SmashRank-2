@@ -128,9 +128,18 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
         
         // Verificar si el usuario está registrado
         if (session) {
+          console.log('Session user ID:', session.user.id);
+          console.log('Registrations:', data.registrations);
+          
           const userRegistration = data.registrations.find(
-            (reg: any) => reg.userId === session.user.id
+            (reg: any) => {
+              console.log('Comparing:', reg.userId, 'with', session.user.id);
+              return reg.userId === session.user.id;
+            }
           );
+          
+          console.log('User registration found:', userRegistration);
+          
           setIsRegistered(!!userRegistration);
           setHasCheckedIn(userRegistration?.checkedIn || false);
           
