@@ -257,7 +257,7 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
             ))}
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <div>
             {/* Step 1: Información Básica */}
             {currentStep === 1 && (
               <div className="card p-6 animate-fade-in-up">
@@ -496,7 +496,8 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
                 </button>
               ) : (
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => handleSubmit()}
                   disabled={saving}
                   className="flex-1 py-3 rounded-lg font-bold text-white transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}
@@ -512,7 +513,7 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
                 Cancelar
               </Link>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
