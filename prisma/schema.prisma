@@ -161,8 +161,8 @@ model Registration {
   id             String   @id @default(cuid())
   userId         String
   tournamentId   String
-  characterId    String
-  skinId         String
+  characterId    String?
+  skinId         String?
   checkedIn      Boolean  @default(false)
   checkedInAt    DateTime?
   seed           Int?
@@ -172,8 +172,8 @@ model Registration {
   // Relaciones
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  character  Character  @relation(fields: [characterId], references: [id])
-  skin       CharacterSkin @relation(fields: [skinId], references: [id])
+  character  Character? @relation(fields: [characterId], references: [id])
+  skin       CharacterSkin? @relation(fields: [skinId], references: [id])
 
   @@unique([userId, tournamentId])
   @@index([tournamentId])
