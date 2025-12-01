@@ -50,14 +50,18 @@ export async function POST(
     const bracket = tournament.brackets[0];
     const bracketData = bracket.data as any;
 
-    // Crear los matches en la base de datos
+    // Crear solo los matches de la PRIMERA RONDA con ambos jugadores
     const matches: any[] = [];
     const now = new Date();
     const checkInDeadline = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutos
 
-    // Winners bracket
+    // Winners bracket - Solo ronda 1
     if (bracketData.winners) {
-      for (const match of bracketData.winners) {
+      const firstRoundMatches = bracketData.winners.filter(
+        (match: any) => match.roundNumber === 1 && match.player1Id && match.player2Id
+      );
+      
+      for (const match of firstRoundMatches) {
         matches.push({
           id: match.id,
           tournamentId: params.id,
@@ -66,43 +70,14 @@ export async function POST(
           matchNumber: match.matchNumber,
           player1Id: match.player1Id,
           player2Id: match.player2Id,
-          status: match.player1Id && match.player2Id ? 'CHECKIN' : 'PENDING',
-          checkInDeadline: match.player1Id && match.player2Id ? checkInDeadline : null,
+          status: 'CHECKIN',
+          checkInDeadline: checkInDeadline,
+          player1CheckIn: false,
+          player2CheckIn: false,
+          currentGame: 1,
           bestOf: 3,
         });
       }
-    }
-
-    // Losers bracket
-    if (bracketData.losers) {
-      for (const match of bracketData.losers) {
-        matches.push({
-          id: match.id,
-          tournamentId: params.id,
-          bracketType: 'LOSERS',
-          round: match.roundNumber,
-          matchNumber: match.matchNumber,
-          player1Id: match.player1Id,
-          player2Id: match.player2Id,
-          status: 'PENDING',
-          bestOf: 3,
-        });
-      }
-    }
-
-    // Grand Finals
-    if (bracketData.grandFinals) {
-      matches.push({
-        id: bracketData.grandFinals.id,
-        tournamentId: params.id,
-        bracketType: 'GRANDS',
-        round: 1,
-        matchNumber: 1,
-        player1Id: bracketData.grandFinals.player1Id,
-        player2Id: bracketData.grandFinals.player2Id,
-        status: 'PENDING',
-        bestOf: 5, // Grand Finals es BO5
-      });
     }
 
     // Crear todos los matches
