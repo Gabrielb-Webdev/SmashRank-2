@@ -6,23 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date: Date | string): string {
-  let d: Date;
-  
-  if (typeof date === 'string') {
-    // Parsear como UTC para evitar conversión de zona horaria
-    const utcDate = new Date(date);
-    // Crear nueva fecha usando los componentes UTC como si fueran locales
-    d = new Date(
-      utcDate.getUTCFullYear(),
-      utcDate.getUTCMonth(),
-      utcDate.getUTCDate(),
-      utcDate.getUTCHours(),
-      utcDate.getUTCMinutes(),
-      utcDate.getUTCSeconds()
-    );
-  } else {
-    d = date;
-  }
+  // La fecha viene de la DB como ISO string en UTC
+  // Intl.DateTimeFormat automáticamente la convertirá a la zona horaria local del navegador del usuario
+  // Si creas el torneo a las 22:00 en Argentina y alguien lo ve desde España (UTC+1), verá 02:00 del día siguiente
+  const d = typeof date === 'string' ? new Date(date) : date;
   
   return new Intl.DateTimeFormat('es-AR', {
     year: 'numeric',
@@ -30,6 +17,7 @@ export function formatDate(date: Date | string): string {
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    // NO especificamos timeZone para que use la zona horaria local del usuario
   }).format(d);
 }
 

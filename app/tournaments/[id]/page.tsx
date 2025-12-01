@@ -34,22 +34,11 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   useEffect(() => {
     if (!tournament || !isRegistered || hasCheckedIn) return;
 
-    const parseUTCAsLocal = (dateString: string) => {
-      const utcDate = new Date(dateString);
-      return new Date(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate(),
-        utcDate.getUTCHours(),
-        utcDate.getUTCMinutes(),
-        utcDate.getUTCSeconds()
-      );
-    };
-
     const updateCountdown = () => {
       const now = new Date();
-      const checkinStart = parseUTCAsLocal(tournament.checkinStart);
-      const checkinEnd = parseUTCAsLocal(tournament.checkinEnd);
+      // Las fechas de la DB vienen en UTC, JavaScript las convierte automáticamente a hora local del navegador
+      const checkinStart = new Date(tournament.checkinStart);
+      const checkinEnd = new Date(tournament.checkinEnd);
 
       if (now < checkinStart) {
         // Antes del check-in
@@ -83,22 +72,11 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   useEffect(() => {
     if (!tournament) return;
 
-    const parseUTCAsLocal = (dateString: string) => {
-      const utcDate = new Date(dateString);
-      return new Date(
-        utcDate.getUTCFullYear(),
-        utcDate.getUTCMonth(),
-        utcDate.getUTCDate(),
-        utcDate.getUTCHours(),
-        utcDate.getUTCMinutes(),
-        utcDate.getUTCSeconds()
-      );
-    };
-
     const updateRegistrationStatus = () => {
       const now = new Date();
-      const startDate = parseUTCAsLocal(tournament.startDate);
-      const checkinStart = parseUTCAsLocal(tournament.checkinStart);
+      // Las fechas de la DB vienen en UTC, JavaScript las convierte automáticamente
+      const startDate = new Date(tournament.startDate);
+      const checkinStart = new Date(tournament.checkinStart);
       
       if (now < startDate) {
         // Antes del inicio del torneo - INSCRIPCIONES ABIERTAS
@@ -158,25 +136,9 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
           
           // Verificar si puede hacer check-in
           const now = new Date();
-          const checkinStartUTC = new Date(data.checkinStart);
-          const checkinEndUTC = new Date(data.checkinEnd);
-          // Parsear como hora local
-          const checkinStart = new Date(
-            checkinStartUTC.getUTCFullYear(),
-            checkinStartUTC.getUTCMonth(),
-            checkinStartUTC.getUTCDate(),
-            checkinStartUTC.getUTCHours(),
-            checkinStartUTC.getUTCMinutes(),
-            checkinStartUTC.getUTCSeconds()
-          );
-          const checkinEnd = new Date(
-            checkinEndUTC.getUTCFullYear(),
-            checkinEndUTC.getUTCMonth(),
-            checkinEndUTC.getUTCDate(),
-            checkinEndUTC.getUTCHours(),
-            checkinEndUTC.getUTCMinutes(),
-            checkinEndUTC.getUTCSeconds()
-          );
+          // Las fechas de la DB vienen en UTC, JavaScript las convierte automáticamente a hora local
+          const checkinStart = new Date(data.checkinStart);
+          const checkinEnd = new Date(data.checkinEnd);
           setCanCheckIn(
             now >= checkinStart && 
             now <= checkinEnd && 

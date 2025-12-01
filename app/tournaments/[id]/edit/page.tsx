@@ -103,16 +103,17 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
   };
 
   const formatDateTimeLocal = (dateString: string) => {
-    // Parsear la fecha sin conversión de zona horaria
-    // La fecha viene como ISO string de la DB, pero queremos mantener la hora tal cual
+    // Convertir la fecha UTC de la DB a hora de Argentina para el input
     const date = new Date(dateString);
     
-    // Obtener componentes usando UTC para evitar conversión
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    // Obtener la fecha en zona horaria de Argentina
+    const argDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' }));
+    
+    const year = argDate.getFullYear();
+    const month = String(argDate.getMonth() + 1).padStart(2, '0');
+    const day = String(argDate.getDate()).padStart(2, '0');
+    const hours = String(argDate.getHours()).padStart(2, '0');
+    const minutes = String(argDate.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 

@@ -107,12 +107,9 @@ export async function PUT(
     } = body;
 
     // Calcular fechas automáticamente basadas en la nueva fecha de inicio
-    // Parsear la fecha como hora local sin conversión UTC
-    const dateStr = startDate;
-    const [datePart, timePart] = dateStr.includes('T') ? dateStr.split('T') : [dateStr, '00:00'];
-    const [year, month, day] = datePart.split('-').map(Number);
-    const [hours, minutes] = timePart.split(':').map(Number);
-    const newStartDate = new Date(year, month - 1, day, hours, minutes);
+    // La fecha viene como string que representa hora de Argentina
+    // JavaScript la interpreta y Prisma la guarda como UTC
+    const newStartDate = new Date(startDate);
     const now = new Date();
     
     // Las inscripciones se mantienen abiertas hasta que inicia el torneo
