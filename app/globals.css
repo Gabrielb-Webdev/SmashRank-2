@@ -390,6 +390,171 @@ h1, h2, h3, h4, h5, h6 {
   @apply opacity-60;
 }
 
+/* Bracket Container Improvements */
+.bracket-container {
+  position: relative;
+  min-height: 600px;
+}
+
+.bracket-round {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  min-width: 300px;
+  padding: 0 20px;
+}
+
+.bracket-line {
+  stroke: rgba(220, 20, 60, 0.4);
+  stroke-width: 2px;
+  fill: none;
+  transition: all 0.3s ease;
+}
+
+.bracket-line:hover {
+  stroke: rgba(220, 20, 60, 0.8);
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 8px rgba(220, 20, 60, 0.6));
+}
+
+.bracket-connector-dot {
+  fill: rgba(220, 20, 60, 0.6);
+  transition: all 0.3s ease;
+}
+
+.bracket-connector-dot:hover {
+  fill: rgba(255, 215, 0, 0.9);
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+}
+
+/* Bracket Animation */
+@keyframes bracket-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bracket-match-animated {
+  animation: bracket-fade-in 0.5s ease-out forwards;
+}
+
+/* Match Card Glow Effect */
+.match-card-live {
+  animation: match-glow 2s ease-in-out infinite;
+}
+
+@keyframes match-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(220, 20, 60, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(220, 20, 60, 0.6), 0 0 40px rgba(255, 215, 0, 0.3);
+  }
+}
+
+/* SVG Line Hover Effects */
+.bracket-connector:hover .bracket-line {
+  stroke: rgba(255, 215, 0, 0.8);
+  stroke-width: 4px;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+.bracket-connector:hover .bracket-connector-dot {
+  fill: rgba(255, 215, 0, 1);
+  r: 6;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
+}
+
+/* Smooth entrance for bracket lines */
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.bracket-lines {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Grand Finals Special Styles */
+.grand-finals-container {
+  position: relative;
+}
+
+.grand-finals-container::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  animation: grand-finals-pulse 3s ease-in-out infinite;
+}
+
+@keyframes grand-finals-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* Winner Crown Animation */
+@keyframes crown-bounce {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(5deg);
+  }
+  75% {
+    transform: translateY(-5px) rotate(-5deg);
+  }
+}
+
+.winner-crown {
+  animation: crown-bounce 1s ease-in-out infinite;
+}
+
+/* Bracket Scroll Improvements */
+.bracket-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(220, 20, 60, 0.6) rgba(10, 10, 10, 0.4);
+}
+
+.bracket-scroll-container::-webkit-scrollbar {
+  height: 10px;
+}
+
+.bracket-scroll-container::-webkit-scrollbar-track {
+  background: rgba(10, 10, 10, 0.4);
+  border-radius: 5px;
+  margin: 0 10px;
+}
+
+.bracket-scroll-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, rgba(220, 20, 60, 0.6) 0%, rgba(255, 23, 68, 0.8) 100%);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.bracket-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, rgba(220, 20, 60, 0.9) 0%, rgba(255, 23, 68, 1) 100%);
+  box-shadow: 0 0 10px rgba(220, 20, 60, 0.6);
+}
+
 /* ============================================
    ⚡ ANIMATIONS
    ============================================ */
