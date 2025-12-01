@@ -119,6 +119,8 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
     
     // Solo guardar si estamos en el paso 3
     if (currentStep !== 3) {
+      // Si no estamos en el paso 3, avanzar al siguiente paso
+      nextStep();
       return;
     }
     
