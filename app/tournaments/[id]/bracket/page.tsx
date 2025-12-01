@@ -300,24 +300,20 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       return (
         <div 
           key={match.id} 
-          className="rounded-lg overflow-hidden"
+          className="relative"
           style={{
-            background: '#1e293b',
-            border: '2px solid rgba(100, 116, 139, 0.3)',
-            width: '280px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+            width: '220px'
           }}
         >
-          {/* Header del match */}
-          <div className="px-2 py-1 text-center border-b border-slate-700"
-            style={{background: 'rgba(0, 0, 0, 0.3)'}}>
-            <span className="text-xs font-bold text-slate-400">Bracket {index + 1}</span>
+          {/* Match label */}
+          <div className="text-xs font-bold text-slate-500 mb-1 px-2">
+            Bracket {index + 1}
           </div>
           
           {/* Dos slots vacíos con referencia al match de origen */}
           <div 
-            className="px-3 py-2.5 flex items-center gap-2"
-            style={{background: 'rgba(30, 41, 59, 0.5)', borderBottom: '1px solid rgba(71, 85, 105, 0.3)'}}
+            className="px-3 py-2.5 flex items-center gap-2 border border-b-0 border-slate-700 rounded-t-md"
+            style={{background: 'rgba(30, 41, 59, 0.3)'}}
           >
             <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
               style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -326,8 +322,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             <span className="text-slate-500 italic text-xs">{slot1Text}</span>
           </div>
           <div 
-            className="px-3 py-2.5 flex items-center gap-2"
-            style={{background: 'rgba(30, 41, 59, 0.5)'}}
+            className="px-3 py-2.5 flex items-center gap-2 border border-slate-700 rounded-b-md"
+            style={{background: 'rgba(30, 41, 59, 0.3)'}}
           >
             <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
               style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -367,28 +363,23 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       return (
         <div 
           key={match.id} 
-          className="rounded-lg overflow-hidden"
+          className="relative"
           style={{
-            background: '#1e293b',
-            border: '2px solid rgba(100, 116, 139, 0.5)',
-            width: '280px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+            width: '220px'
           }}
         >
-          {/* Header del match con su ID */}
-          <div className="px-2 py-1 text-center border-b border-slate-700"
-            style={{background: 'rgba(0, 0, 0, 0.3)'}}>
-            <span className="text-xs font-bold text-slate-400">Bracket {index + 1}</span>
+          {/* Match label */}
+          <div className="text-xs font-bold text-slate-400 mb-1 px-2">
+            Bracket {index + 1}
           </div>
           
           {/* Jugador esperando o slot esperando */}
           {isPlayer1Waiting && waitingPlayer ? (
             <>
               <div 
-                className="px-3 py-3 flex items-center justify-between"
+                className="px-3 py-2.5 flex items-center justify-between border border-b-0 border-slate-600 rounded-t-md"
                 style={{
-                  background: 'rgba(100, 116, 139, 0.2)',
-                  borderBottom: '1px solid rgba(71, 85, 105, 0.3)'
+                  background: 'rgba(30, 41, 59, 0.8)'
                 }}
               >
                 <div className="flex items-center gap-2.5 flex-1">
@@ -400,8 +391,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
               <div 
-                className="px-3 py-3 flex items-center gap-2"
-                style={{background: 'rgba(30, 41, 59, 0.5)'}}
+                className="px-3 py-2.5 flex items-center gap-2 border border-slate-600 rounded-b-md"
+                style={{background: 'rgba(30, 41, 59, 0.4)'}}
               >
                 <div className="w-8 h-8 rounded flex items-center justify-center"
                   style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -413,19 +404,19 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           ) : (
             <>
               <div 
-                className="px-3 py-3 flex items-center gap-2"
-                style={{background: 'rgba(30, 41, 59, 0.5)', borderBottom: '1px solid rgba(71, 85, 105, 0.3)'}}
+                className="px-3 py-2.5 flex items-center gap-2 border border-b-0 border-slate-600 rounded-t-md"
+                style={{background: 'rgba(30, 41, 59, 0.4)'}}
               >
                 <div className="w-8 h-8 rounded flex items-center justify-center"
-                  style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+                  style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
                   <span className="text-slate-500 text-xs">?</span>
                 </div>
                 <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
               </div>
               {waitingPlayer && (
                 <div 
-                  className="px-3 py-3 flex items-center justify-between"
-                  style={{background: 'rgba(100, 116, 139, 0.2)'}}
+                  className="px-3 py-2.5 flex items-center justify-between border border-slate-600 rounded-b-md"
+                  style={{background: 'rgba(30, 41, 59, 0.8)'}}
                 >
                   <div className="flex items-center gap-2.5 flex-1">
                     <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
@@ -447,32 +438,27 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`rounded-lg overflow-hidden transition-all ${
-          isClickable ? 'cursor-pointer hover:scale-[1.02] hover:shadow-xl' : ''
+        className={`relative transition-all ${
+          isClickable ? 'cursor-pointer hover:scale-[1.02]' : ''
         }`}
         style={{
-          background: '#1e293b',
-          border: `2px solid ${hasWinner ? 'rgba(34, 197, 94, 0.5)' : 'rgba(71, 85, 105, 0.5)'}`,
-          width: '280px',
-          boxShadow: hasWinner ? '0 4px 15px rgba(34, 197, 94, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.3)'
+          width: '220px'
         }}
       >
-        {/* Header del match con su ID */}
-        <div className="px-2 py-1 text-center border-b border-slate-700"
-          style={{background: 'rgba(0, 0, 0, 0.3)'}}>
-          <span className="text-xs font-bold text-yellow-400">Bracket {index + 1}</span>
+        {/* Match label encima */}
+        <div className="text-xs font-bold text-slate-400 mb-1 px-2">
+          Bracket {index + 1}
         </div>
         
         {/* Player 1 */}
         <div 
-          className={`px-3 py-3 flex items-center justify-between transition-all ${
-            match.winnerId === match.player1Id ? 'bg-gradient-to-r from-green-900/40 to-green-800/20' : ''
+          className={`px-3 py-2.5 flex items-center justify-between transition-all rounded-t-md border border-b-0 ${
+            match.winnerId === match.player1Id ? 'border-green-500/50' : 'border-slate-600'
           }`}
           style={{
-            borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
             background: match.winnerId === match.player1Id 
-              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.25) 0%, rgba(22, 163, 74, 0.05) 100%)'
-              : 'rgba(30, 41, 59, 0.5)'
+              ? 'rgba(34, 197, 94, 0.15)'
+              : 'rgba(30, 41, 59, 0.8)'
           }}
         >
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -520,13 +506,13 @@ export default function BracketPage({ params }: { params: { id: string } }) {
 
         {/* Player 2 */}
         <div 
-          className={`px-3 py-3 flex items-center justify-between transition-all ${
-            match.winnerId === match.player2Id ? 'bg-gradient-to-r from-green-900/40 to-green-800/20' : ''
+          className={`px-3 py-2.5 flex items-center justify-between transition-all rounded-b-md border ${
+            match.winnerId === match.player2Id ? 'border-green-500/50' : 'border-slate-600'
           }`}
           style={{
             background: match.winnerId === match.player2Id 
-              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.25) 0%, rgba(22, 163, 74, 0.05) 100%)'
-              : 'rgba(30, 41, 59, 0.5)'
+              ? 'rgba(34, 197, 94, 0.15)'
+              : 'rgba(30, 41, 59, 0.8)'
           }}
         >
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -572,24 +558,23 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           </div>
         </div>
 
-        {/* Footer con estado del match */}
+        {/* Status indicator as a small badge if needed */}
         {realMatch && realMatch.status !== 'COMPLETED' && (
-          <div className="px-3 py-1.5 text-center text-xs font-bold"
+          <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full"
             style={{
-              background: realMatch.status === 'CHECKIN' ? 'rgba(234, 179, 8, 0.15)' :
-                         realMatch.status === 'PLAYING' ? 'rgba(59, 130, 246, 0.15)' :
-                         'rgba(71, 85, 105, 0.15)',
-              color: realMatch.status === 'CHECKIN' ? '#eab308' :
-                    realMatch.status === 'PLAYING' ? '#3b82f6' :
-                    '#94a3b8',
-              borderTop: '1px solid rgba(71, 85, 105, 0.3)'
-            }}>
-            {realMatch.status === 'CHECKIN' && '⏰ Esperando check-in'}
-            {realMatch.status === 'PLAYING' && '🎮 En progreso'}
-            {realMatch.status === 'BANNING' && '🚫 Banning stages'}
-            {realMatch.status === 'STAGE_SELECT' && '🎯 Selección de stage'}
-            {realMatch.status === 'CHAR_SELECT' && '🎮 Selección de personaje'}
-          </div>
+              background: realMatch.status === 'CHECKIN' ? '#eab308' :
+                         realMatch.status === 'PLAYING' ? '#3b82f6' :
+                         '#94a3b8',
+              boxShadow: '0 0 8px currentColor'
+            }}
+            title={
+              realMatch.status === 'CHECKIN' ? 'Esperando check-in' :
+              realMatch.status === 'PLAYING' ? 'En progreso' :
+              realMatch.status === 'BANNING' ? 'Banning stages' :
+              realMatch.status === 'STAGE_SELECT' ? 'Selección de stage' :
+              'Selección de personaje'
+            }
+          />
         )}
       </div>
     );
@@ -640,7 +625,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 const verticalGap = rNum > 1 ? baseSpacing * Math.pow(2, rNum - 1) : baseSpacing;
 
                 return (
-                  <div key={roundNum} className="flex flex-col" style={{ minWidth: '300px' }}>
+                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '280px' }}>
                     {/* Título de la ronda */}
                     <div className="mb-6 p-2.5 rounded-lg text-center sticky top-0 z-10" 
                       style={{
@@ -653,12 +638,33 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                       </h4>
                     </div>
 
-                    {/* Matches de la ronda */}
-                    <div className="flex flex-col justify-around h-full" style={{ gap: `${verticalGap}px` }}>
+                    {/* Matches de la ronda con líneas conectoras */}
+                    <div className="flex flex-col justify-around h-full relative" style={{ gap: `${verticalGap}px` }}>
                       {roundMatches
                         .sort((a, b) => a.matchNumber - b.matchNumber)
                         .map((match, idx) => (
-                          <div key={match.id} className="flex items-center">
+                          <div key={match.id} className="relative flex items-center">
+                            {/* Línea conectora desde el match hacia la derecha */}
+                            {rNum < totalRounds && (
+                              <>
+                                {/* Línea horizontal desde el medio del match hacia la derecha */}
+                                <div 
+                                  className="absolute left-full top-1/2 w-8 border-t-2 border-slate-600"
+                                  style={{ transform: 'translateY(-50%)' }}
+                                />
+                                {/* Línea vertical que conecta con otros matches (solo para matches impares) */}
+                                {idx % 2 === 0 && idx + 1 < roundMatches.length && (
+                                  <div 
+                                    className="absolute left-full border-l-2 border-slate-600"
+                                    style={{
+                                      top: '50%',
+                                      height: `${verticalGap + 100}px`,
+                                      marginLeft: '32px'
+                                    }}
+                                  />
+                                )}
+                              </>
+                            )}
                             {renderMatch(match, idx, roundMatches)}
                           </div>
                         ))}
