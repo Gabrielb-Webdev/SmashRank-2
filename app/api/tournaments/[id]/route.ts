@@ -107,7 +107,12 @@ export async function PUT(
     } = body;
 
     // Calcular fechas automáticamente basadas en la nueva fecha de inicio
-    const newStartDate = new Date(startDate);
+    // Parsear la fecha como hora local sin conversión UTC
+    const dateStr = startDate;
+    const [datePart, timePart] = dateStr.includes('T') ? dateStr.split('T') : [dateStr, '00:00'];
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hours, minutes] = timePart.split(':').map(Number);
+    const newStartDate = new Date(year, month - 1, day, hours, minutes);
     const now = new Date();
     
     // Las inscripciones se mantienen abiertas hasta que inicie el torneo

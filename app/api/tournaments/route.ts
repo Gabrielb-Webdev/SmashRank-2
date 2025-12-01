@@ -98,7 +98,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Calcular fechas automáticamente
-    const startDate = new Date(validatedData.startDate);
+    // Parsear la fecha como hora local sin conversión UTC
+    const dateStr = validatedData.startDate;
+    const [datePart, timePart] = dateStr.includes('T') ? dateStr.split('T') : [dateStr, '00:00'];
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hours, minutes] = timePart.split(':').map(Number);
+    const startDate = new Date(year, month - 1, day, hours, minutes);
     const now = new Date();
     
     // Las inscripciones se abren inmediatamente
