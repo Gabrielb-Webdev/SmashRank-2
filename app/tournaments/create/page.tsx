@@ -85,13 +85,13 @@ export default function CreateTournamentPage() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     
     // Solo crear el torneo si estamos en el paso 3
     if (currentStep !== 3) {
-      // Si no estamos en el paso 3, avanzar al siguiente paso
-      nextStep();
       return;
     }
     
@@ -171,7 +171,7 @@ export default function CreateTournamentPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <div>
             {/* Step 1: Información Básica */}
             {currentStep === 1 && (
               <div className="card p-6 animate-fade-in-up">
@@ -391,7 +391,8 @@ export default function CreateTournamentPage() {
                 </button>
               ) : (
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => handleSubmit()}
                   className="btn-primary px-6 py-3 flex-1"
                   disabled={loading}
                 >
@@ -417,7 +418,7 @@ export default function CreateTournamentPage() {
                 Cancelar
               </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

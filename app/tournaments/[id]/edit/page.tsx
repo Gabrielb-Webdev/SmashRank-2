@@ -114,13 +114,13 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     
     // Solo guardar si estamos en el paso 3
     if (currentStep !== 3) {
-      // Si no estamos en el paso 3, avanzar al siguiente paso
-      nextStep();
       return;
     }
     
