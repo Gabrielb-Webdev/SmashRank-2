@@ -21,11 +21,49 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showUnregisterModal, setShowUnregisterModal] = useState(false);
   const [registering, setRegistering] = useState(false);
+  const [timeUntilCheckin, setTimeUntilCheckin] = useState<string>('');
   const tournamentId = params.id;
 
   useEffect(() => {
     fetchTournament();
   }, [tournamentId]);
+
+  // Contador regresivo para check-in
+  useEffect(() => {
+    if (!tournament || !isRegistered || hasCheckedIn) return;
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const checkinStart = new Date(tournament.checkinStart);
+      const checkinEnd = new Date(tournament.checkinEnd);
+
+      if (now < checkinStart) {
+        // Antes del check-in
+        const diff = checkinStart.getTime() - now.getTime();
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        setTimeUntilCheckin(`Check-in abre en ${hours}h ${minutes}m ${seconds}s`);
+        setCanCheckIn(false);
+      } else if (now >= checkinStart && now <= checkinEnd) {
+        // Durante el check-in
+        const diff = checkinEnd.getTime() - now.getTime();
+        const minutes = Math.floor(diff / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        setTimeUntilCheckin(`⏰ ${minutes}m ${seconds}s restantes`);
+        setCanCheckIn(true);
+      } else {
+        // Después del check-in
+        setTimeUntilCheckin('Check-in cerrado');
+        setCanCheckIn(false);
+      }
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [tournament, isRegistered, hasCheckedIn]);
 
   const fetchTournament = async () => {
     setLoading(true);
@@ -380,17 +418,25 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                     <p className="text-green-400 font-bold">¡Estás inscrito!</p>
                   </div>
                   
-                  {canCheckIn && (
-                    <button onClick={handleCheckIn} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)'}}>
-                      ✅ Hacer Check-in
-                    </button>
-                  )}
-                  
-                  {hasCheckedIn && (
+                  {hasCheckedIn ? (
                     <div className="p-4 rounded-lg text-center" style={{background: 'rgba(59, 130, 246, 0.2)', border: '2px solid rgba(59, 130, 246, 0.4)'}}>
                       <Check className="w-8 h-8 text-blue-400 mx-auto mb-2" />
                       <p className="text-blue-400 font-bold">Check-in Completado</p>
                     </div>
+                  ) : (
+                    <>
+                      {timeUntilCheckin && (
+                        <div className="p-4 rounded-lg text-center" style={{background: 'rgba(255, 215, 0, 0.1)', border: '2px solid rgba(255, 215, 0, 0.3)'}}>
+                          <p className="text-yellow-400 font-bold text-sm">{timeUntilCheckin}</p>
+                        </div>
+                      )}
+                      
+                      {canCheckIn && (
+                        <button onClick={handleCheckIn} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)'}}>
+                          ✅ Hacer Check-in
+                        </button>
+                      )}
+                    </>
                   )}
                   
                   <button onClick={() => setShowUnregisterModal(true)} className="w-full py-3 rounded-lg font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-all border-2 border-red-500/40">
