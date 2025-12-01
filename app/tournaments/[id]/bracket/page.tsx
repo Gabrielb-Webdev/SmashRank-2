@@ -300,19 +300,24 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       return (
         <div 
           key={match.id} 
-          className="relative"
-          style={{
-            width: '240px'
-          }}
+          className="relative flex items-center gap-2"
         >
-          {/* Match label */}
-          <div className="text-xs font-bold text-slate-500 mb-1.5 px-2">
-            Bracket {index + 1}
+          {/* Match label a la IZQUIERDA como en start.gg */}
+          <div 
+            className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold flex-shrink-0"
+            style={{
+              background: 'rgba(71, 85, 105, 0.4)',
+              border: '2px solid rgba(148, 163, 184, 0.3)',
+              color: '#64748b'
+            }}>
+            {matchLabel}
           </div>
           
-          {/* Dos slots vacíos con referencia al match de origen */}
-          <div 
-            className="px-3 py-2.5 flex items-center gap-2 border-2 border-b-0 border-dashed border-slate-600 rounded-t-lg"
+          {/* Container del match */}
+          <div style={{ width: '220px' }}>
+            {/* Dos slots vacíos con referencia al match de origen */}
+            <div 
+              className="px-3 py-2.5 flex items-center gap-2 border-2 border-b-0 border-dashed border-slate-600 rounded-t-lg"
             style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
           >
             <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
@@ -330,6 +335,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               <span className="text-slate-600 text-xs">?</span>
             </div>
             <span className="text-slate-500 italic text-xs">{slot2Text}</span>
+          </div>
           </div>
         </div>
       );
@@ -363,21 +369,26 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       return (
         <div 
           key={match.id} 
-          className="relative"
-          style={{
-            width: '240px'
-          }}
+          className="relative flex items-center gap-2"
         >
-          {/* Match label */}
-          <div className="text-xs font-bold text-slate-400 mb-1.5 px-2">
-            Bracket {index + 1}
+          {/* Match label a la IZQUIERDA como en start.gg */}
+          <div 
+            className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold flex-shrink-0"
+            style={{
+              background: 'rgba(71, 85, 105, 0.6)',
+              border: '2px solid rgba(148, 163, 184, 0.4)',
+              color: '#94a3b8'
+            }}>
+            {matchLabel}
           </div>
           
-          {/* Jugador esperando o slot esperando */}
-          {isPlayer1Waiting && waitingPlayer ? (
-            <>
-              <div 
-                className="px-3 py-3 flex items-center justify-between border-2 border-b-0 border-slate-700 rounded-t-lg"
+          {/* Container del match */}
+          <div style={{ width: '220px' }}>
+            {/* Jugador esperando o slot esperando */}
+            {isPlayer1Waiting && waitingPlayer ? (
+              <>
+                <div 
+                  className="px-3 py-3 flex items-center justify-between border-2 border-b-0 border-slate-700 rounded-t-lg"
                 style={{
                   background: 'rgba(30, 41, 59, 0.95)',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
@@ -430,6 +441,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               )}
             </>
           )}
+          </div>
         </div>
       );
     }
@@ -439,23 +451,28 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`relative transition-all ${
+        className={`relative transition-all flex items-center gap-2 ${
           isClickable ? 'cursor-pointer hover:scale-105 hover:z-10' : ''
         }`}
-        style={{
-          width: '240px'
-        }}
       >
-        {/* Match label encima */}
-        <div className="text-xs font-bold text-yellow-500/80 mb-1.5 px-2">
-          Bracket {index + 1}
+        {/* Match label a la IZQUIERDA como en start.gg */}
+        <div 
+          className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold flex-shrink-0"
+          style={{
+            background: 'rgba(71, 85, 105, 0.8)',
+            border: '2px solid rgba(148, 163, 184, 0.5)',
+            color: 'white'
+          }}>
+          {matchLabel}
         </div>
         
-        {/* Player 1 */}
-        <div 
-          className={`px-3 py-3 flex items-center justify-between transition-all rounded-t-lg border-2 border-b-0 ${
-            match.winnerId === match.player1Id ? 'border-green-400' : 'border-slate-700'
-          }`}
+        {/* Container del match */}
+        <div style={{ width: '220px' }}>
+          {/* Player 1 */}
+          <div 
+            className={`px-3 py-3 flex items-center justify-between transition-all rounded-t-lg border-2 border-b-0 ${
+              match.winnerId === match.player1Id ? 'border-green-400' : 'border-slate-700'
+            }`}
           style={{
             background: match.winnerId === match.player1Id 
               ? 'linear-gradient(90deg, rgba(34, 197, 94, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%)'
@@ -583,6 +600,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             }
           />
         )}
+        </div>
       </div>
     );
   };
