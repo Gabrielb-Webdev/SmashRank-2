@@ -793,6 +793,43 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               <h1 className="text-4xl font-black mb-2 text-white">Bracket del Torneo</h1>
               <p className="text-slate-300 text-lg">Eliminación Doble - {players.length} Participantes</p>
               
+              {/* Botón Reset para Admin (cuando torneo está en progreso) */}
+              {session?.user?.role === 'ADMIN' && tournamentStatus === 'IN_PROGRESS' && (
+                <div className="mt-6 max-w-2xl mx-auto">
+                  <button
+                    onClick={async () => {
+                      if (!confirm('¿Resetear el torneo? Esto eliminará todos los matches y volverá el torneo a estado DRAFT para que puedas regenerar el bracket.')) return;
+                      try {
+                        const response = await fetch(`/api/tournaments/${params.id}/reset`, {
+                          method: 'POST',
+                        });
+                        const data = await response.json();
+                        if (!response.ok) {
+                          toast.error(data.error || 'Error al resetear');
+                          return;
+                        }
+                        toast.success('Torneo reseteado exitosamente');
+                        setTournamentStatus('DRAFT');
+                        await loadBracket();
+                      } catch (err) {
+                        console.error('Error:', err);
+                        toast.error('Error al resetear el torneo');
+                      }
+                    }}
+                    className="w-full py-3 rounded-xl font-bold text-white text-sm transition-all hover:scale-[1.02]"
+                    style={{
+                      background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                      border: '2px solid rgba(239, 68, 68, 0.5)',
+                      boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
+                    }}>
+                    🔄 RESETEAR TORNEO (Volver a DRAFT)
+                  </button>
+                  <p className="text-center text-slate-400 text-xs mt-2">
+                    Útil para testing: elimina matches y permite regenerar bracket
+                  </p>
+                </div>
+              )}
+              
               {/* Botones de Admin para Regenerar e Iniciar */}
               {session?.user?.role === 'ADMIN' && tournamentStatus !== 'IN_PROGRESS' && tournamentStatus !== 'COMPLETED' && (
                 <div className="mt-6 max-w-2xl mx-auto space-y-4">
