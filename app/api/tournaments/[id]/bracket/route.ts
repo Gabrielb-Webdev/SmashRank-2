@@ -22,27 +22,6 @@ export async function POST(
     // Obtener el torneo con todas las inscripciones que hicieron check-in
     const tournament = await prisma.tournament.findUnique({
       where: { id: params.id },
-      include: {
-        registrations: {
-          where: {
-            checkedIn: true, // Solo los que hicieron check-in participan
-          },
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                wins: true,
-                losses: true,
-                points: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: 'asc',
-          },
-        },
-      },
     });
 
     if (!tournament) {
@@ -52,8 +31,22 @@ export async function POST(
       );
     }
 
+    // Obtener registraciones con check-in
+    const registrations = await prisma.registration.findMany({
+      where: {
+        tournamentId: params.id,
+        checkedIn: true,
+      },
+      include: {
+        user: true,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
     // Verificar que hay suficientes participantes
-    if (tournament.registrations.length < 2) {
+    if (registrations.length < 2) {
       return NextResponse.json(
         { error: 'Se necesitan al menos 2 participantes con check-in para generar el bracket' },
         { status: 400 }
@@ -61,7 +54,7 @@ export async function POST(
     }
 
     // Asignar seeds basados en el ranking
-    const playersWithSeeds = assignSeeds(tournament.registrations);
+    const playersWithSeeds = assignSeeds(registrations);
 
     // Actualizar los seeds en la base de datos
     await Promise.all(
@@ -77,17 +70,24 @@ export async function POST(
     const bracket = generateDoubleEliminationBracket(playersWithSeeds);
 
     // Guardar el bracket en la base de datos
-    await prisma.bracket.upsert({
+    const existingBracket = await prisma.bracket.findFirst({
       where: { tournamentId: params.id },
-      create: {
-        tournamentId: params.id,
-        type: 'double_elimination',
-        data: bracket as any,
-      },
-      update: {
-        data: bracket as any,
-      },
     });
+
+    if (existingBracket) {
+      await prisma.bracket.update({
+        where: { id: existingBracket.id },
+        data: { data: bracket as any },
+      });
+    } else {
+      await prisma.bracket.create({
+        data: {
+          tournamentId: params.id,
+          type: 'double_elimination',
+          data: bracket as any,
+        },
+      });
+    }
 
     // Actualizar el estado del torneo
     await prisma.tournament.update({
@@ -115,7 +115,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const bracket = await prisma.bracket.findUnique({
+    const bracket = await prisma.bracket.findFirst({
       where: { tournamentId: params.id },
       include: {
         tournament: {
@@ -179,7 +179,7 @@ export async function PUT(
     }
 
     // Obtener el bracket actual
-    const currentBracket = await prisma.bracket.findUnique({
+    const currentBracket = await prisma.bracket.findFirst({
       where: { tournamentId: params.id },
     });
 
@@ -223,7 +223,7 @@ export async function PUT(
 
     // Guardar el bracket actualizado
     await prisma.bracket.update({
-      where: { tournamentId: params.id },
+      where: { id: currentBracket.id },
       data: { data: bracketData as any },
     });
 

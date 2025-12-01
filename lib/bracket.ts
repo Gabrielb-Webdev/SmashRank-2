@@ -103,13 +103,13 @@ export function assignSeeds(players: any[]): Player[] {
  * Genera un bracket de double elimination
  */
 export function generateDoubleEliminationBracket(players: Player[]): Bracket {
-  const seededPlayers = assignSeeds(players);
-  const bracketSize = nextPowerOfTwo(seededPlayers.length);
+  // Los jugadores ya vienen con seeds asignados
+  const bracketSize = nextPowerOfTwo(players.length);
   const seeding = generateSeeding(bracketSize);
   
   // Crear array de jugadores según el seeding
   const orderedPlayers: (Player | null)[] = seeding.map(seed => {
-    return seededPlayers.find(p => p.seed === seed) || null;
+    return players.find(p => p.seed === seed) || null;
   });
   
   // Winners Bracket - Primera ronda
