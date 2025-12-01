@@ -1,4 +1,4 @@
-https://smash-rank-2.vercel.app// Utilidades para generación y manejo de brackets
+// Utilidades para generación y manejo de brackets
 
 export interface Player {
   id: string;
