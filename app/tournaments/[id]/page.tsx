@@ -354,7 +354,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                   <p className="text-xs text-slate-400 uppercase font-semibold">Jugadores</p>
                 </div>
                 <p className="text-white font-bold text-lg">
-                  {tournament.currentParticipants}
+                  {tournament.registrations?.length || 0}
                   {tournament.maxParticipants && <span className="text-slate-400"> / {tournament.maxParticipants}</span>}
                 </p>
               </div>
