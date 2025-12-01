@@ -106,11 +106,12 @@ export async function POST(req: NextRequest) {
     const startDate = new Date(year, month - 1, day, hours, minutes);
     const now = new Date();
     
-    // Las inscripciones se abren inmediatamente y cierran 30 minutos antes del inicio
-    // El check-in se abre 30 minutos antes y cierra cuando inicia el torneo
+    // Las inscripciones se abren inmediatamente y cierran cuando inicia el torneo
+    // El check-in se abre 30 minutos antes del inicio y cierra cuando inicia el torneo
+    // Durante esos 30 minutos la gente puede inscribirse Y hacer check-in
     const registrationStart = now;
+    const registrationEnd = startDate; // Inscripciones abiertas hasta el inicio
     const checkinStart = new Date(startDate.getTime() - 30 * 60 * 1000);
-    const registrationEnd = checkinStart; // Inscripciones cierran cuando abre check-in
     const checkinEnd = startDate;
 
     const tournament = await prisma.tournament.create({

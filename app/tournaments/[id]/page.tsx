@@ -101,29 +101,39 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
       const registrationEnd = parseUTCAsLocal(tournament.registrationEnd);
       const startDate = parseUTCAsLocal(tournament.startDate);
 
+      const checkinStart = parseUTCAsLocal(tournament.checkinStart);
+      
       if (now < registrationStart) {
         setRegistrationStatus('Las inscripciones aún no abren');
         setCanRegister(false);
-      } else if (now >= registrationStart && now < registrationEnd) {
-        // Durante las inscripciones
-        const diff = registrationEnd.getTime() - now.getTime();
+      } else if (now >= registrationStart && now < startDate) {
+        // Durante las inscripciones (hasta que inicia el torneo)
+        const diff = startDate.getTime() - now.getTime();
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         
-        if (hours > 0) {
-          setRegistrationStatus(`Inscripciones cierran en ${hours}h ${minutes}m`);
-        } else if (minutes > 0) {
-          setRegistrationStatus(`Inscripciones cierran en ${minutes}m ${seconds}s`);
+        // Mostrar mensaje especial si ya abrió el check-in
+        if (now >= checkinStart) {
+          if (hours > 0) {
+            setRegistrationStatus(`⏰ Check-in abierto | Inscripciones cierran en ${hours}h ${minutes}m`);
+          } else if (minutes > 0) {
+            setRegistrationStatus(`⏰ Check-in abierto | Inscripciones cierran en ${minutes}m ${seconds}s`);
+          } else {
+            setRegistrationStatus(`⏰ Check-in abierto | Inscripciones cierran en ${seconds}s`);
+          }
         } else {
-          setRegistrationStatus(`Inscripciones cierran en ${seconds}s`);
+          if (hours > 0) {
+            setRegistrationStatus(`Inscripciones cierran en ${hours}h ${minutes}m`);
+          } else if (minutes > 0) {
+            setRegistrationStatus(`Inscripciones cierran en ${minutes}m ${seconds}s`);
+          } else {
+            setRegistrationStatus(`Inscripciones cierran en ${seconds}s`);
+          }
         }
         setCanRegister(true);
-      } else if (now >= registrationEnd && now < startDate) {
-        setRegistrationStatus('Inscripciones cerradas - Check-in abierto');
-        setCanRegister(false);
       } else {
-        setRegistrationStatus('Torneo iniciado');
+        setRegistrationStatus('Inscripciones cerradas - Esperando inicio del torneo');
         setCanRegister(false);
       }
     };
