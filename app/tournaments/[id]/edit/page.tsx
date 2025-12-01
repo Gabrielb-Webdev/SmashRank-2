@@ -83,7 +83,7 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
           description: data.description || '',
           format: data.format || 'DOUBLE_ELIMINATION',
           maxParticipants: String(data.maxParticipants || 32),
-          startDate: formatDateTimeLocal(new Date(data.startDate)),
+          startDate: formatDateTimeLocal(data.startDate),
           stockCount: stockMatch ? stockMatch[1] : '3',
           timeLimit: timeMatch ? timeMatch[1] : '7',
           itemsRule: itemsRuleValue,
@@ -102,12 +102,17 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
     }
   };
 
-  const formatDateTimeLocal = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+  const formatDateTimeLocal = (dateString: string) => {
+    // Parsear la fecha sin conversión de zona horaria
+    // La fecha viene como ISO string de la DB, pero queremos mantener la hora tal cual
+    const date = new Date(dateString);
+    
+    // Obtener componentes usando UTC para evitar conversión
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
