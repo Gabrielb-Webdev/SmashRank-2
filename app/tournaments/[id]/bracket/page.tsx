@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Trophy, Users, AlertCircle, ArrowLeft, Sparkles, Zap, Target, Play } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MatchModal from '@/components/matches/MatchModal';
+import BracketViewerV2 from '@/components/brackets/BracketViewerV2';
 
 interface Player {
   id: string;
@@ -302,41 +303,25 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           key={match.id} 
           className="relative flex items-center gap-3"
         >
-          {/* Match label a la IZQUIERDA como en start.gg */}
+          {/* Match label PEQUEÑO */}
           <div 
-            className="w-12 h-[72px] rounded-md flex items-center justify-center text-base font-black flex-shrink-0"
+            className="w-8 h-16 rounded-md flex items-center justify-center text-sm font-bold flex-shrink-0"
             style={{
-              background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, rgba(30, 41, 59, 0.6) 100%)',
-              border: '2px solid rgba(148, 163, 184, 0.3)',
-              color: '#64748b',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+              background: 'rgba(51, 65, 85, 0.8)',
+              border: '1px solid rgba(148, 163, 184, 0.3)',
+              color: '#94a3b8'
             }}>
             {matchLabel}
           </div>
           
-          {/* Container del match */}
-          <div style={{ width: '260px' }}>
-            {/* Dos slots vacíos con referencia al match de origen */}
-            <div 
-              className="px-3 py-2.5 flex items-center gap-2 border-2 border-b-0 border-dashed border-slate-600 rounded-t-lg"
-            style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
-          >
-            <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
-              style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-              <span className="text-slate-600 text-xs">?</span>
+          {/* Container SIMPLIFICADO */}
+          <div style={{ width: '240px' }}>
+            <div className="px-2 py-2 flex items-center gap-2 border border-b-0 border-dashed border-slate-600 rounded-t bg-slate-800/30">
+              <span className="text-slate-500 italic text-xs">{slot1Text}</span>
             </div>
-            <span className="text-slate-500 italic text-xs">{slot1Text}</span>
-          </div>
-          <div 
-            className="px-4 py-3.5 flex items-center gap-2 border-2 border-dashed border-slate-600/60 rounded-b-lg"
-            style={{background: 'rgba(30, 41, 59, 0.6)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
-          >
-            <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
-              style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-              <span className="text-slate-600 text-xs">?</span>
+            <div className="px-2 py-2 flex items-center gap-2 border border-dashed border-slate-600 rounded-b bg-slate-800/30">
+              <span className="text-slate-500 italic text-xs">{slot2Text}</span>
             </div>
-            <span className="text-slate-500 italic text-xs">{slot2Text}</span>
-          </div>
           </div>
         </div>
       );
@@ -372,218 +357,112 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           key={match.id} 
           className="relative flex items-center gap-3"
         >
-          {/* Match label a la IZQUIERDA como en start.gg */}
+          {/* Match label PEQUEÑO */}
           <div 
-            className="w-12 h-[72px] rounded-md flex items-center justify-center text-base font-black flex-shrink-0"
+            className="w-8 h-16 rounded-md flex items-center justify-center text-sm font-bold flex-shrink-0"
             style={{
-              background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%)',
-              border: '2px solid rgba(148, 163, 184, 0.4)',
-              color: '#94a3b8',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)'
+              background: 'rgba(51, 65, 85, 0.8)',
+              border: '1px solid rgba(148, 163, 184, 0.3)',
+              color: '#94a3b8'
             }}>
             {matchLabel}
           </div>
           
-          {/* Container del match */}
-          <div style={{ width: '260px' }}>
-            {/* Jugador esperando o slot esperando */}
+          {/* Container SIMPLIFICADO */}
+          <div style={{ width: '240px' }}>
             {isPlayer1Waiting && waitingPlayer ? (
               <>
-                <div 
-                  className="px-3 py-3 flex items-center justify-between border-2 border-b-0 border-slate-700 rounded-t-lg"
-                style={{
-                  background: 'rgba(30, 41, 59, 0.95)',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
-                }}
-              >
-                <div className="flex items-center gap-2.5 flex-1">
-                  <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
-                    style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
-                    {waitingPlayer.username.charAt(0).toUpperCase()}
+                <div className="px-2 py-2 flex items-center border border-b-0 border-slate-700 rounded-t bg-slate-800/50">
+                  <span className="text-white text-xs font-bold">{waitingPlayer.username}</span>
+                </div>
+                <div className="px-2 py-2 flex items-center border border-dashed border-slate-600 rounded-b bg-slate-800/30">
+                  <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="px-2 py-2 flex items-center border border-b-0 border-dashed border-slate-600 rounded-t bg-slate-800/30">
+                  <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
+                </div>
+                {waitingPlayer && (
+                  <div className="px-2 py-2 flex items-center border border-slate-700 rounded-b bg-slate-800/50">
+                    <span className="text-white text-xs font-bold">{waitingPlayer.username}</span>
                   </div>
-                  <span className="font-bold text-white text-sm">{waitingPlayer.username}</span>
-                </div>
-              </div>
-              <div 
-                className="px-4 py-3.5 flex items-center gap-2 border-2 border-dashed border-slate-600/60 rounded-b-lg"
-                style={{background: 'rgba(30, 41, 59, 0.6)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
-              >
-                <div className="w-8 h-8 rounded flex items-center justify-center"
-                  style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-                  <span className="text-slate-500 text-xs">?</span>
-                </div>
-                <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
-              </div>
-            </>
-          ) : (
-            <>
-              <div 
-                className="px-3 py-2.5 flex items-center gap-2 border-2 border-b-0 border-dashed border-slate-600 rounded-t-lg"
-                style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
-              >
-                <div className="w-8 h-8 rounded flex items-center justify-center"
-                  style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-                  <span className="text-slate-500 text-xs">?</span>
-                </div>
-                <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
-              </div>
-              {waitingPlayer && (
-                <div 
-                  className="px-4 py-3.5 flex items-center justify-between border-2 border-slate-700/50 rounded-b-lg"
-                  style={{background: 'rgba(30, 41, 59, 0.95)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'}}
-                >
-                  <div className="flex items-center gap-2.5 flex-1">
-                    <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
-                      style={{background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)', color: 'white'}}>
-                      {waitingPlayer.username.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="font-bold text-white text-sm">{waitingPlayer.username}</span>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
           </div>
         </div>
       );
     }
 
-    // Match normal estilo start.gg
+    // Match normal SIMPLIFICADO
     return (
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`relative transition-all flex items-center gap-3 ${
-          isClickable ? 'cursor-pointer hover:scale-[1.02] hover:z-10' : ''
+        className={`relative transition-all flex items-center gap-2 ${
+          isClickable ? 'cursor-pointer hover:scale-[1.01] hover:z-10' : ''
         }`}
       >
-        {/* Match label a la IZQUIERDA como en start.gg - MÁS GRANDE */}
+        {/* Match label PEQUEÑO a la izquierda */}
         <div 
-          className="w-12 h-[72px] rounded-md flex items-center justify-center text-base font-black flex-shrink-0"
+          className="w-8 h-16 rounded-md flex items-center justify-center text-sm font-bold flex-shrink-0"
           style={{
-            background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
-            border: '2px solid rgba(148, 163, 184, 0.6)',
-            color: '#e2e8f0',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)'
+            background: 'rgba(51, 65, 85, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.3)',
+            color: '#94a3b8'
           }}>
           {matchLabel}
         </div>
         
-        {/* Container del match */}
-        <div style={{ width: '260px' }}>
-          {/* Player 1 */}
+        {/* Container del match MÁS COMPACTO */}
+        <div style={{ width: '240px' }}>
+          {/* Player 1 SIMPLIFICADO */}
           <div 
-            className={`px-3 py-3 flex items-center justify-between transition-all rounded-t-lg border-2 border-b-0 ${
-              match.winnerId === match.player1Id ? 'border-green-400' : 'border-slate-700'
+            className={`px-2 py-2 flex items-center justify-between rounded-t border border-b-0 ${
+              match.winnerId === match.player1Id ? 'border-red-500 bg-red-900/30' : 'border-slate-700 bg-slate-800/50'
             }`}
-          style={{
-            background: match.winnerId === match.player1Id 
-              ? 'linear-gradient(90deg, rgba(34, 197, 94, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%)'
-              : 'rgba(30, 41, 59, 0.95)',
-            boxShadow: match.winnerId === match.player1Id 
-              ? '0 0 20px rgba(34, 197, 94, 0.3)' 
-              : '0 2px 8px rgba(0, 0, 0, 0.4)'
-          }}
-        >
-          <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            {/* Avatar del jugador */}
-            <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-              match.winnerId === match.player1Id ? 'ring-2 ring-green-400' : ''
-            }`}
-              style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
-              {player1.username.charAt(0).toUpperCase()}
-            </div>
-            
-            {/* Nombre del jugador */}
-            <div className="flex-1 min-w-0">
-              <span className={`font-bold text-sm truncate block ${
-                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-300'
+          >
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <span className={`text-xs truncate ${
+                match.winnerId === match.player1Id ? 'text-white font-bold' : 'text-slate-300'
               }`}>
                 {player1.username}
               </span>
-              {/* Personaje usado (si está disponible) */}
-              {realMatch?.player1Character && (
-                <span className="text-xs text-slate-400 truncate block">
-                  {realMatch.player1Character}
-                </span>
-              )}
+              {match.winnerId === match.player1Id && <span className="text-xs">👑</span>}
             </div>
-          </div>
-
-          {/* Score y winner badge */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {match.winnerId === match.player1Id && (
-              <div className="w-6 h-6 rounded-sm flex items-center justify-center"
-                style={{background: 'rgba(34, 197, 94, 0.3)'}}>
-                <Trophy className="w-3.5 h-3.5 text-green-400" />
-              </div>
-            )}
             {realMatch && (
-              <div className={`w-8 h-8 rounded flex items-center justify-center font-bold text-sm ${
-                match.winnerId === match.player1Id ? 'bg-green-600 text-white' : 'bg-slate-700 text-slate-300'
+              <span className={`text-sm font-bold ml-2 ${
+                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-400'
               }`}>
                 {realMatch.player1Score || 0}
-              </div>
+              </span>
             )}
           </div>
-        </div>
 
-        {/* Player 2 */}
-        <div 
-          className={`px-3 py-3 flex items-center justify-between transition-all rounded-b-lg border-2 ${
-            match.winnerId === match.player2Id ? 'border-green-400' : 'border-slate-700'
-          }`}
-          style={{
-            background: match.winnerId === match.player2Id 
-              ? 'linear-gradient(90deg, rgba(34, 197, 94, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%)'
-              : 'rgba(30, 41, 59, 0.95)',
-            boxShadow: match.winnerId === match.player2Id 
-              ? '0 0 20px rgba(34, 197, 94, 0.3)' 
-              : '0 2px 8px rgba(0, 0, 0, 0.4)'
-          }}
-        >
-          <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            {/* Avatar del jugador */}
-            <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-              match.winnerId === match.player2Id ? 'ring-2 ring-green-400' : ''
+          {/* Player 2 SIMPLIFICADO */}
+          <div 
+            className={`px-2 py-2 flex items-center justify-between rounded-b border border-t-0 ${
+              match.winnerId === match.player2Id ? 'border-red-500 bg-red-900/30' : 'border-slate-700 bg-slate-800/50'
             }`}
-              style={{background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)', color: 'white'}}>
-              {player2.username.charAt(0).toUpperCase()}
-            </div>
-            
-            {/* Nombre del jugador */}
-            <div className="flex-1 min-w-0">
-              <span className={`font-bold text-sm truncate block ${
-                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-300'
+          >
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <span className={`text-xs truncate ${
+                match.winnerId === match.player2Id ? 'text-white font-bold' : 'text-slate-300'
               }`}>
                 {player2.username}
               </span>
-              {/* Personaje usado (si está disponible) */}
-              {realMatch?.player2Character && (
-                <span className="text-xs text-slate-400 truncate block">
-                  {realMatch.player2Character}
-                </span>
-              )}
+              {match.winnerId === match.player2Id && <span className="text-xs">👑</span>}
             </div>
-          </div>
-
-          {/* Score y winner badge */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {match.winnerId === match.player2Id && (
-              <div className="w-6 h-6 rounded-sm flex items-center justify-center"
-                style={{background: 'rgba(34, 197, 94, 0.3)'}}>
-                <Trophy className="w-3.5 h-3.5 text-green-400" />
-              </div>
-            )}
             {realMatch && (
-              <div className={`w-8 h-8 rounded flex items-center justify-center font-bold text-sm ${
-                match.winnerId === match.player2Id ? 'bg-green-600 text-white' : 'bg-slate-700 text-slate-300'
+              <span className={`text-sm font-bold ml-2 ${
+                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-400'
               }`}>
                 {realMatch.player2Score || 0}
-              </div>
+              </span>
             )}
           </div>
-        </div>
 
         {/* Status indicator as a small badge if needed */}
         {realMatch && realMatch.status !== 'COMPLETED' && (
@@ -631,38 +510,31 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const totalRounds = Math.max(...Object.keys(rounds).map(Number));
 
     return (
-      <div className="mb-12">
-        {/* Título del bracket */}
-        <div className="mb-6 p-4 rounded-xl" 
-          style={{background: gradient, border: '2px solid rgba(220, 20, 60, 0.5)', boxShadow: '0 4px 20px rgba(220, 20, 60, 0.2)'}}>
-          <h3 className="text-2xl font-black text-white flex items-center gap-3">
-            <span className="text-3xl">{icon}</span>
+      <div className="mb-8">
+        {/* Título del bracket SIMPLIFICADO */}
+        <div className="mb-4 p-3 rounded-lg border border-red-600/50 bg-red-900/20">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <span className="text-xl">{icon}</span>
             {title}
           </h3>
         </div>
 
-        {/* Bracket horizontal tipo start.gg */}
-        <div className="overflow-x-auto pb-8">
-          <div className="flex gap-8 min-w-min">
+        {/* Bracket horizontal COMPACTO */}
+        <div className="overflow-x-auto pb-4">
+          <div className="flex gap-3 min-w-min">
             {Object.entries(rounds)
               .sort((a, b) => Number(a[0]) - Number(b[0]))
               .map(([roundNum, roundMatches]) => {
                 const rNum = Number(roundNum);
                 // Calcular espaciado vertical que aumenta con cada ronda
-                const baseSpacing = 8;
+                const baseSpacing = 4;
                 const verticalGap = rNum > 1 ? baseSpacing * Math.pow(2, rNum - 1) : baseSpacing;
 
                 return (
-                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '400px' }}>
-                    {/* Título de la ronda */}
-                    <div className="mb-8 p-3 rounded-lg text-center sticky top-0 z-10" 
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(255, 215, 0, 0.15) 100%)',
-                        border: '2px solid rgba(220, 20, 60, 0.5)',
-                        boxShadow: '0 4px 15px rgba(220, 20, 60, 0.3)',
-                        backdropFilter: 'blur(10px)'
-                      }}>
-                      <h4 className="font-black text-white text-base tracking-wide uppercase">
+                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '300px' }}>
+                    {/* Título de la ronda SIMPLIFICADO */}
+                    <div className="mb-4 p-2 rounded text-center border border-red-600/30 bg-red-900/10">
+                      <h4 className="font-bold text-white text-sm uppercase">
                         {getRoundName(rNum, totalRounds)}
                       </h4>
                     </div>
@@ -753,7 +625,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4">
         <div className="mb-6">
           <button 
             onClick={() => router.back()}
