@@ -321,7 +321,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', animation: 'pulse 2s infinite'}}>
             <Trophy className="w-8 h-8 text-white animate-bounce" />
           </div>
-          <p className="text-white font-bold">Cargando bracket...</p>
+          <p className="text-white font-bold">Cargando información del bracket...</p>
         </div>
       </div>
     );
