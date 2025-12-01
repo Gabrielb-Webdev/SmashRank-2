@@ -82,10 +82,10 @@ export async function POST(
       create: {
         tournamentId: params.id,
         type: 'double_elimination',
-        data: bracket,
+        data: bracket as any,
       },
       update: {
-        data: bracket,
+        data: bracket as any,
       },
     });
 
@@ -224,7 +224,7 @@ export async function PUT(
     // Guardar el bracket actualizado
     await prisma.bracket.update({
       where: { tournamentId: params.id },
-      data: { data: bracketData },
+      data: { data: bracketData as any },
     });
 
     return NextResponse.json({
