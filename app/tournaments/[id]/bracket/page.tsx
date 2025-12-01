@@ -1,3 +1,4 @@
+/* VERSIÓN SIMPLIFICADA v2.0.1 - ${new Date().toISOString()} */
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Trophy, Users, AlertCircle, ArrowLeft, Sparkles, Zap, Target, Play } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MatchModal from '@/components/matches/MatchModal';
-import BracketViewerV2 from '@/components/brackets/BracketViewerV2';
 
 interface Player {
   id: string;
