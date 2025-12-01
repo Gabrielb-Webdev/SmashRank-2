@@ -84,7 +84,14 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         const data = await response.json();
         setBracket(data);
         setPlayers(data.tournament.registrations.filter((r: any) => r.checkedIn));
-      } else if (response.status !== 404) {
+      } else if (response.status === 404) {
+        // Si el bracket no existe, cargar información del torneo para mostrar participantes
+        const tournamentResponse = await fetch(`/api/tournaments/${params.id}`);
+        if (tournamentResponse.ok) {
+          const tournamentData = await tournamentResponse.json();
+          setPlayers(tournamentData.registrations.filter((r: any) => r.checkedIn));
+        }
+      } else {
         const errorData = await response.json();
         setError(errorData.error || 'Error al cargar el bracket');
       }
