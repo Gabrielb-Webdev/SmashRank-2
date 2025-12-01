@@ -208,9 +208,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const player1 = getPlayerInfo(match.player1Id);
     const player2 = getPlayerInfo(match.player2Id);
     
-    // Detectar si es un BYE (un jugador sin oponente)
-    const isBye = (!player1 && player2) || (player1 && !player2);
-    const byePlayer = player1 || player2;
+    // Si solo hay un jugador, no mostramos este match (avanza automáticamente a la siguiente ronda)
+    const hasBothPlayers = player1 && player2;
     
     // Buscar match real si el torneo está en progreso
     const realMatch = tournamentStatus === 'IN_PROGRESS' 
@@ -222,34 +221,9 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       realMatch.player1Id === session?.user?.id || 
       realMatch.player2Id === session?.user?.id);
 
-    // Si es BYE, mostrar card compacto verde
-    if (isBye && byePlayer) {
-      return (
-        <div 
-          key={match.id} 
-          className="rounded-lg overflow-hidden"
-          style={{
-            background: 'rgba(22, 163, 74, 0.15)',
-            border: '2px solid rgba(34, 197, 94, 0.4)',
-            width: '280px'
-          }}
-        >
-          <div className="p-3 flex items-center justify-between"
-            style={{background: 'rgba(34, 197, 94, 0.2)'}}>
-            <div className="flex items-center gap-2 flex-1">
-              <div className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold"
-                style={{background: '#22c55e', color: 'white'}}>
-                {byePlayer.username.charAt(0).toUpperCase()}
-              </div>
-              <span className="font-bold text-white text-sm truncate">{byePlayer.username}</span>
-            </div>
-            <span className="text-xs font-bold text-green-400 px-2 py-1 rounded"
-              style={{background: 'rgba(34, 197, 94, 0.3)'}}>
-              BYE
-            </span>
-          </div>
-        </div>
-      );
+    // Si no hay ambos jugadores, no renderizar nada (el jugador avanza automáticamente)
+    if (!hasBothPlayers) {
+      return null;
     }
 
     // Match normal estilo start.gg
@@ -267,105 +241,152 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           boxShadow: hasWinner ? '0 4px 15px rgba(34, 197, 94, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.3)'
         }}
       >
-        {/* Header con número de match y estado */}
-        {realMatch && (
-          <div className="px-3 py-1.5 flex items-center justify-between text-xs"
-            style={{background: 'rgba(15, 23, 42, 0.8)', borderBottom: '1px solid rgba(71, 85, 105, 0.3)'}}>
-            <span className="text-slate-400 font-semibold">Match {match.matchNumber}</span>
-            {realMatch.status === 'CHECKIN' && <span className="text-yellow-400 font-bold">⏰ Check-in</span>}
-            {realMatch.status === 'PLAYING' && <span className="text-blue-400 font-bold">🎮 En juego</span>}
-            {realMatch.status === 'COMPLETED' && <span className="text-green-400 font-bold">✓</span>}
-          </div>
-        )}
-        
         {/* Player 1 */}
         <div 
-          className={`px-3 py-2.5 flex items-center justify-between transition-all ${
-            match.winnerId === match.player1Id ? 'bg-gradient-to-r from-green-900/30 to-green-800/20' : ''
+          className={`px-3 py-3 flex items-center justify-between transition-all ${
+            match.winnerId === match.player1Id ? 'bg-gradient-to-r from-green-900/40 to-green-800/20' : ''
           }`}
           style={{
             borderBottom: '1px solid rgba(71, 85, 105, 0.3)',
             background: match.winnerId === match.player1Id 
-              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.2) 0%, rgba(22, 163, 74, 0.05) 100%)'
+              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.25) 0%, rgba(22, 163, 74, 0.05) 100%)'
               : 'rgba(30, 41, 59, 0.5)'
           }}
         >
-          {player1 ? (
-            <>
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className={`w-7 h-7 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                  match.winnerId === match.player1Id ? 'ring-2 ring-green-400' : ''
-                }`}
-                  style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
-                  {player1.username.charAt(0).toUpperCase()}
-                </div>
-                <span className={`font-semibold text-sm truncate ${
-                  match.winnerId === match.player1Id ? 'text-white' : 'text-slate-300'
-                }`}>
-                  {player1.username}
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
+            {/* Badge de letra con círculo negro */}
+            <div className="relative flex-shrink-0">
+              <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
+                <span className="text-white text-xs font-bold">
+                  {String.fromCharCode(65 + index * 2)}
                 </span>
               </div>
-              {match.winnerId === match.player1Id && (
-                <Trophy className="w-4 h-4 text-green-400 flex-shrink-0 ml-2" />
-              )}
-              {realMatch && (
-                <span className="text-white font-bold ml-2 text-sm">{realMatch.player1Score || 0}</span>
-              )}
-            </>
-          ) : (
-            <div className="flex items-center gap-2 flex-1">
-              <div className="w-7 h-7 rounded flex items-center justify-center"
-                style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-                <span className="text-slate-500 text-xs">?</span>
-              </div>
-              <span className="text-slate-500 italic text-sm">TBD</span>
             </div>
-          )}
+            
+            {/* Avatar del jugador */}
+            <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+              match.winnerId === match.player1Id ? 'ring-2 ring-green-400' : ''
+            }`}
+              style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
+              {player1.username.charAt(0).toUpperCase()}
+            </div>
+            
+            {/* Nombre del jugador */}
+            <div className="flex-1 min-w-0">
+              <span className={`font-bold text-sm truncate block ${
+                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-300'
+              }`}>
+                {player1.username}
+              </span>
+              {/* Personaje usado (si está disponible) */}
+              {realMatch?.player1Character && (
+                <span className="text-xs text-slate-400 truncate block">
+                  {realMatch.player1Character}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Score y winner badge */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {match.winnerId === match.player1Id && (
+              <div className="w-6 h-6 rounded-sm flex items-center justify-center"
+                style={{background: 'rgba(34, 197, 94, 0.3)'}}>
+                <Trophy className="w-3.5 h-3.5 text-green-400" />
+              </div>
+            )}
+            {realMatch && (
+              <div className={`w-8 h-8 rounded flex items-center justify-center font-bold text-sm ${
+                match.winnerId === match.player1Id ? 'bg-green-600 text-white' : 'bg-slate-700 text-slate-300'
+              }`}>
+                {realMatch.player1Score || 0}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Player 2 */}
         <div 
-          className={`px-3 py-2.5 flex items-center justify-between transition-all ${
-            match.winnerId === match.player2Id ? 'bg-gradient-to-r from-green-900/30 to-green-800/20' : ''
+          className={`px-3 py-3 flex items-center justify-between transition-all ${
+            match.winnerId === match.player2Id ? 'bg-gradient-to-r from-green-900/40 to-green-800/20' : ''
           }`}
           style={{
             background: match.winnerId === match.player2Id 
-              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.2) 0%, rgba(22, 163, 74, 0.05) 100%)'
+              ? 'linear-gradient(90deg, rgba(22, 163, 74, 0.25) 0%, rgba(22, 163, 74, 0.05) 100%)'
               : 'rgba(30, 41, 59, 0.5)'
           }}
         >
-          {player2 ? (
-            <>
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className={`w-7 h-7 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                  match.winnerId === match.player2Id ? 'ring-2 ring-green-400' : ''
-                }`}
-                  style={{background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)', color: 'white'}}>
-                  {player2.username.charAt(0).toUpperCase()}
-                </div>
-                <span className={`font-semibold text-sm truncate ${
-                  match.winnerId === match.player2Id ? 'text-white' : 'text-slate-300'
-                }`}>
-                  {player2.username}
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
+            {/* Badge de letra con círculo negro */}
+            <div className="relative flex-shrink-0">
+              <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
+                <span className="text-white text-xs font-bold">
+                  {String.fromCharCode(66 + index * 2)}
                 </span>
               </div>
-              {match.winnerId === match.player2Id && (
-                <Trophy className="w-4 h-4 text-green-400 flex-shrink-0 ml-2" />
-              )}
-              {realMatch && (
-                <span className="text-white font-bold ml-2 text-sm">{realMatch.player2Score || 0}</span>
-              )}
-            </>
-          ) : (
-            <div className="flex items-center gap-2 flex-1">
-              <div className="w-7 h-7 rounded flex items-center justify-center"
-                style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-                <span className="text-slate-500 text-xs">?</span>
-              </div>
-              <span className="text-slate-500 italic text-sm">TBD</span>
             </div>
-          )}
+            
+            {/* Avatar del jugador */}
+            <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+              match.winnerId === match.player2Id ? 'ring-2 ring-green-400' : ''
+            }`}
+              style={{background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)', color: 'white'}}>
+              {player2.username.charAt(0).toUpperCase()}
+            </div>
+            
+            {/* Nombre del jugador */}
+            <div className="flex-1 min-w-0">
+              <span className={`font-bold text-sm truncate block ${
+                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-300'
+              }`}>
+                {player2.username}
+              </span>
+              {/* Personaje usado (si está disponible) */}
+              {realMatch?.player2Character && (
+                <span className="text-xs text-slate-400 truncate block">
+                  {realMatch.player2Character}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Score y winner badge */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {match.winnerId === match.player2Id && (
+              <div className="w-6 h-6 rounded-sm flex items-center justify-center"
+                style={{background: 'rgba(34, 197, 94, 0.3)'}}>
+                <Trophy className="w-3.5 h-3.5 text-green-400" />
+              </div>
+            )}
+            {realMatch && (
+              <div className={`w-8 h-8 rounded flex items-center justify-center font-bold text-sm ${
+                match.winnerId === match.player2Id ? 'bg-green-600 text-white' : 'bg-slate-700 text-slate-300'
+              }`}>
+                {realMatch.player2Score || 0}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Footer con estado del match */}
+        {realMatch && realMatch.status !== 'COMPLETED' && (
+          <div className="px-3 py-1.5 text-center text-xs font-bold"
+            style={{
+              background: realMatch.status === 'CHECKIN' ? 'rgba(234, 179, 8, 0.15)' :
+                         realMatch.status === 'PLAYING' ? 'rgba(59, 130, 246, 0.15)' :
+                         'rgba(71, 85, 105, 0.15)',
+              color: realMatch.status === 'CHECKIN' ? '#eab308' :
+                    realMatch.status === 'PLAYING' ? '#3b82f6' :
+                    '#94a3b8',
+              borderTop: '1px solid rgba(71, 85, 105, 0.3)'
+            }}>
+            {realMatch.status === 'CHECKIN' && '⏰ Esperando check-in'}
+            {realMatch.status === 'PLAYING' && '🎮 En progreso'}
+            {realMatch.status === 'BANNING' && '🚫 Banning stages'}
+            {realMatch.status === 'STAGE_SELECT' && '🎯 Selección de stage'}
+            {realMatch.status === 'CHAR_SELECT' && '🎮 Selección de personaje'}
+          </div>
+        )}
       </div>
     );
   };
