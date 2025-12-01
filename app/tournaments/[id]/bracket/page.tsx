@@ -302,18 +302,18 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           key={match.id} 
           className="relative"
           style={{
-            width: '220px'
+            width: '240px'
           }}
         >
           {/* Match label */}
-          <div className="text-xs font-bold text-slate-500 mb-1 px-2">
+          <div className="text-xs font-bold text-slate-500 mb-1.5 px-2">
             Bracket {index + 1}
           </div>
           
           {/* Dos slots vacíos con referencia al match de origen */}
           <div 
-            className="px-3 py-2.5 flex items-center gap-2 border border-b-0 border-slate-700 rounded-t-md"
-            style={{background: 'rgba(30, 41, 59, 0.3)'}}
+            className="px-3 py-2.5 flex items-center gap-2 border-2 border-b-0 border-dashed border-slate-600 rounded-t-lg"
+            style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
           >
             <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
               style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -322,8 +322,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             <span className="text-slate-500 italic text-xs">{slot1Text}</span>
           </div>
           <div 
-            className="px-3 py-2.5 flex items-center gap-2 border border-slate-700 rounded-b-md"
-            style={{background: 'rgba(30, 41, 59, 0.3)'}}
+            className="px-3 py-2.5 flex items-center gap-2 border-2 border-dashed border-slate-600 rounded-b-lg"
+            style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
           >
             <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
               style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -365,11 +365,11 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           key={match.id} 
           className="relative"
           style={{
-            width: '220px'
+            width: '240px'
           }}
         >
           {/* Match label */}
-          <div className="text-xs font-bold text-slate-400 mb-1 px-2">
+          <div className="text-xs font-bold text-slate-400 mb-1.5 px-2">
             Bracket {index + 1}
           </div>
           
@@ -377,9 +377,10 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           {isPlayer1Waiting && waitingPlayer ? (
             <>
               <div 
-                className="px-3 py-2.5 flex items-center justify-between border border-b-0 border-slate-600 rounded-t-md"
+                className="px-3 py-3 flex items-center justify-between border-2 border-b-0 border-slate-700 rounded-t-lg"
                 style={{
-                  background: 'rgba(30, 41, 59, 0.8)'
+                  background: 'rgba(30, 41, 59, 0.95)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
                 }}
               >
                 <div className="flex items-center gap-2.5 flex-1">
@@ -391,8 +392,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
               <div 
-                className="px-3 py-2.5 flex items-center gap-2 border border-slate-600 rounded-b-md"
-                style={{background: 'rgba(30, 41, 59, 0.4)'}}
+                className="px-3 py-2.5 flex items-center gap-2 border-2 border-dashed border-slate-600 rounded-b-lg"
+                style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
               >
                 <div className="w-8 h-8 rounded flex items-center justify-center"
                   style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -404,8 +405,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           ) : (
             <>
               <div 
-                className="px-3 py-2.5 flex items-center gap-2 border border-b-0 border-slate-600 rounded-t-md"
-                style={{background: 'rgba(30, 41, 59, 0.4)'}}
+                className="px-3 py-2.5 flex items-center gap-2 border-2 border-b-0 border-dashed border-slate-600 rounded-t-lg"
+                style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
               >
                 <div className="w-8 h-8 rounded flex items-center justify-center"
                   style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -415,8 +416,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               </div>
               {waitingPlayer && (
                 <div 
-                  className="px-3 py-2.5 flex items-center justify-between border border-slate-600 rounded-b-md"
-                  style={{background: 'rgba(30, 41, 59, 0.8)'}}
+                  className="px-3 py-3 flex items-center justify-between border-2 border-slate-700 rounded-b-lg"
+                  style={{background: 'rgba(30, 41, 59, 0.95)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'}}
                 >
                   <div className="flex items-center gap-2.5 flex-1">
                     <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
@@ -439,26 +440,29 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
         className={`relative transition-all ${
-          isClickable ? 'cursor-pointer hover:scale-[1.02]' : ''
+          isClickable ? 'cursor-pointer hover:scale-105 hover:z-10' : ''
         }`}
         style={{
-          width: '220px'
+          width: '240px'
         }}
       >
         {/* Match label encima */}
-        <div className="text-xs font-bold text-slate-400 mb-1 px-2">
+        <div className="text-xs font-bold text-yellow-500/80 mb-1.5 px-2">
           Bracket {index + 1}
         </div>
         
         {/* Player 1 */}
         <div 
-          className={`px-3 py-2.5 flex items-center justify-between transition-all rounded-t-md border border-b-0 ${
-            match.winnerId === match.player1Id ? 'border-green-500/50' : 'border-slate-600'
+          className={`px-3 py-3 flex items-center justify-between transition-all rounded-t-lg border-2 border-b-0 ${
+            match.winnerId === match.player1Id ? 'border-green-400' : 'border-slate-700'
           }`}
           style={{
             background: match.winnerId === match.player1Id 
-              ? 'rgba(34, 197, 94, 0.15)'
-              : 'rgba(30, 41, 59, 0.8)'
+              ? 'linear-gradient(90deg, rgba(34, 197, 94, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%)'
+              : 'rgba(30, 41, 59, 0.95)',
+            boxShadow: match.winnerId === match.player1Id 
+              ? '0 0 20px rgba(34, 197, 94, 0.3)' 
+              : '0 2px 8px rgba(0, 0, 0, 0.4)'
           }}
         >
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -506,13 +510,16 @@ export default function BracketPage({ params }: { params: { id: string } }) {
 
         {/* Player 2 */}
         <div 
-          className={`px-3 py-2.5 flex items-center justify-between transition-all rounded-b-md border ${
-            match.winnerId === match.player2Id ? 'border-green-500/50' : 'border-slate-600'
+          className={`px-3 py-3 flex items-center justify-between transition-all rounded-b-lg border-2 ${
+            match.winnerId === match.player2Id ? 'border-green-400' : 'border-slate-700'
           }`}
           style={{
             background: match.winnerId === match.player2Id 
-              ? 'rgba(34, 197, 94, 0.15)'
-              : 'rgba(30, 41, 59, 0.8)'
+              ? 'linear-gradient(90deg, rgba(34, 197, 94, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%)'
+              : 'rgba(30, 41, 59, 0.95)',
+            boxShadow: match.winnerId === match.player2Id 
+              ? '0 0 20px rgba(34, 197, 94, 0.3)' 
+              : '0 2px 8px rgba(0, 0, 0, 0.4)'
           }}
         >
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -625,15 +632,16 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 const verticalGap = rNum > 1 ? baseSpacing * Math.pow(2, rNum - 1) : baseSpacing;
 
                 return (
-                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '280px' }}>
+                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '320px' }}>
                     {/* Título de la ronda */}
-                    <div className="mb-6 p-2.5 rounded-lg text-center sticky top-0 z-10" 
+                    <div className="mb-6 p-3 rounded-lg text-center sticky top-0 z-10" 
                       style={{
-                        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-                        border: '2px solid rgba(220, 20, 60, 0.3)',
-                        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
+                        background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(255, 215, 0, 0.15) 100%)',
+                        border: '2px solid rgba(220, 20, 60, 0.5)',
+                        boxShadow: '0 4px 15px rgba(220, 20, 60, 0.3)',
+                        backdropFilter: 'blur(10px)'
                       }}>
-                      <h4 className="font-black text-white text-sm tracking-wide uppercase">
+                      <h4 className="font-black text-white text-base tracking-wide uppercase">
                         {getRoundName(rNum, totalRounds)}
                       </h4>
                     </div>
@@ -642,32 +650,58 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                     <div className="flex flex-col justify-around h-full relative" style={{ gap: `${verticalGap}px` }}>
                       {roundMatches
                         .sort((a, b) => a.matchNumber - b.matchNumber)
-                        .map((match, idx) => (
-                          <div key={match.id} className="relative flex items-center">
-                            {/* Línea conectora desde el match hacia la derecha */}
-                            {rNum < totalRounds && (
-                              <>
-                                {/* Línea horizontal desde el medio del match hacia la derecha */}
-                                <div 
-                                  className="absolute left-full top-1/2 w-8 border-t-2 border-slate-600"
-                                  style={{ transform: 'translateY(-50%)' }}
-                                />
-                                {/* Línea vertical que conecta con otros matches (solo para matches impares) */}
-                                {idx % 2 === 0 && idx + 1 < roundMatches.length && (
+                        .map((match, idx) => {
+                          const isLastRound = rNum === totalRounds;
+                          const isPairStart = idx % 2 === 0;
+                          const hasNextInPair = idx + 1 < roundMatches.length;
+                          
+                          return (
+                            <div key={match.id} className="relative flex items-center">
+                              {/* Líneas conectoras mejoradas */}
+                              {!isLastRound && (
+                                <>
+                                  {/* Línea horizontal desde el match hacia la derecha (más gruesa y visible) */}
                                   <div 
-                                    className="absolute left-full border-l-2 border-slate-600"
-                                    style={{
-                                      top: '50%',
-                                      height: `${verticalGap + 100}px`,
-                                      marginLeft: '32px'
+                                    className="absolute left-full top-1/2 h-[3px] w-12"
+                                    style={{ 
+                                      transform: 'translateY(-50%)',
+                                      background: 'linear-gradient(90deg, rgba(148, 163, 184, 0.8) 0%, rgba(148, 163, 184, 0.4) 100%)',
+                                      boxShadow: '0 0 8px rgba(148, 163, 184, 0.3)'
                                     }}
                                   />
-                                )}
-                              </>
-                            )}
-                            {renderMatch(match, idx, roundMatches)}
-                          </div>
-                        ))}
+                                  
+                                  {/* Línea vertical que conecta pares de matches */}
+                                  {isPairStart && hasNextInPair && (
+                                    <>
+                                      {/* Línea vertical principal */}
+                                      <div 
+                                        className="absolute left-full w-[3px]"
+                                        style={{
+                                          top: '50%',
+                                          height: `${verticalGap + 100}px`,
+                                          marginLeft: '48px',
+                                          background: 'linear-gradient(180deg, rgba(148, 163, 184, 0.8) 0%, rgba(148, 163, 184, 0.8) 100%)',
+                                          boxShadow: '0 0 8px rgba(148, 163, 184, 0.3)'
+                                        }}
+                                      />
+                                      {/* Línea horizontal corta que conecta con el siguiente nivel */}
+                                      <div 
+                                        className="absolute left-full h-[3px] w-6"
+                                        style={{
+                                          top: `calc(50% + ${(verticalGap + 100) / 2}px)`,
+                                          marginLeft: '48px',
+                                          background: 'linear-gradient(90deg, rgba(148, 163, 184, 0.8) 0%, rgba(148, 163, 184, 0.4) 100%)',
+                                          boxShadow: '0 0 8px rgba(148, 163, 184, 0.3)'
+                                        }}
+                                      />
+                                    </>
+                                  )}
+                                </>
+                              )}
+                              {renderMatch(match, idx, roundMatches)}
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
                 );
