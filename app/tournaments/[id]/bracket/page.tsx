@@ -136,6 +136,9 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const registration = bracket.tournament.registrations.find(
       r => r.user.id === playerId
     );
+    return registration?.user;
+  };
+
   const renderMatch = (match: Match, index: number) => {
     const player1 = getPlayerInfo(match.player1Id);
     const player2 = getPlayerInfo(match.player2Id);
