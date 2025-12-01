@@ -300,21 +300,22 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       return (
         <div 
           key={match.id} 
-          className="relative flex items-center gap-2"
+          className="relative flex items-center gap-3"
         >
           {/* Match label a la IZQUIERDA como en start.gg */}
           <div 
-            className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold flex-shrink-0"
+            className="w-12 h-[72px] rounded-md flex items-center justify-center text-base font-black flex-shrink-0"
             style={{
-              background: 'rgba(71, 85, 105, 0.4)',
+              background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, rgba(30, 41, 59, 0.6) 100%)',
               border: '2px solid rgba(148, 163, 184, 0.3)',
-              color: '#64748b'
+              color: '#64748b',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
             }}>
             {matchLabel}
           </div>
           
           {/* Container del match */}
-          <div style={{ width: '220px' }}>
+          <div style={{ width: '260px' }}>
             {/* Dos slots vacíos con referencia al match de origen */}
             <div 
               className="px-3 py-2.5 flex items-center gap-2 border-2 border-b-0 border-dashed border-slate-600 rounded-t-lg"
@@ -327,8 +328,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             <span className="text-slate-500 italic text-xs">{slot1Text}</span>
           </div>
           <div 
-            className="px-3 py-2.5 flex items-center gap-2 border-2 border-dashed border-slate-600 rounded-b-lg"
-            style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
+            className="px-4 py-3.5 flex items-center gap-2 border-2 border-dashed border-slate-600/60 rounded-b-lg"
+            style={{background: 'rgba(30, 41, 59, 0.6)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
           >
             <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
               style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -369,21 +370,22 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       return (
         <div 
           key={match.id} 
-          className="relative flex items-center gap-2"
+          className="relative flex items-center gap-3"
         >
           {/* Match label a la IZQUIERDA como en start.gg */}
           <div 
-            className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold flex-shrink-0"
+            className="w-12 h-[72px] rounded-md flex items-center justify-center text-base font-black flex-shrink-0"
             style={{
-              background: 'rgba(71, 85, 105, 0.6)',
+              background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%)',
               border: '2px solid rgba(148, 163, 184, 0.4)',
-              color: '#94a3b8'
+              color: '#94a3b8',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)'
             }}>
             {matchLabel}
           </div>
           
           {/* Container del match */}
-          <div style={{ width: '220px' }}>
+          <div style={{ width: '260px' }}>
             {/* Jugador esperando o slot esperando */}
             {isPlayer1Waiting && waitingPlayer ? (
               <>
@@ -403,8 +405,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
               <div 
-                className="px-3 py-2.5 flex items-center gap-2 border-2 border-dashed border-slate-600 rounded-b-lg"
-                style={{background: 'rgba(30, 41, 59, 0.5)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
+                className="px-4 py-3.5 flex items-center gap-2 border-2 border-dashed border-slate-600/60 rounded-b-lg"
+                style={{background: 'rgba(30, 41, 59, 0.6)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'}}
               >
                 <div className="w-8 h-8 rounded flex items-center justify-center"
                   style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
@@ -427,7 +429,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               </div>
               {waitingPlayer && (
                 <div 
-                  className="px-3 py-3 flex items-center justify-between border-2 border-slate-700 rounded-b-lg"
+                  className="px-4 py-3.5 flex items-center justify-between border-2 border-slate-700/50 rounded-b-lg"
                   style={{background: 'rgba(30, 41, 59, 0.95)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'}}
                 >
                   <div className="flex items-center gap-2.5 flex-1">
@@ -451,23 +453,24 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`relative transition-all flex items-center gap-2 ${
-          isClickable ? 'cursor-pointer hover:scale-105 hover:z-10' : ''
+        className={`relative transition-all flex items-center gap-3 ${
+          isClickable ? 'cursor-pointer hover:scale-[1.02] hover:z-10' : ''
         }`}
       >
-        {/* Match label a la IZQUIERDA como en start.gg */}
+        {/* Match label a la IZQUIERDA como en start.gg - MÁS GRANDE */}
         <div 
-          className="w-8 h-8 rounded flex items-center justify-center text-sm font-bold flex-shrink-0"
+          className="w-12 h-[72px] rounded-md flex items-center justify-center text-base font-black flex-shrink-0"
           style={{
-            background: 'rgba(71, 85, 105, 0.8)',
-            border: '2px solid rgba(148, 163, 184, 0.5)',
-            color: 'white'
+            background: 'linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
+            border: '2px solid rgba(148, 163, 184, 0.6)',
+            color: '#e2e8f0',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)'
           }}>
           {matchLabel}
         </div>
         
         {/* Container del match */}
-        <div style={{ width: '220px' }}>
+        <div style={{ width: '260px' }}>
           {/* Player 1 */}
           <div 
             className={`px-3 py-3 flex items-center justify-between transition-all rounded-t-lg border-2 border-b-0 ${
@@ -650,9 +653,9 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 const verticalGap = rNum > 1 ? baseSpacing * Math.pow(2, rNum - 1) : baseSpacing;
 
                 return (
-                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '320px' }}>
+                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '400px' }}>
                     {/* Título de la ronda */}
-                    <div className="mb-6 p-3 rounded-lg text-center sticky top-0 z-10" 
+                    <div className="mb-8 p-3 rounded-lg text-center sticky top-0 z-10" 
                       style={{
                         background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(255, 215, 0, 0.15) 100%)',
                         border: '2px solid rgba(220, 20, 60, 0.5)',
@@ -678,38 +681,41 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                               {/* Líneas conectoras mejoradas */}
                               {!isLastRound && (
                                 <>
-                                  {/* Línea horizontal desde el match hacia la derecha (más gruesa y visible) */}
+                                  {/* Línea horizontal LARGA desde el match hacia la derecha */}
                                   <div 
-                                    className="absolute left-full top-1/2 h-[3px] w-12"
+                                    className="absolute left-full top-1/2 h-[3px]"
                                     style={{ 
                                       transform: 'translateY(-50%)',
-                                      background: 'linear-gradient(90deg, rgba(148, 163, 184, 0.8) 0%, rgba(148, 163, 184, 0.4) 100%)',
-                                      boxShadow: '0 0 8px rgba(148, 163, 184, 0.3)'
+                                      width: '60px',
+                                      background: 'rgba(148, 163, 184, 0.7)',
+                                      boxShadow: '0 0 10px rgba(148, 163, 184, 0.4)'
                                     }}
                                   />
                                   
-                                  {/* Línea vertical que conecta pares de matches */}
+                                  {/* Línea vertical que conecta pares de matches - MÁS LARGA */}
                                   {isPairStart && hasNextInPair && (
                                     <>
-                                      {/* Línea vertical principal */}
+                                      {/* Línea vertical principal MÁS GRUESA */}
                                       <div 
-                                        className="absolute left-full w-[3px]"
+                                        className="absolute left-full"
                                         style={{
                                           top: '50%',
-                                          height: `${verticalGap + 100}px`,
-                                          marginLeft: '48px',
-                                          background: 'linear-gradient(180deg, rgba(148, 163, 184, 0.8) 0%, rgba(148, 163, 184, 0.8) 100%)',
-                                          boxShadow: '0 0 8px rgba(148, 163, 184, 0.3)'
+                                          height: `${verticalGap + 145}px`,
+                                          marginLeft: '60px',
+                                          width: '3px',
+                                          background: 'rgba(148, 163, 184, 0.7)',
+                                          boxShadow: '0 0 10px rgba(148, 163, 184, 0.4)'
                                         }}
                                       />
-                                      {/* Línea horizontal corta que conecta con el siguiente nivel */}
+                                      {/* Línea horizontal que conecta con el siguiente nivel - MÁS LARGA */}
                                       <div 
-                                        className="absolute left-full h-[3px] w-6"
+                                        className="absolute left-full h-[3px]"
                                         style={{
-                                          top: `calc(50% + ${(verticalGap + 100) / 2}px)`,
-                                          marginLeft: '48px',
-                                          background: 'linear-gradient(90deg, rgba(148, 163, 184, 0.8) 0%, rgba(148, 163, 184, 0.4) 100%)',
-                                          boxShadow: '0 0 8px rgba(148, 163, 184, 0.3)'
+                                          top: `calc(50% + ${(verticalGap + 145) / 2}px)`,
+                                          marginLeft: '60px',
+                                          width: '40px',
+                                          background: 'rgba(148, 163, 184, 0.7)',
+                                          boxShadow: '0 0 10px rgba(148, 163, 184, 0.4)'
                                         }}
                                       />
                                     </>
