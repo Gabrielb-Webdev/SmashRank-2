@@ -195,6 +195,13 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     }
   };
 
+  // Función para generar badges en formato AA, AB, AC, etc.
+  const getPlayerBadge = (matchIndex: number, playerNumber: 1 | 2) => {
+    const firstLetter = String.fromCharCode(65 + matchIndex); // A, B, C, D...
+    const secondLetter = playerNumber === 1 ? 'A' : 'B';
+    return firstLetter + secondLetter;
+  };
+
   const getPlayerInfo = (playerId: string | undefined) => {
     if (!playerId || !bracket) return null;
     const registration = bracket.tournament.registrations.find(
@@ -305,9 +312,9 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
             {/* Badge de letra con círculo negro */}
             <div className="relative flex-shrink-0">
-              <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
                 <span className="text-white text-xs font-bold">
-                  {String.fromCharCode(65 + index * 2)}
+                  {getPlayerBadge(index, 1)}
                 </span>
               </div>
             </div>
@@ -368,9 +375,9 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
             {/* Badge de letra con círculo negro */}
             <div className="relative flex-shrink-0">
-              <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
                 <span className="text-white text-xs font-bold">
-                  {String.fromCharCode(66 + index * 2)}
+                  {getPlayerBadge(index, 2)}
                 </span>
               </div>
             </div>
