@@ -97,23 +97,17 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
 
     const updateRegistrationStatus = () => {
       const now = new Date();
-      const registrationStart = parseUTCAsLocal(tournament.registrationStart);
-      const registrationEnd = parseUTCAsLocal(tournament.registrationEnd);
       const startDate = parseUTCAsLocal(tournament.startDate);
-
       const checkinStart = parseUTCAsLocal(tournament.checkinStart);
       
-      if (now < registrationStart) {
-        setRegistrationStatus('Las inscripciones aún no abren');
-        setCanRegister(false);
-      } else if (now >= registrationStart && now < startDate) {
-        // Durante las inscripciones (hasta que inicia el torneo)
+      if (now < startDate) {
+        // Antes del inicio del torneo - INSCRIPCIONES ABIERTAS
         const diff = startDate.getTime() - now.getTime();
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         
-        // Mostrar mensaje especial si ya abrió el check-in
+        // Mostrar mensaje especial si ya abrió el check-in (últimos 30 minutos)
         if (now >= checkinStart) {
           if (hours > 0) {
             setRegistrationStatus(`⏰ Check-in abierto | Inscripciones cierran en ${hours}h ${minutes}m`);
@@ -133,6 +127,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
         }
         setCanRegister(true);
       } else {
+        // Después del inicio del torneo - INSCRIPCIONES CERRADAS
         setRegistrationStatus('Inscripciones cerradas - Esperando inicio del torneo');
         setCanRegister(false);
       }
