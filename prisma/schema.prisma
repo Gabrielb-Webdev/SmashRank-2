@@ -59,6 +59,7 @@ model User {
   matchesAsPlayer1   Match[]          @relation("Player1")
   matchesAsPlayer2   Match[]          @relation("Player2")
   matchesWon         Match[]          @relation("MatchWinner")
+  gamesWon           MatchGame[]
   rankings           Ranking[]
 
   @@index([username])
@@ -81,6 +82,22 @@ model Character {
   registrations  Registration[]
 
   @@index([slug])
+}
+
+model Stage {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  image       String
+  legal       Boolean  @default(true)
+  starter     Boolean  @default(false)  // Starter stages (available in game 1)
+  counterpick Boolean  @default(false)  // Counterpick stages (available after game 1)
+  order       Int      @default(0)      // Display order
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([legal])
 }
 
 model CharacterSkin {
@@ -206,9 +223,23 @@ model Match {
   player1Score     Int         @default(0)
   player2Score     Int         @default(0)
   winnerId         String?
-  status           String      @default("PENDING") // "PENDING", "ONGOING", "COMPLETED"
+  status           String      @default("PENDING") // "PENDING", "CHECKIN", "BANNING", "SELECTING", "PLAYING", "REPORTING", "COMPLETED", "DQ"
+  
+  // Check-in
+  player1CheckIn   Boolean     @default(false)
+  player2CheckIn   Boolean     @default(false)
+  checkInDeadline  DateTime?
+  
+  // Current game state
+  currentGame      Int         @default(1)
+  bestOf           Int         @default(3)
+  
+  // Match data (stores ban/pick history)
+  matchData        Json?       // { games: [{ bans: [], stage: "", characters: {}, winner: "" }] }
+  
   nextMatchId      String?
   loserNextMatchId String?
+  startedAt        DateTime?
   completedAt      DateTime?
   notes            String?
   createdAt        DateTime    @default(now())
@@ -219,10 +250,42 @@ model Match {
   player1    User?      @relation("Player1", fields: [player1Id], references: [id])
   player2    User?      @relation("Player2", fields: [player2Id], references: [id])
   winner     User?      @relation("MatchWinner", fields: [winnerId], references: [id])
+  games      MatchGame[]
 
   @@index([tournamentId])
   @@index([player1Id])
   @@index([player2Id])
+  @@index([winnerId])
+  @@index([status])
+}
+
+model MatchGame {
+  id            String   @id @default(cuid())
+  matchId       String
+  gameNumber    Int
+  
+  // Stage banning/selection
+  bannedStages  String[] // Array de IDs de stages baneados
+  selectedStage String?  // ID del stage seleccionado
+  
+  // Character selection
+  player1Character String?
+  player2Character String?
+  
+  // Result
+  winnerId      String?
+  reportedBy    String?  // User ID who reported
+  confirmedBy   String?  // User ID who confirmed
+  
+  status        String   @default("PENDING") // "PENDING", "BANNING", "STAGE_SELECT", "CHAR_SELECT", "PLAYING", "REPORTING", "COMPLETED"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relaciones
+  match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  winner  User? @relation(fields: [winnerId], references: [id])
+
+  @@index([matchId])
   @@index([winnerId])
 }
 

@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Trophy, Users, AlertCircle, ArrowLeft, Sparkles, Zap, Target } from 'lucide-react';
+import { Loader2, Trophy, Users, AlertCircle, ArrowLeft, Sparkles, Zap, Target, Play } from 'lucide-react';
 import toast from 'react-hot-toast';
+import MatchModal from '@/components/matches/MatchModal';
 
 interface Player {
   id: string;
@@ -73,10 +74,47 @@ export default function BracketPage({ params }: { params: { id: string } }) {
   const [bracket, setBracket] = useState<BracketData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [players, setPlayers] = useState<any[]>([]);
+  const [matches, setMatches] = useState<any[]>([]);
+  const [selectedMatch, setSelectedMatch] = useState<any>(null);
+  const [tournamentStatus, setTournamentStatus] = useState<string>('DRAFT');
+  const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     loadBracket();
+    loadTournamentStatus();
   }, [params.id]);
+
+  useEffect(() => {
+    if (tournamentStatus === 'IN_PROGRESS') {
+      loadMatches();
+      const interval = setInterval(loadMatches, 10000); // Actualizar cada 10 segundos
+      return () => clearInterval(interval);
+    }
+  }, [tournamentStatus]);
+
+  const loadTournamentStatus = async () => {
+    try {
+      const response = await fetch(`/api/tournaments/${params.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setTournamentStatus(data.status);
+      }
+    } catch (err) {
+      console.error('Error loading tournament status:', err);
+    }
+  };
+
+  const loadMatches = async () => {
+    try {
+      const response = await fetch(`/api/tournaments/${params.id}/matches`);
+      if (response.ok) {
+        const data = await response.json();
+        setMatches(data);
+      }
+    } catch (err) {
+      console.error('Error loading matches:', err);
+    }
+  };
 
   const loadBracket = async () => {
     try {
@@ -133,6 +171,31 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     }
   };
 
+  const handleStartTournament = async () => {
+    try {
+      setStarting(true);
+      const response = await fetch(`/api/tournaments/${params.id}/start`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || 'Error al iniciar el torneo');
+        return;
+      }
+
+      toast.success('¡Torneo iniciado! Los jugadores pueden hacer check-in.');
+      setTournamentStatus('IN_PROGRESS');
+      await loadMatches();
+    } catch (err) {
+      console.error('Error:', err);
+      toast.error('Error al iniciar el torneo');
+    } finally {
+      setStarting(false);
+    }
+  };
+
   const getPlayerInfo = (playerId: string | undefined) => {
     if (!playerId || !bracket) return null;
     const registration = bracket.tournament.registrations.find(
@@ -144,12 +207,24 @@ export default function BracketPage({ params }: { params: { id: string } }) {
   const renderMatch = (match: Match, index: number) => {
     const player1 = getPlayerInfo(match.player1Id);
     const player2 = getPlayerInfo(match.player2Id);
-    const hasWinner = !!match.winnerId;
+    
+    // Buscar match real si el torneo está en progreso
+    const realMatch = tournamentStatus === 'IN_PROGRESS' 
+      ? matches.find(m => m.id === match.id)
+      : null;
+    
+    const hasWinner = realMatch ? !!realMatch.winnerId : !!match.winnerId;
+    const isClickable = realMatch && (session?.user?.role === 'ADMIN' || 
+      realMatch.player1Id === session?.user?.id || 
+      realMatch.player2Id === session?.user?.id);
 
     return (
       <div 
         key={match.id} 
-        className="mb-3 p-4 rounded-xl transition-all hover:scale-[1.02]"
+        onClick={() => isClickable && setSelectedMatch(realMatch)}
+        className={`mb-3 p-4 rounded-xl transition-all ${
+          isClickable ? 'cursor-pointer hover:scale-[1.02]' : ''
+        }`}
         style={{
           background: 'rgba(15, 23, 42, 0.6)',
           border: '2px solid rgba(220, 20, 60, 0.3)',
@@ -166,12 +241,39 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               Ronda {match.roundNumber}
             </span>
           </div>
-          {match.score && (
-            <span className="text-xs font-bold px-2 py-1 rounded" 
-              style={{background: 'rgba(255, 215, 0, 0.1)', color: '#ffd700'}}>
-              {match.score}
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {realMatch && (
+              <span className="text-xs font-bold px-2 py-1 rounded" 
+                style={{
+                  background: realMatch.status === 'COMPLETED' ? 'rgba(34, 197, 94, 0.1)' :
+                             realMatch.status === 'CHECKIN' ? 'rgba(255, 215, 0, 0.1)' :
+                             realMatch.status === 'PLAYING' ? 'rgba(59, 130, 246, 0.1)' :
+                             'rgba(100, 116, 139, 0.1)',
+                  color: realMatch.status === 'COMPLETED' ? '#22c55e' :
+                        realMatch.status === 'CHECKIN' ? '#ffd700' :
+                        realMatch.status === 'PLAYING' ? '#3b82f6' :
+                        '#94a3b8',
+                  border: `1px solid ${
+                    realMatch.status === 'COMPLETED' ? 'rgba(34, 197, 94, 0.3)' :
+                    realMatch.status === 'CHECKIN' ? 'rgba(255, 215, 0, 0.3)' :
+                    realMatch.status === 'PLAYING' ? 'rgba(59, 130, 246, 0.3)' :
+                    'rgba(100, 116, 139, 0.3)'
+                  }`
+                }}>
+                {realMatch.status === 'CHECKIN' ? '⏰ Check-in' :
+                 realMatch.status === 'PLAYING' ? '🎮 En juego' :
+                 realMatch.status === 'COMPLETED' ? '✓ Completado' :
+                 realMatch.status === 'DQ' ? 'DQ' :
+                 'Pendiente'}
+              </span>
+            )}
+            {realMatch && (realMatch.player1Score > 0 || realMatch.player2Score > 0) && (
+              <span className="text-xs font-bold px-2 py-1 rounded" 
+                style={{background: 'rgba(255, 215, 0, 0.1)', color: '#ffd700'}}>
+                {realMatch.player1Score} - {realMatch.player2Score}
+              </span>
+            )}
+          </div>
         </div>
         
         <div className="space-y-2">
@@ -517,6 +619,37 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 ⚠️ Se necesitan al menos 2 participantes con check-in para generar el bracket
               </p>
             )}
+
+            {/* Botón Iniciar Torneo */}
+            {bracket && tournamentStatus !== 'IN_PROGRESS' && (
+              <div className="mt-6">
+                <button
+                  onClick={handleStartTournament}
+                  disabled={starting}
+                  className="w-full py-4 rounded-xl font-black text-white text-lg transition-all hover:scale-[1.02] hover:shadow-2xl"
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    border: '2px solid rgba(16, 185, 129, 0.5)',
+                    boxShadow: '0 8px 30px rgba(16, 185, 129, 0.4)'
+                  }}>
+                  {starting ? (
+                    <span className="flex items-center justify-center gap-3">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Iniciando Torneo...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-3">
+                      <Play className="w-5 h-5" />
+                      INICIAR TORNEO
+                      <Play className="w-5 h-5" />
+                    </span>
+                  )}
+                </button>
+                <p className="text-center text-slate-400 mt-3 text-sm">
+                  Al iniciar el torneo, los jugadores tendrán 5 minutos para hacer check-in en sus matches
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -594,6 +727,19 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           </div>
         )}
       </div>
+
+      {/* Match Modal */}
+      {selectedMatch && (
+        <MatchModal
+          match={selectedMatch}
+          tournamentId={params.id}
+          onClose={() => setSelectedMatch(null)}
+          onUpdate={() => {
+            loadMatches();
+            setSelectedMatch(null);
+          }}
+        />
+      )}
     </div>
   );
 }
