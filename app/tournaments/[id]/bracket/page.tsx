@@ -550,44 +550,40 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                           
                           return (
                             <div key={match.id} className="relative flex items-center">
-                              {/* Líneas conectoras mejoradas */}
+                              {/* Líneas conectoras LIMPIAS estilo start.gg */}
                               {!isLastRound && (
                                 <>
-                                  {/* Línea horizontal LARGA desde el match hacia la derecha */}
+                                  {/* Línea horizontal desde el match */}
                                   <div 
-                                    className="absolute left-full top-1/2 h-[3px]"
+                                    className="absolute left-full top-1/2 bg-slate-600"
                                     style={{ 
                                       transform: 'translateY(-50%)',
-                                      width: '60px',
-                                      background: 'rgba(148, 163, 184, 0.7)',
-                                      boxShadow: '0 0 10px rgba(148, 163, 184, 0.4)'
+                                      width: '48px',
+                                      height: '2px'
                                     }}
                                   />
                                   
-                                  {/* Línea vertical que conecta pares de matches - MÁS LARGA */}
+                                  {/* Conexión vertical entre pares de matches */}
                                   {isPairStart && hasNextInPair && (
                                     <>
-                                      {/* Línea vertical principal MÁS GRUESA */}
+                                      {/* Línea vertical */}
                                       <div 
-                                        className="absolute left-full"
+                                        className="absolute left-full bg-slate-600"
                                         style={{
                                           top: '50%',
-                                          height: `${verticalGap + 145}px`,
-                                          marginLeft: '60px',
-                                          width: '3px',
-                                          background: 'rgba(148, 163, 184, 0.7)',
-                                          boxShadow: '0 0 10px rgba(148, 163, 184, 0.4)'
+                                          height: `${verticalGap + 85}px`,
+                                          marginLeft: '48px',
+                                          width: '2px'
                                         }}
                                       />
-                                      {/* Línea horizontal que conecta con el siguiente nivel - MÁS LARGA */}
+                                      {/* Línea horizontal final */}
                                       <div 
-                                        className="absolute left-full h-[3px]"
+                                        className="absolute left-full bg-slate-600"
                                         style={{
-                                          top: `calc(50% + ${(verticalGap + 145) / 2}px)`,
-                                          marginLeft: '60px',
-                                          width: '40px',
-                                          background: 'rgba(148, 163, 184, 0.7)',
-                                          boxShadow: '0 0 10px rgba(148, 163, 184, 0.4)'
+                                          top: `calc(50% + ${(verticalGap + 85) / 2}px)`,
+                                          marginLeft: '48px',
+                                          width: '24px',
+                                          height: '2px'
                                         }}
                                       />
                                     </>
