@@ -227,6 +227,8 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const hasBothPlayers = player1 && player2;
     if (!hasBothPlayers) {
       const waitingPlayer = player1 || player2;
+      if (!waitingPlayer) return null; // Safety check
+      
       return (
         <div 
           key={match.id} 
