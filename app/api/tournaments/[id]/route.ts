@@ -110,10 +110,11 @@ export async function PUT(
     const newStartDate = new Date(startDate);
     const now = new Date();
     
-    // Las inscripciones y check-in se mantienen abiertas hasta que inicie el torneo
+    // Las inscripciones se mantienen abiertas hasta que inicie el torneo
+    // El check-in se abre 30 minutos antes del inicio
     const registrationStart = now;
     const registrationEnd = newStartDate;
-    const checkinStart = now;
+    const checkinStart = new Date(newStartDate.getTime() - 30 * 60 * 1000);
     const checkinEnd = newStartDate;
 
     const updatedTournament = await prisma.tournament.update({

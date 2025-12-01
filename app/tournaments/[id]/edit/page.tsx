@@ -303,7 +303,7 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
                       <div>
                         <p className="text-sm text-blue-300 font-semibold mb-1">💡 Fechas Automáticas</p>
                         <p className="text-xs text-slate-400">
-                          Las inscripciones y check-in se abren al guardar cambios y se cierran automáticamente cuando inicia.
+                          Las inscripciones están abiertas desde la publicación. El check-in se abre 30 minutos antes del inicio. Ambos cierran cuando inicia el torneo.
                         </p>
                       </div>
                     </div>
@@ -325,8 +325,8 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
                       Fechas Automáticas Configuradas
                     </h4>
                     <div className="space-y-2 text-sm text-slate-300">
-                      <p>✅ <strong>Inscripciones:</strong> Abiertas ahora hasta el inicio</p>
-                      <p>⏰ <strong>Check-in:</strong> Abierto ahora hasta el inicio</p>
+                      <p>✅ <strong>Inscripciones:</strong> Abiertas desde la publicación</p>
+                      <p>⏰ <strong>Check-in:</strong> Abierto 30 minutos antes del inicio</p>
                       <p>🏁 <strong>Cierre:</strong> Ambos cierran cuando inicia el torneo</p>
                     </div>
                   </div>
