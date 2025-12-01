@@ -437,7 +437,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {players
-                    .sort((a, b) => b.points - a.points)
+                    .sort((a, b) => b.user.points - a.user.points)
                     .map((player, index) => (
                       <div 
                         key={player.id} 
@@ -455,17 +455,17 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                             </span>
                             <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold"
                               style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
-                              {player.username.charAt(0).toUpperCase()}
+                              {player.user.username.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-bold text-white">{player.username}</p>
+                              <p className="font-bold text-white">{player.user.username}</p>
                               <p className="text-xs text-slate-400">
-                                {player.wins}W - {player.losses}L
+                                {player.user.wins}W - {player.user.losses}L
                               </p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-black text-yellow-400">{player.points}</p>
+                            <p className="text-lg font-black text-yellow-400">{player.user.points}</p>
                             <p className="text-xs text-slate-400">pts</p>
                           </div>
                         </div>
