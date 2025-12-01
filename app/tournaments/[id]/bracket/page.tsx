@@ -792,6 +792,68 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               </div>
               <h1 className="text-4xl font-black mb-2 text-white">Bracket del Torneo</h1>
               <p className="text-slate-300 text-lg">Eliminación Doble - {players.length} Participantes</p>
+              
+              {/* Botones de Admin para Regenerar e Iniciar */}
+              {session?.user?.role === 'ADMIN' && tournamentStatus !== 'IN_PROGRESS' && tournamentStatus !== 'COMPLETED' && (
+                <div className="mt-6 max-w-2xl mx-auto space-y-4">
+                  {/* Botón Regenerar */}
+                  <button
+                    onClick={handleGenerateBracket}
+                    disabled={generating || players.length < 2}
+                    className="w-full py-3 rounded-xl font-black text-white text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-2xl"
+                    style={{
+                      background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)',
+                      border: '2px solid rgba(220, 20, 60, 0.5)',
+                      boxShadow: '0 4px 20px rgba(220, 20, 60, 0.3)'
+                    }}>
+                    {generating ? (
+                      <span className="flex items-center justify-center gap-3">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Regenerando Bracket...
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-3">
+                        <Sparkles className="w-5 h-5" />
+                        REGENERAR BRACKET
+                        <Sparkles className="w-5 h-5" />
+                      </span>
+                    )}
+                  </button>
+                  
+                  {/* Mensaje informativo */}
+                  <p className="text-center text-yellow-400 text-sm font-medium flex items-center justify-center gap-2">
+                    <Zap className="w-4 h-4" />
+                    Puedes regenerar el bracket las veces que quieras antes de iniciar el torneo
+                  </p>
+                  
+                  {/* Botón Iniciar Torneo */}
+                  <button
+                    onClick={handleStartTournament}
+                    disabled={starting}
+                    className="w-full py-4 rounded-xl font-black text-white text-lg transition-all hover:scale-[1.02] hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      border: '2px solid rgba(16, 185, 129, 0.5)',
+                      boxShadow: '0 8px 30px rgba(16, 185, 129, 0.4)'
+                    }}>
+                    {starting ? (
+                      <span className="flex items-center justify-center gap-3">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Iniciando Torneo...
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-3">
+                        <Play className="w-5 h-5" />
+                        INICIAR TORNEO
+                        <Play className="w-5 h-5" />
+                      </span>
+                    )}
+                  </button>
+                  <p className="text-center text-slate-400 text-sm">
+                    Al iniciar el torneo, los jugadores tendrán 5 minutos para hacer check-in en sus matches
+                  </p>
+                </div>
+              )}
             </div>
             
             {/* Winners Bracket */}
