@@ -293,7 +293,6 @@ export default function BracketViewer({ tournamentId, isAdmin }: BracketViewerPr
                     </svg>
                   )}
                 </div>
-                </div>
               );
             })}
           </div>
