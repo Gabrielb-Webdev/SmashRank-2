@@ -19,7 +19,10 @@ export async function POST(req: NextRequest) {
 
     // Verificar que el torneo existe
     const tournament = await prisma.tournament.findUnique({
-      where: { id: TOURNAMENT_ID }
+      where: { id: TOURNAMENT_ID },
+      include: {
+        registrations: true,
+      }
     });
 
     if (!tournament) {
@@ -29,12 +32,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Calcular cuántos usuarios faltan para llenar el torneo
+    const currentRegistrations = tournament.registrations.length;
+    const maxParticipants = tournament.maxParticipants || 32;
+    const slotsAvailable = maxParticipants - currentRegistrations;
+
+    if (slotsAvailable <= 0) {
+      return NextResponse.json(
+        { error: `El torneo ya está lleno (${currentRegistrations}/${maxParticipants})` },
+        { status: 400 }
+      );
+    }
+
+    // Crear solo los usuarios necesarios para llenar el torneo
+    const usersToCreate = Math.min(29, slotsAvailable);
+
     const hashedPassword = await bcrypt.hash('password123', 10);
     const users = [];
     const registrations = [];
 
-    // Crear 29 usuarios
-    for (let i = 1; i <= 29; i++) {
+    // Crear usuarios
+    for (let i = 1; i <= usersToCreate; i++) {
       const username = `Player${i}`;
       const email = `player${i}@test.com`;
 
@@ -89,7 +107,6 @@ export async function POST(req: NextRequest) {
           data: {
             userId,
             tournamentId: TOURNAMENT_ID,
-            checkedIn: true,
           }
         });
 
@@ -102,7 +119,9 @@ export async function POST(req: NextRequest) {
       usersCreated: users.length,
       registrationsCreated: registrations.length,
       tournamentId: TOURNAMENT_ID,
-      message: `${users.length} usuarios nuevos creados, ${registrations.length} inscripciones nuevas`
+      currentTotal: currentRegistrations + registrations.length,
+      maxParticipants,
+      message: `${users.length} usuarios nuevos creados, ${registrations.length} inscripciones nuevas. Total: ${currentRegistrations + registrations.length}/${maxParticipants}`
     });
 
   } catch (error) {

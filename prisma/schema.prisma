@@ -183,8 +183,6 @@ model Registration {
   tournamentId   String
   characterId    String?
   skinId         String?
-  checkedIn      Boolean  @default(false)
-  checkedInAt    DateTime?
   seed           Int?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

@@ -53,7 +53,6 @@ interface BracketData {
     registrations: Array<{
       id: string;
       seed: number | null;
-      checkedIn: boolean;
       user: {
         id: string;
         username: string;
@@ -124,13 +123,13 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       if (response.ok) {
         const data = await response.json();
         setBracket(data);
-        setPlayers(data.tournament.registrations.filter((r: any) => r.checkedIn));
+        setPlayers(data.tournament.registrations);
       } else if (response.status === 404) {
         // Si el bracket no existe, cargar información del torneo para mostrar participantes
         const tournamentResponse = await fetch(`/api/tournaments/${params.id}`);
         if (tournamentResponse.ok) {
           const tournamentData = await tournamentResponse.json();
-          setPlayers(tournamentData.registrations.filter((r: any) => r.checkedIn));
+          setPlayers(tournamentData.registrations);
         }
       } else {
         const errorData = await response.json();
@@ -684,7 +683,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               </div>
             )}
 
-            {/* Generate Button */}
+            {/* Generate/Regenerate Button */}
             <button
               onClick={handleGenerateBracket}
               disabled={generating || players.length < 2}
@@ -699,12 +698,12 @@ export default function BracketPage({ params }: { params: { id: string } }) {
               {generating ? (
                 <span className="flex items-center justify-center gap-3">
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Generando Bracket...
+                  {bracket ? 'Regenerando' : 'Generando'} Bracket...
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-3">
                   <Sparkles className="w-5 h-5" />
-                  GENERAR BRACKET
+                  {bracket ? 'REGENERAR BRACKET' : 'GENERAR BRACKET'}
                   <Sparkles className="w-5 h-5" />
                 </span>
               )}
@@ -712,7 +711,14 @@ export default function BracketPage({ params }: { params: { id: string } }) {
 
             {players.length < 2 && (
               <p className="text-center text-slate-400 mt-4 font-medium">
-                ⚠️ Se necesitan al menos 2 participantes con check-in para generar el bracket
+                ⚠️ Se necesitan al menos 2 participantes para generar el bracket
+              </p>
+            )}
+            
+            {bracket && players.length >= 2 && (
+              <p className="text-center text-yellow-400 mt-4 font-medium flex items-center justify-center gap-2">
+                <Zap className="w-4 h-4" />
+                Puedes regenerar el bracket las veces que quieras antes de iniciar el torneo
               </p>
             )}
 

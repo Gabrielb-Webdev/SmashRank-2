@@ -16,12 +16,9 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   const [tournament, setTournament] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false);
-  const [canCheckIn, setCanCheckIn] = useState(false);
-  const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showUnregisterModal, setShowUnregisterModal] = useState(false);
   const [registering, setRegistering] = useState(false);
-  const [timeUntilCheckin, setTimeUntilCheckin] = useState<string>('');
   const [registrationStatus, setRegistrationStatus] = useState<string>('');
   const [canRegister, setCanRegister] = useState(false);
   const [hasBracket, setHasBracket] = useState(false);
@@ -31,89 +28,39 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     fetchTournament();
   }, [tournamentId]);
 
-  // Contador regresivo para check-in
-  useEffect(() => {
-    if (!tournament || !isRegistered || hasCheckedIn) return;
 
-    const updateCountdown = () => {
-      const now = new Date();
-      // Las fechas de la DB vienen en UTC, JavaScript las convierte automáticamente a hora local del navegador
-      const checkinStart = new Date(tournament.checkinStart);
-      const checkinEnd = new Date(tournament.checkinEnd);
 
-      if (now < checkinStart) {
-        // Antes del check-in
-        const diff = checkinStart.getTime() - now.getTime();
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        setTimeUntilCheckin(`Check-in abre en ${hours}h ${minutes}m ${seconds}s`);
-        setCanCheckIn(false);
-      } else if (now >= checkinStart && now <= checkinEnd) {
-        // Durante el check-in
-        const diff = checkinEnd.getTime() - now.getTime();
-        const minutes = Math.floor(diff / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        setTimeUntilCheckin(`⏰ ${minutes}m ${seconds}s restantes`);
-        setCanCheckIn(true);
-      } else {
-        // Después del check-in
-        setTimeUntilCheckin('Check-in cerrado');
-        setCanCheckIn(false);
-      }
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-
-    return () => clearInterval(interval);
-  }, [tournament, isRegistered, hasCheckedIn]);
-
-  // Contador para estado de inscripciones
+  // Verificar estado de inscripciones
   useEffect(() => {
     if (!tournament) return;
 
     const updateRegistrationStatus = () => {
       const now = new Date();
-      // Las fechas de la DB vienen en UTC, JavaScript las convierte automáticamente
       const startDate = new Date(tournament.startDate);
-      const checkinStart = new Date(tournament.checkinStart);
       
       if (now < startDate) {
         // Antes del inicio del torneo - INSCRIPCIONES ABIERTAS
         const diff = startDate.getTime() - now.getTime();
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         
-        // Mostrar mensaje especial si ya abrió el check-in (últimos 30 minutos)
-        if (now >= checkinStart) {
-          if (hours > 0) {
-            setRegistrationStatus(`⏰ Check-in abierto | Inscripciones cierran en ${hours}h ${minutes}m`);
-          } else if (minutes > 0) {
-            setRegistrationStatus(`⏰ Check-in abierto | Inscripciones cierran en ${minutes}m ${seconds}s`);
-          } else {
-            setRegistrationStatus(`⏰ Check-in abierto | Inscripciones cierran en ${seconds}s`);
-          }
+        if (hours > 0) {
+          setRegistrationStatus(`Inscripciones cierran en ${hours}h ${minutes}m`);
+        } else if (minutes > 0) {
+          setRegistrationStatus(`Inscripciones cierran en ${minutes}m`);
         } else {
-          if (hours > 0) {
-            setRegistrationStatus(`Inscripciones cierran en ${hours}h ${minutes}m`);
-          } else if (minutes > 0) {
-            setRegistrationStatus(`Inscripciones cierran en ${minutes}m ${seconds}s`);
-          } else {
-            setRegistrationStatus(`Inscripciones cierran en ${seconds}s`);
-          }
+          setRegistrationStatus(`Inscripciones abiertas`);
         }
         setCanRegister(true);
       } else {
         // Después del inicio del torneo - INSCRIPCIONES CERRADAS
-        setRegistrationStatus('Inscripciones cerradas - Esperando inicio del torneo');
+        setRegistrationStatus('Inscripciones cerradas');
         setCanRegister(false);
       }
     };
 
     updateRegistrationStatus();
-    const interval = setInterval(updateRegistrationStatus, 1000);
+    const interval = setInterval(updateRegistrationStatus, 60000); // Cada minuto
 
     return () => clearInterval(interval);
   }, [tournament]);
@@ -137,28 +84,10 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
           console.log('Registrations:', data.registrations);
           
           const userRegistration = data.registrations.find(
-            (reg: any) => {
-              console.log('Comparing:', reg.userId, 'with', session.user.id);
-              return reg.userId === session.user.id;
-            }
+            (reg: any) => reg.userId === session.user.id
           );
-          
-          console.log('User registration found:', userRegistration);
           
           setIsRegistered(!!userRegistration);
-          setHasCheckedIn(userRegistration?.checkedIn || false);
-          
-          // Verificar si puede hacer check-in
-          const now = new Date();
-          // Las fechas de la DB vienen en UTC, JavaScript las convierte automáticamente a hora local
-          const checkinStart = new Date(data.checkinStart);
-          const checkinEnd = new Date(data.checkinEnd);
-          setCanCheckIn(
-            now >= checkinStart && 
-            now <= checkinEnd && 
-            userRegistration && 
-            !userRegistration.checkedIn
-          );
         }
       }
     } catch (error) {
@@ -216,24 +145,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     }
   };
 
-  const handleCheckIn = async () => {
-    try {
-      const response = await fetch(`/api/tournaments/${tournamentId}/checkin`, {
-        method: 'POST',
-      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error);
-      }
-
-      toast.success('¡Check-in completado!');
-      fetchTournament();
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
 
   const handleDelete = async () => {
     if (!confirm('¿Estás seguro de eliminar este torneo? Esta acción no se puede deshacer.')) return;
@@ -468,12 +380,6 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                           </div>
                         )}
                       </div>
-                      {reg.checkedIn && (
-                        <div className="flex items-center gap-2 px-3 py-1 rounded-full" style={{background: 'rgba(34, 197, 94, 0.2)', border: '1px solid rgba(34, 197, 94, 0.4)'}}>
-                          <Check className="w-4 h-4 text-green-400" />
-                          <span className="text-sm font-bold text-green-400">Check-in</span>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -507,27 +413,6 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                     <div className="p-3 rounded-lg text-center" style={{background: 'rgba(255, 215, 0, 0.1)', border: '1px solid rgba(255, 215, 0, 0.3)'}}>
                       <p className="text-yellow-400 text-xs font-semibold">{registrationStatus}</p>
                     </div>
-                  )}
-                  
-                  {hasCheckedIn ? (
-                    <div className="p-4 rounded-lg text-center" style={{background: 'rgba(59, 130, 246, 0.2)', border: '2px solid rgba(59, 130, 246, 0.4)'}}>
-                      <Check className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                      <p className="text-blue-400 font-bold">Check-in Completado</p>
-                    </div>
-                  ) : (
-                    <>
-                      {timeUntilCheckin && (
-                        <div className="p-4 rounded-lg text-center" style={{background: 'rgba(255, 215, 0, 0.1)', border: '2px solid rgba(255, 215, 0, 0.3)'}}>
-                          <p className="text-yellow-400 font-bold text-sm">{timeUntilCheckin}</p>
-                        </div>
-                      )}
-                      
-                      {canCheckIn && (
-                        <button onClick={handleCheckIn} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)'}}>
-                          ✅ Hacer Check-in
-                        </button>
-                      )}
-                    </>
                   )}
                   
                   <button onClick={() => setShowUnregisterModal(true)} className="w-full py-3 rounded-lg font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-all border-2 border-red-500/40">

@@ -133,7 +133,8 @@ export default function SeedTestPage() {
               <div className="space-y-2 text-slate-300">
                 <p>👥 Usuarios creados: <span className="font-bold text-white">{result.usersCreated}</span></p>
                 <p>📝 Inscripciones creadas: <span className="font-bold text-white">{result.registrationsCreated}</span></p>
-                <p>🎯 Torneo ID: <span className="font-mono text-xs text-slate-400">{result.tournamentId}</span></p>
+                <p>🎯 Total en torneo: <span className="font-bold text-white">{result.currentTotal}/{result.maxParticipants}</span></p>
+                <p>📋 Mensaje: <span className="text-sm text-slate-400">{result.message}</span></p>
               </div>
               <button
                 onClick={() => router.push(`/tournaments/${result.tournamentId}`)}

@@ -109,7 +109,6 @@ export async function POST(
         userId: session.user.id,
         ...(characterId && { characterId }),
         ...(skinId && { skinId }),
-        checkedIn: false,
       },
       include: {
         user: {

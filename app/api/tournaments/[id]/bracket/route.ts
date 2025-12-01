@@ -31,11 +31,10 @@ export async function POST(
       );
     }
 
-    // Obtener registraciones con check-in
+    // Obtener todas las registraciones
     const registrations = await prisma.registration.findMany({
       where: {
         tournamentId: params.id,
-        checkedIn: true,
       },
       include: {
         user: true,
@@ -48,7 +47,7 @@ export async function POST(
     // Verificar que hay suficientes participantes
     if (registrations.length < 2) {
       return NextResponse.json(
-        { error: 'Se necesitan al menos 2 participantes con check-in para generar el bracket' },
+        { error: 'Se necesitan al menos 2 participantes para generar el bracket' },
         { status: 400 }
       );
     }
@@ -69,7 +68,7 @@ export async function POST(
     // Generar el bracket
     const bracket = generateDoubleEliminationBracket(playersWithSeeds);
 
-    // Guardar el bracket en la base de datos
+    // Guardar el bracket en la base de datos (no cambiar estado del torneo todavía)
     const existingBracket = await prisma.bracket.findFirst({
       where: { tournamentId: params.id },
     });
@@ -88,12 +87,6 @@ export async function POST(
         },
       });
     }
-
-    // Actualizar el estado del torneo
-    await prisma.tournament.update({
-      where: { id: params.id },
-      data: { status: 'IN_PROGRESS' },
-    });
 
     return NextResponse.json({
       success: true,
