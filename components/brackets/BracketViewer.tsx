@@ -1,3 +1,7 @@
+/**
+ * BracketViewer v1.1.0 - Simplified Design
+ * Last updated: 2025-12-01
+ */
 'use client';
 
 import { useEffect, useState } from 'react';
