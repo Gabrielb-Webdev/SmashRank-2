@@ -212,6 +212,56 @@ export default function BracketPage({ params }: { params: { id: string } }) {
   const matchLabelMap = new Map<string, string>();
   let globalMatchIndex = 0;
 
+  // Función para encontrar qué match alimenta este slot basado en round y posición
+  const getSourceMatchLabel = (currentMatch: Match, isPlayer1Slot: boolean, allMatches: Match[]) => {
+    // En ronda 1, no hay matches previos
+    if (currentMatch.roundNumber === 1) return null;
+    
+    // Calcular qué match de la ronda anterior alimenta este slot
+    const prevRound = currentMatch.roundNumber - 1;
+    const currentPosition = currentMatch.matchNumber;
+    
+    // En winners bracket: match N recibe ganadores de matches 2N-1 y 2N de ronda anterior
+    // En losers bracket: la lógica es más compleja por la mezcla de perdedores de winners
+    
+    let sourceMatchNumber;
+    if (currentMatch.bracket === 'winners') {
+      // Winners bracket: doble eliminación simple
+      sourceMatchNumber = isPlayer1Slot 
+        ? (currentPosition * 2) - 1  // Match superior
+        : (currentPosition * 2);      // Match inferior
+    } else {
+      // Losers bracket: recibe perdedores de winners en rondas impares
+      // y ganadores de losers en rondas pares
+      const isOddRound = currentMatch.roundNumber % 2 === 1;
+      
+      if (isOddRound) {
+        // Recibe perdedores de winners bracket
+        const winnersRound = Math.ceil(currentMatch.roundNumber / 2) + 1;
+        const winnersMatch = allMatches.find(
+          m => m.bracket === 'winners' && 
+               m.roundNumber === winnersRound && 
+               m.matchNumber === currentPosition
+        );
+        return winnersMatch ? matchLabelMap.get(winnersMatch.id) : null;
+      } else {
+        // Recibe ganadores de losers bracket ronda anterior
+        sourceMatchNumber = isPlayer1Slot 
+          ? (currentPosition * 2) - 1
+          : (currentPosition * 2);
+      }
+    }
+    
+    // Buscar el match de origen
+    const sourceMatch = allMatches.find(
+      m => m.bracket === currentMatch.bracket && 
+           m.roundNumber === prevRound && 
+           m.matchNumber === sourceMatchNumber
+    );
+    
+    return sourceMatch ? matchLabelMap.get(sourceMatch.id) : null;
+  };
+
   const getPlayerInfo = (playerId: string | undefined) => {
     if (!playerId || !bracket) return null;
     const registration = bracket.tournament.registrations.find(
@@ -233,6 +283,20 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     
     // Si NO hay ningún jugador, mostrar match completamente vacío
     if (!player1 && !player2) {
+      // Obtener todos los matches para buscar el origen
+      const allMatches = [...(bracket?.data.winners || []), ...(bracket?.data.losers || [])];
+      
+      // Buscar de qué matches vienen ambos slots
+      const player1SourceLabel = getSourceMatchLabel(match, true, allMatches);
+      const player2SourceLabel = getSourceMatchLabel(match, false, allMatches);
+      
+      const slot1Text = player1SourceLabel 
+        ? `Ganador del ${player1SourceLabel}` 
+        : "Por determinar";
+      const slot2Text = player2SourceLabel 
+        ? `Ganador del ${player2SourceLabel}` 
+        : "Por determinar";
+      
       return (
         <div 
           key={match.id} 
@@ -250,26 +314,26 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             <span className="text-xs font-bold text-slate-400">Bracket {index + 1}</span>
           </div>
           
-          {/* Dos slots vacíos */}
+          {/* Dos slots vacíos con referencia al match de origen */}
           <div 
-            className="px-3 py-3 flex items-center gap-2"
+            className="px-3 py-2.5 flex items-center gap-2"
             style={{background: 'rgba(30, 41, 59, 0.5)', borderBottom: '1px solid rgba(71, 85, 105, 0.3)'}}
           >
-            <div className="w-6 h-6 rounded flex items-center justify-center"
+            <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
               style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-              <span className="text-slate-600 text-xs">—</span>
+              <span className="text-slate-600 text-xs">?</span>
             </div>
-            <span className="text-slate-600 italic text-xs">TBD</span>
+            <span className="text-slate-500 italic text-xs">{slot1Text}</span>
           </div>
           <div 
-            className="px-3 py-3 flex items-center gap-2"
+            className="px-3 py-2.5 flex items-center gap-2"
             style={{background: 'rgba(30, 41, 59, 0.5)'}}
           >
-            <div className="w-6 h-6 rounded flex items-center justify-center"
+            <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
               style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
-              <span className="text-slate-600 text-xs">—</span>
+              <span className="text-slate-600 text-xs">?</span>
             </div>
-            <span className="text-slate-600 italic text-xs">TBD</span>
+            <span className="text-slate-500 italic text-xs">{slot2Text}</span>
           </div>
         </div>
       );
@@ -291,8 +355,14 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       const waitingPlayer = player1 || player2;
       const isPlayer1Waiting = !!player1;
       
+      // Obtener todos los matches para buscar el origen
+      const allMatches = [...(bracket?.data.winners || []), ...(bracket?.data.losers || [])];
+      
       // Buscar de qué match viene el slot vacío
-      const emptySlotText = "Ganador de...";
+      const sourceMatchLabel = getSourceMatchLabel(match, !isPlayer1Waiting, allMatches);
+      const emptySlotText = sourceMatchLabel 
+        ? `Ganador del ${sourceMatchLabel}` 
+        : "Por determinar";
       
       return (
         <div 
@@ -337,7 +407,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                   style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
                   <span className="text-slate-500 text-xs">?</span>
                 </div>
-                <span className="text-slate-500 italic text-sm">{emptySlotText}</span>
+                <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
               </div>
             </>
           ) : (
@@ -350,7 +420,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                   style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
                   <span className="text-slate-500 text-xs">?</span>
                 </div>
-                <span className="text-slate-500 italic text-sm">{emptySlotText}</span>
+                <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
               </div>
               {waitingPlayer && (
                 <div 
