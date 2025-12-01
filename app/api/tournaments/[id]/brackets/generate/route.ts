@@ -26,14 +26,11 @@ export async function POST(
 
     const tournamentId = params.id;
 
-    // Obtener el torneo
+    // Obtener el torneo con todos los participantes
     const tournament = await prisma.tournament.findUnique({
       where: { id: tournamentId },
       include: {
         registrations: {
-          where: {
-            checkedIn: true,
-          },
           include: {
             user: true,
             character: true,
@@ -46,10 +43,10 @@ export async function POST(
       return NextResponse.json({ error: 'Torneo no encontrado' }, { status: 404 });
     }
 
-    // Verificar que haya participantes con check-in
+    // Verificar que haya suficientes participantes
     if (tournament.registrations.length < 2) {
       return NextResponse.json(
-        { error: 'Se necesitan al menos 2 participantes con check-in para generar el bracket' },
+        { error: 'Se necesitan al menos 2 participantes para generar el bracket' },
         { status: 400 }
       );
     }
