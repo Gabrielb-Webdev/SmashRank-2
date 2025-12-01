@@ -87,6 +87,12 @@ export default function CreateTournamentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Solo crear el torneo si estamos en el paso 3
+    if (currentStep !== 3) {
+      return;
+    }
+    
     setLoading(true);
 
     try {

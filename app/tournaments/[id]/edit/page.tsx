@@ -117,6 +117,11 @@ export default function EditTournamentPage({ params }: { params: { id: string } 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Solo guardar si estamos en el paso 3
+    if (currentStep !== 3) {
+      return;
+    }
+    
     if (!validateStep(currentStep)) {
       toast.error('Por favor completa todos los campos requeridos');
       return;
