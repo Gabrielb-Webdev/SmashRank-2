@@ -231,9 +231,48 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const player1 = getPlayerInfo(match.player1Id);
     const player2 = getPlayerInfo(match.player2Id);
     
-    // Si NO hay ningún jugador, no mostrar
+    // Si NO hay ningún jugador, mostrar match completamente vacío
     if (!player1 && !player2) {
-      return null;
+      return (
+        <div 
+          key={match.id} 
+          className="rounded-lg overflow-hidden"
+          style={{
+            background: '#1e293b',
+            border: '2px solid rgba(100, 116, 139, 0.3)',
+            width: '280px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+          }}
+        >
+          {/* Header del match */}
+          <div className="px-2 py-1 text-center border-b border-slate-700"
+            style={{background: 'rgba(0, 0, 0, 0.3)'}}>
+            <span className="text-xs font-bold text-slate-400">Bracket {index + 1}</span>
+          </div>
+          
+          {/* Dos slots vacíos */}
+          <div 
+            className="px-3 py-3 flex items-center gap-2"
+            style={{background: 'rgba(30, 41, 59, 0.5)', borderBottom: '1px solid rgba(71, 85, 105, 0.3)'}}
+          >
+            <div className="w-6 h-6 rounded flex items-center justify-center"
+              style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+              <span className="text-slate-600 text-xs">—</span>
+            </div>
+            <span className="text-slate-600 italic text-xs">TBD</span>
+          </div>
+          <div 
+            className="px-3 py-3 flex items-center gap-2"
+            style={{background: 'rgba(30, 41, 59, 0.5)'}}
+          >
+            <div className="w-6 h-6 rounded flex items-center justify-center"
+              style={{background: 'rgba(71, 85, 105, 0.2)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+              <span className="text-slate-600 text-xs">—</span>
+            </div>
+            <span className="text-slate-600 italic text-xs">TBD</span>
+          </div>
+        </div>
+      );
     }
     
     // Buscar match real si el torneo está en progreso
@@ -269,7 +308,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           {/* Header del match con su ID */}
           <div className="px-2 py-1 text-center border-b border-slate-700"
             style={{background: 'rgba(0, 0, 0, 0.3)'}}>
-            <span className="text-xs font-bold text-yellow-400">Match {matchLabel}</span>
+            <span className="text-xs font-bold text-slate-400">Bracket {index + 1}</span>
           </div>
           
           {/* Jugador esperando o slot esperando */}
@@ -351,7 +390,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         {/* Header del match con su ID */}
         <div className="px-2 py-1 text-center border-b border-slate-700"
           style={{background: 'rgba(0, 0, 0, 0.3)'}}>
-          <span className="text-xs font-bold text-yellow-400">Match {matchLabel}</span>
+          <span className="text-xs font-bold text-yellow-400">Bracket {index + 1}</span>
         </div>
         
         {/* Player 1 */}
