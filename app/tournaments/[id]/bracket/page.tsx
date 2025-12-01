@@ -208,8 +208,10 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     const player1 = getPlayerInfo(match.player1Id);
     const player2 = getPlayerInfo(match.player2Id);
     
-    // Si solo hay un jugador, no mostramos este match (avanza automáticamente a la siguiente ronda)
-    const hasBothPlayers = player1 && player2;
+    // Si NO hay ningún jugador, no mostrar
+    if (!player1 && !player2) {
+      return null;
+    }
     
     // Buscar match real si el torneo está en progreso
     const realMatch = tournamentStatus === 'IN_PROGRESS' 
@@ -221,9 +223,55 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       realMatch.player1Id === session?.user?.id || 
       realMatch.player2Id === session?.user?.id);
 
-    // Si no hay ambos jugadores, no renderizar nada (el jugador avanza automáticamente)
+    // Si solo hay un jugador (esperando al ganador de otro match)
+    const hasBothPlayers = player1 && player2;
     if (!hasBothPlayers) {
-      return null;
+      const waitingPlayer = player1 || player2;
+      return (
+        <div 
+          key={match.id} 
+          className="rounded-lg overflow-hidden"
+          style={{
+            background: '#1e293b',
+            border: '2px solid rgba(100, 116, 139, 0.5)',
+            width: '280px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+          }}
+        >
+          {/* Jugador esperando */}
+          <div 
+            className="px-3 py-3 flex items-center justify-between"
+            style={{
+              background: 'rgba(100, 116, 139, 0.2)',
+              borderBottom: '1px solid rgba(71, 85, 105, 0.3)'
+            }}
+          >
+            <div className="flex items-center gap-2.5 flex-1">
+              <div className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
+                style={{background: 'linear-gradient(135deg, #dc143c 0%, #ff6b6b 100%)', color: 'white'}}>
+                {waitingPlayer.username.charAt(0).toUpperCase()}
+              </div>
+              <span className="font-bold text-white text-sm">{waitingPlayer.username}</span>
+            </div>
+            <span className="text-xs font-semibold px-2 py-1 rounded"
+              style={{background: 'rgba(100, 116, 139, 0.2)', color: '#94a3b8'}}>
+              Avanza
+            </span>
+          </div>
+          
+          {/* Slot vacío - esperando */}
+          <div 
+            className="px-3 py-3 flex items-center gap-2"
+            style={{background: 'rgba(30, 41, 59, 0.5)'}}
+          >
+            <div className="w-8 h-8 rounded flex items-center justify-center"
+              style={{background: 'rgba(71, 85, 105, 0.3)', border: '1px dashed rgba(71, 85, 105, 0.5)'}}>
+              <span className="text-slate-500 text-xs">?</span>
+            </div>
+            <span className="text-slate-500 italic text-sm">Esperando ganador...</span>
+          </div>
+        </div>
+      );
     }
 
     // Match normal estilo start.gg
