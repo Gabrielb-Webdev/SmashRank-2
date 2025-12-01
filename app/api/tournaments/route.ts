@@ -59,7 +59,13 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(tournaments);
+    // Agregar currentParticipants a cada torneo
+    const tournamentsWithParticipants = tournaments.map(tournament => ({
+      ...tournament,
+      currentParticipants: tournament._count.registrations,
+    }));
+
+    return NextResponse.json(tournamentsWithParticipants);
   } catch (error) {
     console.error('Error al obtener torneos:', error);
     return NextResponse.json(
