@@ -18,6 +18,9 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   const [isRegistered, setIsRegistered] = useState(false);
   const [canCheckIn, setCanCheckIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showUnregisterModal, setShowUnregisterModal] = useState(false);
+  const [registering, setRegistering] = useState(false);
   const tournamentId = params.id;
 
   useEffect(() => {
@@ -61,9 +64,8 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     }
   };
 
-  const handleRegister = async () => {
-    if (!confirm('¿Confirmas tu inscripción al torneo?')) return;
-
+  const confirmRegister = async () => {
+    setRegistering(true);
     try {
       const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
         method: 'POST',
@@ -74,19 +76,21 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error);
+        throw new Error(data.error || 'Error al inscribirse');
       }
 
       toast.success('¡Inscripción exitosa!');
+      setShowRegisterModal(false);
       fetchTournament();
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.message || 'Error al procesar la inscripción');
+    } finally {
+      setRegistering(false);
     }
   };
 
-  const handleUnregister = async () => {
-    if (!confirm('¿Estás seguro de cancelar tu inscripción?')) return;
-
+  const confirmUnregister = async () => {
+    setRegistering(true);
     try {
       const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
         method: 'DELETE',
@@ -94,13 +98,16 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error);
+        throw new Error(data.error || 'Error al cancelar inscripción');
       }
 
       toast.success('Inscripción cancelada');
+      setShowUnregisterModal(false);
       fetchTournament();
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error.message || 'Error al cancelar la inscripción');
+    } finally {
+      setRegistering(false);
     }
   };
 
@@ -386,12 +393,12 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                     </div>
                   )}
                   
-                  <button onClick={handleUnregister} className="w-full py-3 rounded-lg font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-all border-2 border-red-500/40">
+                  <button onClick={() => setShowUnregisterModal(true)} className="w-full py-3 rounded-lg font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-all border-2 border-red-500/40">
                     Cancelar Inscripción
                   </button>
                 </div>
               ) : (
-                <button onClick={handleRegister} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}>
+                <button onClick={() => setShowRegisterModal(true)} className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}>
                   🏆 Inscribirse Ahora
                 </button>
               )}
@@ -415,6 +422,111 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
           </div>
         </div>
       </div>
+
+      {/* Modal de Confirmación de Inscripción */}
+      {showRegisterModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in" style={{background: 'rgba(0, 0, 0, 0.8)', backdropFilter: 'blur(4px)'}}>
+          <div className="bg-slate-900 rounded-2xl p-6 max-w-md w-full border-2 border-red-500/30 shadow-2xl animate-scale-in" style={{boxShadow: '0 20px 60px rgba(220, 20, 60, 0.3)'}}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)'}}>
+                <Trophy className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Confirmar Inscripción</h3>
+                <p className="text-sm text-slate-400">Torneo: {tournament?.name}</p>
+              </div>
+            </div>
+            
+            <div className="my-6 p-4 rounded-lg" style={{background: 'rgba(220, 20, 60, 0.1)', border: '1px solid rgba(220, 20, 60, 0.3)'}}>
+              <p className="text-slate-300 text-sm mb-3">Al inscribirte aceptas:</p>
+              <ul className="space-y-2 text-xs text-slate-400">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Participar siguiendo las reglas del torneo</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Realizar el check-in antes del inicio</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Mantener una conducta deportiva</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowRegisterModal(false)}
+                disabled={registering}
+                className="flex-1 py-3 px-4 rounded-lg font-semibold bg-slate-800 hover:bg-slate-700 text-white transition-colors border-2 border-slate-700 disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmRegister}
+                disabled={registering}
+                className="flex-1 py-3 px-4 rounded-lg font-bold text-white transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{background: 'linear-gradient(135deg, #dc143c 0%, #ffd700 100%)', boxShadow: '0 4px 15px rgba(220, 20, 60, 0.4)'}}
+              >
+                {registering ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Inscribiendo...
+                  </span>
+                ) : (
+                  '✓ Confirmar Inscripción'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Cancelar Inscripción */}
+      {showUnregisterModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in" style={{background: 'rgba(0, 0, 0, 0.8)', backdropFilter: 'blur(4px)'}}>
+          <div className="bg-slate-900 rounded-2xl p-6 max-w-md w-full border-2 border-red-500/30 shadow-2xl animate-scale-in">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center border-2 border-red-500/40">
+                <X className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Cancelar Inscripción</h3>
+                <p className="text-sm text-slate-400">¿Estás seguro?</p>
+              </div>
+            </div>
+            
+            <p className="text-slate-300 text-sm mb-6">
+              Al cancelar tu inscripción perderás tu lugar en el torneo. Esta acción no se puede deshacer.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowUnregisterModal(false)}
+                disabled={registering}
+                className="flex-1 py-3 px-4 rounded-lg font-semibold bg-slate-800 hover:bg-slate-700 text-white transition-colors border-2 border-slate-700 disabled:opacity-50"
+              >
+                No, mantener inscripción
+              </button>
+              <button
+                onClick={confirmUnregister}
+                disabled={registering}
+                className="flex-1 py-3 px-4 rounded-lg font-bold text-white bg-red-500/20 hover:bg-red-500/30 transition-all border-2 border-red-500/40 disabled:opacity-50"
+              >
+                {registering ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
+                    Cancelando...
+                  </span>
+                ) : (
+                  'Sí, cancelar'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
