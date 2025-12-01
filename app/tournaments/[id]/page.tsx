@@ -289,19 +289,27 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                   </div>
                 </div>
               </div>
-              {canEdit && (
-                <div className="flex gap-2">
-                  <Link href={`/tournaments/${tournamentId}/edit`}>
-                    <button className="px-4 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-white font-semibold transition-all flex items-center gap-2 border border-slate-700">
-                      <Edit className="w-4 h-4" />
-                      Editar
+              <div className="flex gap-2">
+                {canEdit && (
+                  <>
+                    <Link href={`/tournaments/${tournamentId}/bracket`}>
+                      <button className="px-4 py-2 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold transition-all flex items-center gap-2 shadow-lg">
+                        <Trophy className="w-4 h-4" />
+                        Bracket
+                      </button>
+                    </Link>
+                    <Link href={`/tournaments/${tournamentId}/edit`}>
+                      <button className="px-4 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-white font-semibold transition-all flex items-center gap-2 border border-slate-700">
+                        <Edit className="w-4 h-4" />
+                        Editar
+                      </button>
+                    </Link>
+                    <button onClick={handleDelete} className="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 font-semibold transition-all border border-red-500/40">
+                      <Trash2 className="w-4 h-4" />
                     </button>
-                  </Link>
-                  <button onClick={handleDelete} className="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 font-semibold transition-all border border-red-500/40">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+                  </>
+                )}
+              </div>
             </div>
             {tournament.description && (
               <p className="text-slate-300 text-lg mt-4">{tournament.description}</p>

@@ -46,6 +46,9 @@ model User {
   province      String
   avatar        String?
   bio           String?
+  wins          Int       @default(0)
+  losses        Int       @default(0)
+  points        Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -182,16 +185,14 @@ model Registration {
 
 model Bracket {
   id           String   @id @default(cuid())
-  tournamentId String
-  type         String   // "winners", "losers", "grand_finals"
-  data         Json     // Estructura del bracket
+  tournamentId String   @unique
+  type         String   // "double_elimination", "single_elimination", etc.
+  data         Json     // Estructura del bracket completo
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   // Relaciones
   tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-
-  @@index([tournamentId])
 }
 
 model Match {
