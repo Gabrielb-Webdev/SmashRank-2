@@ -65,17 +65,31 @@ export async function POST(
       where: { tournamentId: match.tournamentId },
     });
 
+    // Construir el objeto Bracket para propagateMatchResult
+    const bracket = {
+      winners: allMatches.filter(m => m.bracketType === 'WINNERS'),
+      losers: allMatches.filter(m => m.bracketType === 'LOSERS'),
+      grandFinals: allMatches.find(m => m.bracketType === 'GRANDS'),
+    };
+
     // Propagar resultado usando el nuevo sistema
-    const matchesMap = new Map(allMatches.map(m => [m.id, m]));
-    const affectedMatches = propagateMatchResult(matchesMap, matchId, winnerId!, loserId!);
+    const updatedBracket = propagateMatchResult(bracket, matchId, winnerId!, loserId!);
 
     // Actualizar los matches afectados en la base de datos
-    for (const affectedMatch of affectedMatches) {
+    const allUpdatedMatches = [
+      ...updatedBracket.winners,
+      ...updatedBracket.losers,
+      ...(updatedBracket.grandFinals ? [updatedBracket.grandFinals] : []),
+    ];
+
+    for (const affectedMatch of allUpdatedMatches) {
       await prisma.match.update({
         where: { id: affectedMatch.id },
         data: {
           player1Id: affectedMatch.player1Id,
           player2Id: affectedMatch.player2Id,
+          winnerId: affectedMatch.winnerId,
+          loserId: affectedMatch.loserId,
           status: affectedMatch.status,
         },
       });
