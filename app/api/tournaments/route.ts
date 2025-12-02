@@ -90,7 +90,10 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+    console.log('Body recibido:', JSON.stringify(body, null, 2));
+    
     const validatedData = tournamentSchema.parse(body);
+    console.log('Datos validados:', JSON.stringify(validatedData, null, 2));
 
     const slug = slugify(validatedData.name);
 
@@ -162,8 +165,18 @@ export async function POST(req: NextRequest) {
     }
 
     console.error('Error al crear torneo:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      meta: error.meta,
+      stack: error.stack
+    });
+    
     return NextResponse.json(
-      { error: 'Error al crear torneo' },
+      { 
+        error: 'Error al crear torneo',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     );
   }
