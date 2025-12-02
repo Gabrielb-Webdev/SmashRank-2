@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import Link from 'next/link';
-import { Trophy, Users, Calendar, Settings, BarChart3, Shield, Gamepad2 } from 'lucide-react';
+import { Trophy, Users, Calendar, Settings, BarChart3, Shield, Gamepad2, Wrench } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
 
 async function getAdminStats() {
@@ -85,7 +85,7 @@ export default async function AdminDashboard() {
     { label: 'Gestionar Usuarios', href: '/admin/users', icon: Users, description: 'Administrar usuarios del sistema' },
     { label: 'Configurar Stages', href: '/admin/configure-stages', icon: Settings, description: 'Configurar stages para torneos' },
     { label: 'Rankings', href: '/rankings', icon: BarChart3, description: 'Ver clasificaciones' },
-    { label: 'Diagnóstico Torneos', href: '/admin/tournament-diagnostics', icon: Shield, description: '🔧 Detectar y solucionar problemas' },
+    { label: 'Diagnóstico', href: '/admin/tournament-diagnostics', icon: Wrench, description: 'Detectar y solucionar problemas de torneos' },
   ];
 
 
