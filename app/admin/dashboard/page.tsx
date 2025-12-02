@@ -88,6 +88,7 @@ export default async function AdminDashboard() {
   const testingActions = [
     { label: '🧪 Test Torneo', href: '/admin/test-tournament', icon: Trophy, description: 'Crear torneo de prueba', color: 'from-purple-600 to-pink-600' },
     { label: '💉 Inyectar Participantes', href: '/admin/inject-participants', icon: Users, description: 'Agregar participantes ficticios', color: 'from-green-600 to-emerald-600' },
+    { label: '🎯 Generar Brackets', href: '/admin/generate-brackets', icon: Trophy, description: 'Generar brackets para torneos', color: 'from-yellow-600 to-orange-600' },
   ];
 
   return (
