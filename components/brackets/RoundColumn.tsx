@@ -87,10 +87,10 @@ export function RoundColumn({
   // Mientras menos matches, MÁS espacio entre ellos
   const getGapSize = (matchCount: number): number => {
     if (matchCount >= 16) return 4;
-    if (matchCount >= 8) return 12;
-    if (matchCount >= 4) return 40;
-    if (matchCount >= 2) return 80;
-    return 120;
+    if (matchCount >= 8) return 16;
+    if (matchCount >= 4) return 60;
+    if (matchCount >= 2) return 100;
+    return 140;
   };
 
   return (
