@@ -82,6 +82,7 @@ export default async function AdminDashboard() {
     { label: 'Crear Torneo', href: '/tournaments/create', icon: Trophy, description: 'Organiza un nuevo torneo' },
     { label: 'Ver Torneos', href: '/tournaments', icon: Calendar, description: 'Gestionar torneos existentes' },
     { label: 'Gestionar Usuarios', href: '/admin/users', icon: Users, description: 'Administrar usuarios del sistema' },
+    { label: 'Configurar Stages', href: '/admin/configure-stages', icon: Settings, description: 'Configurar stages para torneos' },
     { label: 'Rankings', href: '/rankings', icon: BarChart3, description: 'Ver clasificaciones' },
   ];
 
