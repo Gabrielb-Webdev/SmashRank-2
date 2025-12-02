@@ -71,30 +71,10 @@ export async function POST(
     // Generar el bracket con Double Elimination
     const bracket = generateDoubleEliminationBracket(params.id, playersWithSeeds);
 
-    // Guardar el bracket en la base de datos
-    const existingBracket = await prisma.bracket.findFirst({
+    // Eliminar matches anteriores si existen
+    await prisma.match.deleteMany({
       where: { tournamentId: params.id },
     });
-
-    if (existingBracket) {
-      // Eliminar matches anteriores si existen
-      await prisma.match.deleteMany({
-        where: { tournamentId: params.id },
-      });
-      
-      await prisma.bracket.update({
-        where: { id: existingBracket.id },
-        data: { data: bracket as any },
-      });
-    } else {
-      await prisma.bracket.create({
-        data: {
-          tournamentId: params.id,
-          type: 'double_elimination',
-          data: bracket as any,
-        },
-      });
-    }
     
     // Crear matches en la base de datos
     const allMatches = [
@@ -110,7 +90,9 @@ export async function POST(
         bracketType: match.bracketType,
         roundName: match.roundName,
         roundNumber: match.roundNumber,
+        round: match.roundNumber,
         position: match.position,
+        matchNumber: match.position,
         player1Id: match.player1Id,
         player1Source: match.player1Source,
         player2Id: match.player2Id,
@@ -127,8 +109,6 @@ export async function POST(
         previousMatch2Id: match.previousMatch2Id,
         streamUrl: match.streamUrl,
         isLive: match.isLive,
-        round: match.roundNumber, // Compatibilidad con campo antiguo
-        matchNumber: match.position,
       })),
     });
 
@@ -152,20 +132,37 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const bracket = await prisma.bracket.findFirst({
+    // Obtener todos los matches del torneo
+    const matches = await prisma.match.findMany({
       where: { tournamentId: params.id },
+      orderBy: [
+        { bracketType: 'asc' },
+        { round: 'asc' },
+        { matchNumber: 'asc' },
+      ],
+    });
+
+    if (matches.length === 0) {
+      return NextResponse.json(
+        { error: 'Bracket no encontrado. Debe generarse primero.' },
+        { status: 404 }
+      );
+    }
+
+    // Obtener el torneo con registraciones
+    const tournament = await prisma.tournament.findUnique({
+      where: { id: params.id },
       include: {
-        tournament: {
+        registrations: {
           include: {
-            registrations: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    username: true,
-                    avatar: true,
-                  },
-                },
+            user: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true,
+                wins: true,
+                losses: true,
+                points: true,
               },
             },
           },
@@ -173,14 +170,27 @@ export async function GET(
       },
     });
 
-    if (!bracket) {
+    if (!tournament) {
       return NextResponse.json(
-        { error: 'Bracket no encontrado. Debe generarse primero.' },
+        { error: 'Torneo no encontrado' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(bracket);
+    // Organizar matches por tipo
+    const winnersMatches = matches.filter(m => m.bracketType === 'WINNERS');
+    const losersMatches = matches.filter(m => m.bracketType === 'LOSERS');
+    const grandFinals = matches.find(m => m.bracketType === 'GRANDS');
+
+    return NextResponse.json({
+      id: params.id,
+      tournament,
+      data: {
+        winners: winnersMatches,
+        losers: losersMatches,
+        grandFinals,
+      },
+    });
   } catch (error) {
     console.error('Error al obtener bracket:', error);
     return NextResponse.json(
@@ -190,89 +200,13 @@ export async function GET(
   }
 }
 
-// PUT - Actualizar resultado de un match
+// PUT - Actualizar resultado de un match (ya no se usa, usar /matches/[matchId]/report)
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'No autorizado' },
-        { status: 403 }
-      );
-    }
-
-    const body = await request.json();
-    const { matchId, winnerId, loserId, score } = body;
-
-    if (!matchId || !winnerId || !loserId) {
-      return NextResponse.json(
-        { error: 'Faltan datos requeridos' },
-        { status: 400 }
-      );
-    }
-
-    // Obtener el bracket actual
-    const currentBracket = await prisma.bracket.findFirst({
-      where: { tournamentId: params.id },
-    });
-
-    if (!currentBracket) {
-      return NextResponse.json(
-        { error: 'Bracket no encontrado' },
-        { status: 404 }
-      );
-    }
-
-    // Actualizar el match en el bracket
-    const bracketData = currentBracket.data as any;
-    
-    // Buscar y actualizar el match
-    const updateMatch = (matches: any[]) => {
-      const match = matches.find(m => m.id === matchId);
-      if (match) {
-        match.winnerId = winnerId;
-        match.loserId = loserId;
-        match.score = score;
-        return true;
-      }
-      return false;
-    };
-
-    let updated = updateMatch(bracketData.winners || []);
-    if (!updated) updated = updateMatch(bracketData.losers || []);
-    if (!updated && bracketData.grandFinals?.id === matchId) {
-      bracketData.grandFinals.winnerId = winnerId;
-      bracketData.grandFinals.loserId = loserId;
-      bracketData.grandFinals.score = score;
-      updated = true;
-    }
-
-    if (!updated) {
-      return NextResponse.json(
-        { error: 'Match no encontrado' },
-        { status: 404 }
-      );
-    }
-
-    // Guardar el bracket actualizado
-    await prisma.bracket.update({
-      where: { id: currentBracket.id },
-      data: { data: bracketData as any },
-    });
-
-    return NextResponse.json({
-      success: true,
-      bracket: bracketData,
-    });
-  } catch (error) {
-    console.error('Error al actualizar match:', error);
-    return NextResponse.json(
-      { error: 'Error al actualizar el match' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { error: 'Use /api/tournaments/[id]/matches/[matchId]/report para reportar resultados' },
+    { status: 410 }
+  );
 }
