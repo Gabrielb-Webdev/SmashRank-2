@@ -96,7 +96,7 @@ export async function POST(
     }
 
     // Actualizar el estado del jugador eliminado si perdió en losers bracket
-    if (match.bracketType === 'LOSERS' && !match.nextLoserMatchId) {
+    if (match.bracketType === 'LOSERS' && !match.nextLoserMatchId && loserId) {
       await prisma.registration.updateMany({
         where: {
           tournamentId: match.tournamentId,
