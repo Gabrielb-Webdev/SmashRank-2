@@ -147,6 +147,9 @@ model Tournament {
   maxParticipants   Int?
   currentParticipants Int           @default(0)
   
+  // Prize Pool
+  prizePool         String?          // "$100 PRIZE POT"
+  
   // Fechas
   startDate         DateTime
   registrationStart DateTime
@@ -158,6 +161,12 @@ model Tournament {
   rules             String?
   stageList         String?
   ruleset           Json?
+  
+  // Streaming
+  streamUrls        String[]         // Array de URLs de streams
+  
+  // Show/Hide options
+  showProjected     Boolean          @default(true)
   
   // Metadata
   createdAt         DateTime         @default(now())
@@ -183,7 +192,16 @@ model Registration {
   tournamentId   String
   characterId    String?
   skinId         String?
-  seed           Int?
+  
+  // Seeding
+  seed           Int?     // 1-32, etc.
+  seedBadge      String?  // "A1", "B2", etc.
+  
+  // Status in tournament
+  status         String   @default("ACTIVE") // "ACTIVE", "ELIMINATED", "DQ"
+  currentBracket String   @default("WINNERS") // "WINNERS", "LOSERS", "OUT"
+  finalPlacement Int?     // 1st, 2nd, 3rd, Top 8, etc.
+  
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -196,6 +214,8 @@ model Registration {
   @@unique([userId, tournamentId])
   @@index([tournamentId])
   @@index([userId])
+  @@index([seed])
+  @@index([status])
 }
 
 model Bracket {
@@ -213,15 +233,29 @@ model Bracket {
 model Match {
   id               String      @id @default(cuid())
   tournamentId     String
+  
+  // Bracket structure (Double Elimination)
   bracketType      String      // "WINNERS", "LOSERS", "GRANDS"
-  round            Int
-  matchNumber      Int
+  roundName        String      // "Winners Round 1", "Losers Quarter-Final", etc.
+  roundNumber      Int         // 1, 2, 3...
+  position         Int         // Position within the round
+  
+  // Players
   player1Id        String?
+  player1Source    String?     // "Winner of Match #5" or "Loser of Match #3"
   player2Id        String?
+  player2Source    String?
+  
+  // Results
   player1Score     Int         @default(0)
   player2Score     Int         @default(0)
   winnerId         String?
-  status           String      @default("PENDING") // "PENDING", "CHECKIN", "BANNING", "SELECTING", "PLAYING", "REPORTING", "COMPLETED", "DQ"
+  loserId          String?
+  
+  // State
+  status           String      @default("PENDING") // "PENDING", "ONGOING", "COMPLETED", "DQ"
+  scheduledTime    DateTime?
+  completedAt      DateTime?
   
   // Check-in
   player1CheckIn   Boolean     @default(false)
@@ -235,11 +269,17 @@ model Match {
   // Match data (stores ban/pick history)
   matchData        Json?       // { games: [{ bans: [], stage: "", characters: {}, winner: "" }] }
   
-  nextMatchId      String?
-  loserNextMatchId String?
-  startedAt        DateTime?
-  completedAt      DateTime?
+  // Relationships in bracket
+  nextMatchId      String?     // Where winner goes
+  nextLoserMatchId String?     // Where loser goes (only for Winners bracket)
+  previousMatch1Id String?     // Source match 1
+  previousMatch2Id String?     // Source match 2
+  
+  // Additional metadata
+  streamUrl        String?     // Twitch/YouTube stream URL
+  isLive           Boolean     @default(false)
   notes            String?
+  
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 
@@ -251,10 +291,13 @@ model Match {
   games      MatchGame[]
 
   @@index([tournamentId])
+  @@index([bracketType])
+  @@index([roundNumber])
   @@index([player1Id])
   @@index([player2Id])
   @@index([winnerId])
   @@index([status])
+  @@index([isLive])
 }
 
 model MatchGame {

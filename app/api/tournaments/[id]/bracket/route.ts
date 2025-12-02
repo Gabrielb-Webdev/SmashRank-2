@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { generateDoubleEliminationBracket, assignSeeds } from '@/lib/bracket';
+import { generateDoubleEliminationBracket, assignSeeds, generateSeedBadge } from '@/lib/doubleElimination';
 
 // POST - Generar bracket para el torneo
 export async function POST(
@@ -55,25 +55,33 @@ export async function POST(
     // Asignar seeds basados en el ranking
     const playersWithSeeds = assignSeeds(registrations);
 
-    // Actualizar los seeds en la base de datos
+    // Actualizar los seeds y seedBadges en la base de datos
     await Promise.all(
       playersWithSeeds.map(player =>
         prisma.registration.update({
           where: { id: player.registrationId },
-          data: { seed: player.seed },
+          data: { 
+            seed: player.seed,
+            seedBadge: generateSeedBadge(player.seed, playersWithSeeds.length) as string,
+          } as any,
         })
       )
     );
 
-    // Generar el bracket
-    const bracket = generateDoubleEliminationBracket(playersWithSeeds);
+    // Generar el bracket con Double Elimination
+    const bracket = generateDoubleEliminationBracket(params.id, playersWithSeeds);
 
-    // Guardar el bracket en la base de datos (no cambiar estado del torneo todavía)
+    // Guardar el bracket en la base de datos
     const existingBracket = await prisma.bracket.findFirst({
       where: { tournamentId: params.id },
     });
 
     if (existingBracket) {
+      // Eliminar matches anteriores si existen
+      await prisma.match.deleteMany({
+        where: { tournamentId: params.id },
+      });
+      
       await prisma.bracket.update({
         where: { id: existingBracket.id },
         data: { data: bracket as any },
@@ -87,6 +95,42 @@ export async function POST(
         },
       });
     }
+    
+    // Crear matches en la base de datos
+    const allMatches = [
+      ...bracket.winners,
+      ...bracket.losers,
+      ...(bracket.grandFinals ? [bracket.grandFinals] : []),
+    ];
+    
+    await prisma.match.createMany({
+      data: allMatches.map(match => ({
+        id: match.id,
+        tournamentId: match.tournamentId,
+        bracketType: match.bracketType,
+        roundName: match.roundName,
+        roundNumber: match.roundNumber,
+        position: match.position,
+        player1Id: match.player1Id,
+        player1Source: match.player1Source,
+        player2Id: match.player2Id,
+        player2Source: match.player2Source,
+        player1Score: match.player1Score,
+        player2Score: match.player2Score,
+        winnerId: match.winnerId,
+        loserId: match.loserId,
+        status: match.status,
+        scheduledTime: match.scheduledTime,
+        nextMatchId: match.nextMatchId,
+        nextLoserMatchId: match.nextLoserMatchId,
+        previousMatch1Id: match.previousMatch1Id,
+        previousMatch2Id: match.previousMatch2Id,
+        streamUrl: match.streamUrl,
+        isLive: match.isLive,
+        round: match.roundNumber, // Compatibilidad con campo antiguo
+        matchNumber: match.position,
+      })),
+    });
 
     return NextResponse.json({
       success: true,
