@@ -59,11 +59,14 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Agregar currentParticipants a cada torneo
-    const tournamentsWithParticipants = tournaments.map(tournament => ({
-      ...tournament,
-      currentParticipants: tournament._count.registrations,
-    }));
+    // Actualizar currentParticipants basado en el conteo real
+    const tournamentsWithParticipants = tournaments.map(tournament => {
+      const { _count, ...rest } = tournament;
+      return {
+        ...rest,
+        currentParticipants: _count.registrations,
+      };
+    });
 
     return NextResponse.json(tournamentsWithParticipants);
   } catch (error) {
