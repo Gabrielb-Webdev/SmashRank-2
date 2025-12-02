@@ -369,7 +369,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
             
             {bracket && (
               <>
-                {/* Show Projected Toggle & Participants */}
+                {/* Show Projected Toggle */}
                 <div className="mb-6 flex items-center justify-between gap-4">
                   <button
                     onClick={() => setShowProjected(!showProjected)}
@@ -389,42 +389,6 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                     {bracket.tournament.registrations.length} participantes
                   </div>
                 </div>
-                
-                {/* Participants List */}
-                {tournament && tournament.registrations.length > 0 && (
-                  <div className="mb-6 p-4 bg-slate-900/50 rounded-xl border border-slate-800">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Users className="w-4 h-4 text-slate-400" />
-                      <h3 className="text-sm font-bold text-white uppercase tracking-wide">
-                        Participantes Inscritos
-                      </h3>
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                      {tournament.registrations
-                        .sort((a, b) => (a.seed || 999) - (b.seed || 999))
-                        .map((reg) => (
-                          <div
-                            key={reg.id}
-                            className="flex items-center gap-2 p-2 bg-slate-800/50 rounded-lg hover:bg-slate-800 transition-colors"
-                          >
-                            {reg.seedBadge && (
-                              <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
-                                reg.seed && reg.seed <= 4 ? 'bg-yellow-500/20 text-yellow-400' :
-                                reg.seed && reg.seed <= 8 ? 'bg-green-500/20 text-green-400' :
-                                reg.seed && reg.seed <= 16 ? 'bg-blue-500/20 text-blue-400' :
-                                'bg-slate-500/20 text-slate-400'
-                              }`}>
-                                {reg.seedBadge}
-                              </span>
-                            )}
-                            <span className="text-sm text-white truncate flex-1">
-                              {reg.user.username}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
                 
                 {/* Bracket Visualization */}
                 <BracketView
