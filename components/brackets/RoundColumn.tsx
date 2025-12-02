@@ -87,7 +87,7 @@ export function RoundColumn({
   }
 
   return (
-    <div className="flex flex-col gap-3 min-w-[270px]">
+    <div className="flex flex-col gap-3 min-w-[290px]">
       {/* Round Header - Diseño moderno */}
       <div className="text-center">
         <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg shadow-lg">

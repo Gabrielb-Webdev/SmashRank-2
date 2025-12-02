@@ -76,7 +76,7 @@ export function MatchCardV3({
 
       {/* Main Card */}
       <div className={cn(
-        'w-64 bg-slate-900 rounded-lg overflow-hidden transition-all',
+        'w-[280px] bg-slate-900 rounded-lg overflow-hidden transition-all',
         'border-2',
         isLive && 'border-red-500 shadow-lg shadow-red-500/20',
         isCompleted && 'border-emerald-500/50',
@@ -175,8 +175,8 @@ function PlayerRow({ player, source, score, isWinner, showProjected }: PlayerRow
             )}
           </>
         ) : (
-          // Projected Text
-          <span className="text-xs text-slate-500 italic truncate">
+          // Projected Text - Mostrar referencia completa del match
+          <span className="text-[11px] text-blue-400/80 font-medium tracking-tight">
             {source === 'BYE' ? 'BYE' : source || 'TBD'}
           </span>
         )}
