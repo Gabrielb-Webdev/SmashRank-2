@@ -61,15 +61,24 @@ export default function BracketViewerV2({ tournamentId, isAdmin }: BracketViewer
   const fetchTournamentData = async () => {
     try {
       const res = await fetch(`/api/tournaments/${tournamentId}`);
+      if (!res.ok) {
+        console.error('Error al cargar torneo:', res.status);
+        return;
+      }
       const data = await res.json();
-      if (data.tournament) {
+      if (data && data.tournament) {
         setTournamentStages({
-          starterStages: data.tournament.starterStages || [],
-          counterPickStages: data.tournament.counterpickStages || [],
+          starterStages: Array.isArray(data.tournament.starterStages) ? data.tournament.starterStages : [],
+          counterPickStages: Array.isArray(data.tournament.counterpickStages) ? data.tournament.counterpickStages : [],
         });
       }
     } catch (error) {
       console.error('Error al cargar datos del torneo:', error);
+      // Si falla, usar valores por defecto
+      setTournamentStages({
+        starterStages: [],
+        counterPickStages: [],
+      });
     }
   };
 

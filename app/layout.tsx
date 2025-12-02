@@ -4,6 +4,7 @@ import './globals.css';
 import { Providers } from './providers';
 import Navbar from '@/components/layout/Navbar';
 import { Toaster } from 'react-hot-toast';
+import SystemHealthCheck from '@/components/admin/SystemHealthCheck';
 
 const poppins = Poppins({ 
   weight: ['400', '600', '700', '900'],
@@ -142,6 +143,7 @@ export default function RootLayout({
               },
             }}
           />
+          <SystemHealthCheck />
         </Providers>
       </body>
     </html>

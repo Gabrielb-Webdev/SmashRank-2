@@ -33,10 +33,22 @@ export default function MatchFlowModal({
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [chatInput, setChatInput] = useState('');
 
-  const isPlayer1 = session?.user?.id === match.player1?.id;
-  const isPlayer2 = session?.user?.id === match.player2?.id;
+  const isPlayer1 = session?.user?.id === match?.player1?.id;
+  const isPlayer2 = session?.user?.id === match?.player2?.id;
   const isAdmin = session?.user?.role === 'ADMIN';
   const canInteract = isPlayer1 || isPlayer2 || isAdmin;
+
+  // Validar que match tenga los datos mínimos
+  if (!match || !match.id) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90">
+        <div className="bg-slate-900 rounded-2xl p-8 max-w-md">
+          <p className="text-white text-center">Error: Match no válido</p>
+          <button onClick={onClose} className="mt-4 w-full py-2 bg-red-600 text-white rounded-lg">Cerrar</button>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     fetchStages();
@@ -106,21 +118,21 @@ export default function MatchFlowModal({
 
   // Renderizado del tab Summary
   const renderSummary = () => {
-    const currentGame = match.currentGame || 1;
-    const games = match.games || [];
+    const currentGame = match?.currentGame || 1;
+    const games = match?.games || [];
     
     return (
       <div className="space-y-6">
         {/* Score Overview */}
         <div className="grid grid-cols-2 gap-4">
           <div className={`p-6 rounded-xl text-center ${
-            match.player1Score > match.player2Score 
+            (match?.player1Score || 0) > (match?.player2Score || 0)
               ? 'bg-green-500/20 border-2 border-green-500/50' 
               : 'bg-slate-800/50 border-2 border-slate-700'
           }`}>
-            <div className="text-5xl font-black text-white mb-2">{match.player1Score || 0}</div>
-            <div className="text-slate-300 font-semibold">{match.player1?.username}</div>
-            {match.winnerId === match.player1?.id && (
+            <div className="text-5xl font-black text-white mb-2">{match?.player1Score || 0}</div>
+            <div className="text-slate-300 font-semibold">{match?.player1?.username}</div>
+            {match?.winnerId === match?.player1?.id && (
               <div className="mt-2 flex items-center justify-center gap-2 text-green-400">
                 <Trophy className="w-5 h-5" />
                 <span className="font-bold">WINNER</span>
@@ -129,13 +141,13 @@ export default function MatchFlowModal({
           </div>
 
           <div className={`p-6 rounded-xl text-center ${
-            match.player2Score > match.player1Score 
+            (match?.player2Score || 0) > (match?.player1Score || 0)
               ? 'bg-green-500/20 border-2 border-green-500/50' 
               : 'bg-slate-800/50 border-2 border-slate-700'
           }`}>
-            <div className="text-5xl font-black text-white mb-2">{match.player2Score || 0}</div>
-            <div className="text-slate-300 font-semibold">{match.player2?.username}</div>
-            {match.winnerId === match.player2?.id && (
+            <div className="text-5xl font-black text-white mb-2">{match?.player2Score || 0}</div>
+            <div className="text-slate-300 font-semibold">{match?.player2?.username}</div>
+            {match?.winnerId === match?.player2?.id && (
               <div className="mt-2 flex items-center justify-center gap-2 text-green-400">
                 <Trophy className="w-5 h-5" />
                 <span className="font-bold">WINNER</span>
@@ -160,11 +172,11 @@ export default function MatchFlowModal({
                     <span className="font-bold text-white">Game {game.gameNumber}</span>
                     {game.winnerId && (
                       <span className={`px-3 py-1 rounded-full text-sm font-bold ${
-                        game.winnerId === match.player1?.id 
+                        game.winnerId === match?.player1?.id 
                           ? 'bg-green-500/20 text-green-400' 
                           : 'bg-blue-500/20 text-blue-400'
                       }`}>
-                        Winner: {game.winnerId === match.player1?.id ? match.player1?.username : match.player2?.username}
+                        Winner: {game.winnerId === match?.player1?.id ? match?.player1?.username : match?.player2?.username}
                       </span>
                     )}
                   </div>
@@ -212,7 +224,7 @@ export default function MatchFlowModal({
 
   // Renderizado del tab Tasks (el flujo principal)
   const renderTasks = () => {
-    const currentGameData = match.games?.[match.currentGame - 1];
+    const currentGameData = match?.games?.[match?.currentGame - 1];
     const gamePhase = currentGameData?.phase || 'checkin';
     
     return (
@@ -220,16 +232,16 @@ export default function MatchFlowModal({
         {/* Check-in */}
         <TaskItem
           title="Check in"
-          status={match.player1CheckIn && match.player2CheckIn ? 'complete' : 'pending'}
+          status={match?.player1CheckIn && match?.player2CheckIn ? 'complete' : 'pending'}
           description="Both players must check in to start the match"
         >
-          {(!match.player1CheckIn || !match.player2CheckIn) && canInteract && (
+          {(!match?.player1CheckIn || !match?.player2CheckIn) && canInteract && (
             <div className="space-y-2">
               <button
                 onClick={async () => {
                   setLoading(true);
                   try {
-                    const res = await fetch(`/api/tournaments/${tournamentId}/matches/${match.id}/checkin`, {
+                    const res = await fetch(`/api/tournaments/${tournamentId}/matches/${match?.id}/checkin`, {
                       method: 'POST',
                     });
                     if (res.ok) {
@@ -245,15 +257,15 @@ export default function MatchFlowModal({
                     setLoading(false);
                   }
                 }}
-                disabled={loading || (isPlayer1 && match.player1CheckIn) || (isPlayer2 && match.player2CheckIn)}
+                disabled={loading || (isPlayer1 && match?.player1CheckIn) || (isPlayer2 && match?.player2CheckIn)}
                 className="w-full py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-colors"
               >
-                {(isPlayer1 && match.player1CheckIn) || (isPlayer2 && match.player2CheckIn) ? '✓ Ya hiciste Check-in' : 'Hacer Check-in'}
+                {(isPlayer1 && match?.player1CheckIn) || (isPlayer2 && match?.player2CheckIn) ? '✓ Ya hiciste Check-in' : 'Hacer Check-in'}
               </button>
               <div className="text-xs text-slate-400 text-center">
-                {match.player1CheckIn && '✓ ' + (match.player1?.username || 'Player 1') + ' listo'}
-                {match.player1CheckIn && match.player2CheckIn && ' • '}
-                {match.player2CheckIn && '✓ ' + (match.player2?.username || 'Player 2') + ' listo'}
+                {match?.player1CheckIn && '✓ ' + (match?.player1?.username || 'Player 1') + ' listo'}
+                {match?.player1CheckIn && match?.player2CheckIn && ' • '}
+                {match?.player2CheckIn && '✓ ' + (match?.player2?.username || 'Player 2') + ' listo'}
               </div>
             </div>
           )}
