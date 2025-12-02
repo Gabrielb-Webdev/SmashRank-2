@@ -119,12 +119,24 @@ export function generateDoubleEliminationBracket(
   const totalWinnersRounds = calculateRounds(bracketSize);
   const totalLosersRounds = (totalWinnersRounds * 2) - 1;
   
-  // Generar seeding óptimo
+  // Generar seeding óptimo basado en el bracket size
   const seeding = generateSeeding(bracketSize);
   
+  // Crear un mapa de seeds reales a jugadores
+  const playersByRealSeed = new Map<number, Player>();
+  players.forEach(player => {
+    playersByRealSeed.set(player.seed, player);
+  });
+  
   // Crear array de jugadores según el seeding (con byes si es necesario)
-  const orderedPlayers: (Player | null)[] = seeding.map(seed => {
-    return players.find(p => p.seed === seed) || null;
+  // Si el seed del patrón es mayor que el número de jugadores, es un BYE
+  const orderedPlayers: (Player | null)[] = seeding.map(seedPosition => {
+    // Si seedPosition es mayor al número de jugadores, es BYE
+    if (seedPosition > players.length) {
+      return null;
+    }
+    // Buscar el jugador con ese seed
+    return playersByRealSeed.get(seedPosition) || null;
   });
   
   const winners: Match[] = [];
