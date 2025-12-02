@@ -91,6 +91,10 @@ export default async function AdminDashboard() {
     { label: '🎯 Generar Brackets', href: '/admin/generate-brackets', icon: Trophy, description: 'Generar brackets para torneos', color: 'from-yellow-600 to-orange-600' },
   ];
 
+  const dangerActions = [
+    { label: '🗑️ Limpiar Base de Datos', href: '/admin/clean-database', icon: Shield, description: '⚠️ Eliminar toda la data de prueba', color: 'from-red-600 to-red-800' },
+  ];
+
   return (
     <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)'}}>
       <div className="container mx-auto px-4 py-12">
@@ -168,6 +172,33 @@ export default async function AdminDashboard() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
+                      {action.label}
+                    </h3>
+                    <p className="text-sm text-slate-400">{action.description}</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Danger Zone */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-red-400 mb-6">⚠️ Zona Peligrosa</h2>
+          <div className="grid grid-cols-1 gap-6">
+            {dangerActions.map((action, index) => (
+              <Link
+                key={action.href}
+                href={action.href}
+                className="card p-6 group hover:border-red-500/50 transition-all animate-fade-in-up border-red-500/20"
+                style={{ animationDelay: `${(index + 11) * 0.1}s` }}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${action.color} flex items-center justify-center`}>
+                    <action.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-red-400 transition-colors">
                       {action.label}
                     </h3>
                     <p className="text-sm text-slate-400">{action.description}</p>
