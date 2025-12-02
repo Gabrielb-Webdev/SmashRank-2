@@ -299,17 +299,17 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         : "Por determinar";
       
       return (
-        <div key={match.id} className="rounded-lg border border-dashed border-slate-700/30 bg-slate-900/30">
-          <div className="px-3 py-1 bg-slate-800/30 border-b border-dashed border-slate-700/20">
-            <span className="text-[10px] font-bold text-slate-500">{matchLabel}</span>
-          </div>
-          <div className="divide-y divide-dashed divide-slate-700/20">
-            <div className="px-3 py-2">
+        <div key={match.id} className="relative">
+          <div className="bg-slate-800/40 rounded border border-dashed border-slate-700/40 overflow-hidden">
+            <div className="px-3 py-2.5 border-b border-dashed border-slate-700/30">
               <span className="text-slate-500 italic text-xs">{slot1Text}</span>
             </div>
-            <div className="px-3 py-2">
+            <div className="px-3 py-2.5">
               <span className="text-slate-500 italic text-xs">{slot2Text}</span>
             </div>
+          </div>
+          <div className="absolute -top-2 -left-2 w-6 h-6 bg-slate-700 rounded flex items-center justify-center">
+            <span className="text-[10px] font-bold text-slate-400">{matchLabel}</span>
           </div>
         </div>
       );
@@ -341,115 +341,106 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         : "Por determinar";
       
       return (
-        <div key={match.id} className="rounded-lg border border-slate-700/50 bg-slate-900/40">
-          <div className="px-3 py-1 bg-slate-800/40 border-b border-slate-700/40">
-            <span className="text-[10px] font-bold text-red-400">{matchLabel}</span>
-          </div>
-          <div className="divide-y divide-slate-700/30">
+        <div key={match.id} className="relative">
+          <div className="bg-slate-800/60 rounded border border-slate-700/50 overflow-hidden">
             {isPlayer1Waiting && waitingPlayer ? (
               <>
-                <div className="px-3 py-2">
-                  <span className="text-white text-sm font-medium">{waitingPlayer.username}</span>
+                <div className="px-3 py-2.5 border-b border-slate-700/40">
+                  <span className="text-white text-xs font-medium">{waitingPlayer.username}</span>
                 </div>
-                <div className="px-3 py-2">
+                <div className="px-3 py-2.5">
                   <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
                 </div>
               </>
             ) : (
               <>
-                <div className="px-3 py-2">
+                <div className="px-3 py-2.5 border-b border-slate-700/40">
                   <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
                 </div>
                 {waitingPlayer && (
-                  <div className="px-3 py-2">
-                    <span className="text-white text-sm font-medium">{waitingPlayer.username}</span>
+                  <div className="px-3 py-2.5">
+                    <span className="text-white text-xs font-medium">{waitingPlayer.username}</span>
                   </div>
                 )}
               </>
             )}
           </div>
+          <div className="absolute -top-2 -left-2 w-6 h-6 bg-red-600 rounded flex items-center justify-center shadow-lg">
+            <span className="text-[10px] font-bold text-white">{matchLabel}</span>
+          </div>
         </div>
       );
     }
 
-    // Match card LIMPIO tipo lista
+    // Match card ULTRA LIMPIO - estilo start.gg simplificado
     return (
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`relative transition-all ${
-          isClickable ? 'cursor-pointer hover:bg-slate-800/50' : ''
-        }`}
+        className={`relative ${isClickable ? 'cursor-pointer' : ''}`}
       >
-        <div 
-          className="rounded-lg border border-slate-700/50 bg-slate-900/50 overflow-hidden"
-        >
-          {/* Header con match label */}
-          <div className="px-3 py-1 bg-slate-800/50 border-b border-slate-700/50 flex items-center gap-2">
-            <span className="text-[10px] font-bold text-red-400">{matchLabel}</span>
-            {realMatch && realMatch.status !== 'COMPLETED' && (
-              <span className={`text-[9px] px-1.5 py-0.5 rounded ${
-                realMatch.status === 'PLAYING' ? 'bg-green-500/20 text-green-400' :
-                realMatch.status === 'CHECKIN' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-blue-500/20 text-blue-400'
+        <div className="bg-slate-800/80 rounded border border-slate-700/60 overflow-hidden hover:border-slate-600 transition-colors">
+          {/* Player 1 */}
+          <div 
+            className={`px-3 py-2.5 flex items-center justify-between border-b border-slate-700/40 ${
+              match.winnerId === match.player1Id ? 'bg-gradient-to-r from-emerald-900/30 to-transparent' : ''
+            }`}
+          >
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <span className={`text-xs font-medium truncate ${
+                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-300'
               }`}>
-                {realMatch.status === 'PLAYING' ? 'En juego' :
-                 realMatch.status === 'CHECKIN' ? 'Check-in' : 'Preparando'}
+                {player1.username}
               </span>
-            )}
-          </div>
-
-          {/* Players */}
-          <div className="divide-y divide-slate-700/30">
-            {/* Player 1 */}
-            <div 
-              className={`px-3 py-2 flex items-center justify-between transition-colors ${
-                match.winnerId === match.player1Id ? 'bg-red-500/10' : ''
-              }`}
-            >
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                {match.winnerId === match.player1Id && (
-                  <span className="text-yellow-400 text-xs">★</span>
-                )}
-                <span className={`text-sm truncate ${
-                  match.winnerId === match.player1Id ? 'text-white font-semibold' : 'text-slate-300'
-                }`}>
-                  {player1.username}
-                </span>
-              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {match.winnerId === match.player1Id && (
+                <div className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center">
+                  <span className="text-emerald-400 text-xs">✓</span>
+                </div>
+              )}
               {realMatch && (
-                <span className={`text-base font-bold ${
-                  match.winnerId === match.player1Id ? 'text-yellow-400' : 'text-slate-500'
+                <span className={`text-sm font-bold tabular-nums w-6 text-right ${
+                  match.winnerId === match.player1Id ? 'text-white' : 'text-slate-400'
                 }`}>
                   {realMatch.player1Score || 0}
                 </span>
               )}
             </div>
+          </div>
 
-            {/* Player 2 */}
-            <div 
-              className={`px-3 py-2 flex items-center justify-between transition-colors ${
-                match.winnerId === match.player2Id ? 'bg-red-500/10' : ''
-              }`}
-            >
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                {match.winnerId === match.player2Id && (
-                  <span className="text-yellow-400 text-xs">★</span>
-                )}
-                <span className={`text-sm truncate ${
-                  match.winnerId === match.player2Id ? 'text-white font-semibold' : 'text-slate-300'
-                }`}>
-                  {player2.username}
-                </span>
-              </div>
+          {/* Player 2 */}
+          <div 
+            className={`px-3 py-2.5 flex items-center justify-between ${
+              match.winnerId === match.player2Id ? 'bg-gradient-to-r from-emerald-900/30 to-transparent' : ''
+            }`}
+          >
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <span className={`text-xs font-medium truncate ${
+                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-300'
+              }`}>
+                {player2.username}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {match.winnerId === match.player2Id && (
+                <div className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center">
+                  <span className="text-emerald-400 text-xs">✓</span>
+                </div>
+              )}
               {realMatch && (
-                <span className={`text-base font-bold ${
-                  match.winnerId === match.player2Id ? 'text-yellow-400' : 'text-slate-500'
+                <span className={`text-sm font-bold tabular-nums w-6 text-right ${
+                  match.winnerId === match.player2Id ? 'text-white' : 'text-slate-400'
                 }`}>
                   {realMatch.player2Score || 0}
                 </span>
               )}
             </div>
+          </div>
+
+          {/* Match label en la esquina */}
+          <div className="absolute -top-2 -left-2 w-6 h-6 bg-red-600 rounded flex items-center justify-center shadow-lg">
+            <span className="text-[10px] font-bold text-white">{matchLabel}</span>
           </div>
 
         {/* Status indicator as a small badge if needed */}
@@ -517,34 +508,77 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           </h3>
         </div>
 
-        {/* ESTRUCTURA VERTICAL TIPO LISTA con conexiones minimalistas */}
-        <div className="space-y-2">
-          {Object.entries(rounds)
-            .sort((a, b) => Number(a[0]) - Number(b[0]))
-            .map(([roundNum, roundMatches]) => {
-              const rNum = Number(roundNum);
+        {/* BRACKET HORIZONTAL LIMPIO Y CLARO */}
+        <div className="overflow-x-auto pb-6">
+          <div className="inline-flex gap-12 min-w-min px-4">
+            {Object.entries(rounds)
+              .sort((a, b) => Number(a[0]) - Number(b[0]))
+              .map(([roundNum, roundMatches]) => {
+                const rNum = Number(roundNum);
+                const verticalGap = rNum > 1 ? 12 * Math.pow(2, rNum - 1) : 12;
 
-              return (
-                <div key={roundNum} className="space-y-2">
-                  {/* Header de ronda compacto inline */}
-                  <div className="flex items-center gap-3 px-4 py-2 bg-red-900/20 border-l-4 border-red-500">
-                    <span className="text-red-400 font-bold text-sm">{getRoundName(rNum, totalRounds)}</span>
-                    <div className="flex-1 h-px bg-red-500/30"/>
-                  </div>
+                return (
+                  <div key={roundNum} className="flex flex-col" style={{ minWidth: '280px' }}>
+                    {/* Header de ronda limpio */}
+                    <div className="mb-6 pb-2 border-b-2 border-red-500">
+                      <h4 className="text-sm font-bold text-red-400 uppercase tracking-wide">
+                        {getRoundName(rNum, totalRounds)}
+                      </h4>
+                    </div>
 
-                  {/* Grid de matches - 2 columnas en desktop */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 px-4">
-                    {roundMatches
-                      .sort((a, b) => a.matchNumber - b.matchNumber)
-                      .map((match, idx) => (
-                        <div key={match.id}>
-                          {renderMatch(match, idx, roundMatches)}
-                        </div>
-                      ))}
+                    {/* Matches con espaciado proporcional */}
+                    <div className="flex flex-col justify-around flex-1" style={{ gap: `${verticalGap}px` }}>
+                      {roundMatches
+                        .sort((a, b) => a.matchNumber - b.matchNumber)
+                        .map((match, idx) => {
+                          const isLastRound = rNum === totalRounds;
+                          const isPairStart = idx % 2 === 0;
+                          const hasNextInPair = idx + 1 < roundMatches.length;
+                          
+                          return (
+                            <div key={match.id} className="relative">
+                              {/* Líneas conectoras SIMPLES Y CLARAS */}
+                              {!isLastRound && (
+                                <svg 
+                                  className="absolute left-full top-1/2 pointer-events-none"
+                                  style={{ 
+                                    width: isPairStart && hasNextInPair ? '80px' : '48px',
+                                    height: isPairStart && hasNextInPair ? `${verticalGap + 100}px` : '2px',
+                                    transform: 'translateY(-50%)'
+                                  }}
+                                >
+                                  {isPairStart && hasNextInPair ? (
+                                    <>
+                                      {/* Línea desde el primer match */}
+                                      <line x1="0" y1="50%" x2="48" y2="50%" 
+                                        stroke="rgba(100, 116, 139, 0.6)" strokeWidth="2"/>
+                                      {/* Línea vertical conectando pares */}
+                                      <line x1="48" y1="50%" x2="48" y2={`calc(50% + ${(verticalGap + 100) / 2}px)`}
+                                        stroke="rgba(100, 116, 139, 0.6)" strokeWidth="2"/>
+                                      {/* Línea horizontal final */}
+                                      <line x1="48" y1={`calc(50% + ${(verticalGap + 100) / 2}px)`} x2="80" y2={`calc(50% + ${(verticalGap + 100) / 2}px)`}
+                                        stroke="rgba(100, 116, 139, 0.6)" strokeWidth="2"/>
+                                    </>
+                                  ) : !isPairStart ? (
+                                    /* Línea desde el segundo match del par */
+                                    <line x1="0" y1="50%" x2="48" y2="50%" 
+                                      stroke="rgba(100, 116, 139, 0.6)" strokeWidth="2"/>
+                                  ) : (
+                                    /* Match solitario */
+                                    <line x1="0" y1="50%" x2="48" y2="50%" 
+                                      stroke="rgba(100, 116, 139, 0.6)" strokeWidth="2"/>
+                                  )}
+                                </svg>
+                              )}
+                              {renderMatch(match, idx, roundMatches)}
+                            </div>
+                          );
+                        })}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
       </div>
     );
