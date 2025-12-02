@@ -537,38 +537,46 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                           
                           return (
                             <div key={match.id} className="relative">
-                              {/* Líneas conectoras GRUESAS Y CLARAS */}
+                              {/* Líneas conectoras con CSS - MÁS SIMPLES */}
                               {!isLastRound && (
-                                <svg 
-                                  className="absolute left-full top-1/2 pointer-events-none"
-                                  style={{ 
-                                    width: isPairStart && hasNextInPair ? '96px' : '64px',
-                                    height: isPairStart && hasNextInPair ? `${verticalGap + 120}px` : '2px',
-                                    transform: 'translateY(-50%)'
-                                  }}
-                                >
-                                  {isPairStart && hasNextInPair ? (
+                                <>
+                                  {/* Línea horizontal desde el match */}
+                                  <div 
+                                    className="absolute left-full top-1/2 bg-slate-600"
+                                    style={{ 
+                                      width: '48px',
+                                      height: '3px',
+                                      transform: 'translateY(-50%)'
+                                    }}
+                                  />
+                                  
+                                  {/* Conexión vertical entre pares */}
+                                  {isPairStart && hasNextInPair && (
                                     <>
-                                      {/* Línea desde el primer match */}
-                                      <line x1="0" y1="50%" x2="64" y2="50%" 
-                                        stroke="#64748b" strokeWidth="3"/>
-                                      {/* Línea vertical conectando pares */}
-                                      <line x1="64" y1="50%" x2="64" y2={`calc(50% + ${(verticalGap + 120) / 2}px)`}
-                                        stroke="#64748b" strokeWidth="3"/>
-                                      {/* Línea horizontal final */}
-                                      <line x1="64" y1={`calc(50% + ${(verticalGap + 120) / 2}px)`} x2="96" y2={`calc(50% + ${(verticalGap + 120) / 2}px)`}
-                                        stroke="#64748b" strokeWidth="3"/>
+                                      {/* Línea vertical */}
+                                      <div 
+                                        className="absolute bg-slate-600"
+                                        style={{
+                                          left: 'calc(100% + 48px)',
+                                          top: '50%',
+                                          width: '3px',
+                                          height: `${verticalGap + 120}px`
+                                        }}
+                                      />
+                                      {/* Línea horizontal al siguiente nivel */}
+                                      <div 
+                                        className="absolute bg-slate-600"
+                                        style={{
+                                          left: 'calc(100% + 48px)',
+                                          top: `calc(50% + ${(verticalGap + 120) / 2}px)`,
+                                          width: '48px',
+                                          height: '3px',
+                                          transform: 'translateY(-50%)'
+                                        }}
+                                      />
                                     </>
-                                  ) : !isPairStart ? (
-                                    /* Línea desde el segundo match del par */
-                                    <line x1="0" y1="50%" x2="64" y2="50%" 
-                                      stroke="#64748b" strokeWidth="3"/>
-                                  ) : (
-                                    /* Match solitario */
-                                    <line x1="0" y1="50%" x2="64" y2="50%" 
-                                      stroke="#64748b" strokeWidth="3"/>
                                   )}
-                                </svg>
+                                </>
                               )}
                               {renderMatch(match, idx, roundMatches)}
                             </div>
