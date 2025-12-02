@@ -33,6 +33,24 @@ export default function InjectParticipantsPage() {
       name: 'asdasddasdas (8 participantes)',
       participants: 16,
       color: 'from-purple-600 to-pink-600'
+    },
+    {
+      id: 'cmioprpcz0001jqyumj595lm3',
+      name: 'Torneo Nuevo 1',
+      participants: 25,
+      color: 'from-orange-600 to-red-600'
+    },
+    {
+      id: 'cmiopry440003jqyu1yg9qi7i',
+      name: 'Torneo Nuevo 2',
+      participants: 8,
+      color: 'from-cyan-600 to-blue-600'
+    },
+    {
+      id: 'cmiops6c10005jqyu8y3madxe',
+      name: 'Torneo Nuevo 3',
+      participants: 15,
+      color: 'from-pink-600 to-purple-600'
     }
   ];
 
@@ -131,7 +149,7 @@ export default function InjectParticipantsPage() {
                   Inyectando participantes...
                 </span>
               ) : (
-                '🚀 Inyectar a TODOS los Torneos (49 participantes en total)'
+                '🚀 Inyectar a TODOS los Torneos (97 participantes en total)'
               )}
             </button>
           </div>
