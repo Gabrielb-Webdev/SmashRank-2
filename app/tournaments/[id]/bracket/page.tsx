@@ -113,12 +113,17 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         setTournament(tournamentData);
       }
       
-      // Cargar bracket si existe
-      const bracketRes = await fetch(`/api/tournaments/${params.id}/bracket`);
-      if (bracketRes.ok) {
-        const bracketData = await bracketRes.json();
-        setBracket(bracketData);
-        setTournament(bracketData.tournament);
+      // Cargar bracket si existe (sin mostrar 404 en consola)
+      try {
+        const bracketRes = await fetch(`/api/tournaments/${params.id}/bracket`);
+        if (bracketRes.ok) {
+          const bracketData = await bracketRes.json();
+          setBracket(bracketData);
+          setTournament(bracketData.tournament);
+        }
+      } catch (err) {
+        // Bracket no existe aún, esto es normal
+        console.log('Bracket not generated yet');
       }
     } catch (err) {
       console.error('Error loading data:', err);

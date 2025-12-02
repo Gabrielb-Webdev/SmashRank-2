@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -9,44 +9,29 @@ export default function GenerateBracketsPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [tournaments, setTournaments] = useState<any[]>([]);
+  const [fetchingTournaments, setFetchingTournaments] = useState(true);
 
-  if (session?.user.role !== 'ADMIN') {
-    router.push('/');
-    return null;
-  }
-
-  const tournaments = [
-    {
-      id: 'cmiootw2n00011423j1qg8mf5',
-      name: 'test',
-      participants: 32,
-    },
-    {
-      id: 'cmiooupsp00031423dfzw96m0',
-      name: 'asdasd',
-      participants: 32,
-    },
-    {
-      id: 'cmioovc3l00051423mtmwqdmv',
-      name: 'asdasddasdas',
-      participants: 24,
-    },
-    {
-      id: 'cmioprpcz0001jqyumj595lm3',
-      name: 'Torneo Nuevo 1',
-      participants: 25,
-    },
-    {
-      id: 'cmiopry440003jqyu1yg9qi7i',
-      name: 'Torneo Nuevo 2',
-      participants: 8,
-    },
-    {
-      id: 'cmiops6c10005jqyu8y3madxe',
-      name: 'Torneo Nuevo 3',
-      participants: 15,
+  // Cargar torneos dinámicamente
+  useEffect(() => {
+    if (session?.user.role !== 'ADMIN') {
+      router.push('/');
+      return;
     }
-  ];
+
+    fetch('/api/tournaments')
+      .then(res => res.json())
+      .then(data => {
+        const tournamentsData = Array.isArray(data) ? data : [];
+        setTournaments(tournamentsData.map(t => ({
+          id: t.id,
+          name: t.name,
+          participants: t.currentParticipants || 0,
+        })));
+      })
+      .catch(err => console.error('Error loading tournaments:', err))
+      .finally(() => setFetchingTournaments(false));
+  }, [session, router]);
 
   const generateBracket = async (tournamentId: string, tournamentName: string) => {
     setLoading(true);
@@ -100,7 +85,16 @@ export default function GenerateBracketsPage() {
           </p>
 
           <div className="space-y-4">
-            {tournaments.map((tournament, index) => (
+            {fetchingTournaments ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+                <p className="text-slate-400 mt-4">Cargando torneos...</p>
+              </div>
+            ) : tournaments.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-slate-400">No hay torneos disponibles</p>
+              </div>
+            ) : tournaments.map((tournament, index) => (
               <div 
                 key={tournament.id}
                 className="bg-slate-900/50 rounded-lg p-6 border border-slate-700 hover:border-slate-600 transition-all"
@@ -124,7 +118,7 @@ export default function GenerateBracketsPage() {
                   </button>
                 </div>
               </div>
-            ))}
+            )))}
           </div>
 
           <div className="mt-8 pt-6 border-t border-slate-700">
@@ -142,7 +136,7 @@ export default function GenerateBracketsPage() {
                   Generando brackets...
                 </span>
               ) : (
-                '🚀 Generar TODOS los Brackets (6 torneos)'
+                `🚀 Generar TODOS los Brackets (${tournaments.length} torneos)`
               )}
             </button>
           </div>
