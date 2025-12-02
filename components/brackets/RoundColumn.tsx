@@ -75,11 +75,11 @@ export function RoundColumn({
     : null;
   
   return (
-    <div className="flex flex-col gap-6 min-w-[300px]">
+    <div className="flex flex-col gap-4 min-w-[240px]">
       {/* Round Header */}
       <div className="text-center space-y-1">
-        <div className="inline-block bg-slate-900 dark:bg-slate-800 border-2 border-slate-700 dark:border-slate-600 rounded-lg px-4 py-2 shadow-md">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wide">
+        <div className="inline-block bg-slate-900 dark:bg-slate-800 border-2 border-slate-700 dark:border-slate-600 rounded-lg px-3 py-1.5 shadow-md">
+          <h3 className="text-xs font-bold text-white uppercase tracking-wide">
             {roundName}
           </h3>
         </div>

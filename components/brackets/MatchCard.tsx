@@ -60,7 +60,7 @@ export function MatchCard({
     return (
       <div
         className={cn(
-          'w-[280px] bg-slate-900/60 border-2 border-dashed border-slate-700 rounded-lg p-4',
+          'w-[220px] bg-slate-900/60 border-2 border-dashed border-slate-700 rounded-lg p-3',
           'opacity-50 cursor-not-allowed',
           className
         )}
@@ -91,7 +91,7 @@ export function MatchCard({
       <div
         onClick={onClick}
         className={cn(
-          'relative w-[280px] bg-white dark:bg-slate-900 border-2 rounded-lg overflow-hidden',
+          'relative w-[220px] bg-white dark:bg-slate-900 border-2 rounded-lg overflow-hidden',
           'transition-all duration-200',
           'border-blue-400 dark:border-blue-600',
           onClick && 'cursor-pointer hover:shadow-lg hover:scale-[1.02]',
@@ -100,25 +100,25 @@ export function MatchCard({
       >
         {/* Player Row */}
         {isPlayer1Waiting && (
-          <div className="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex items-center justify-between p-2 border-b border-slate-200 dark:border-slate-700">
             <PlayerRow player={waitingPlayer!} isWinner={false} />
           </div>
         )}
         
         {/* Empty Slot */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50">
+        <div className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800/50">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-              <span className="text-blue-600 dark:text-blue-400 text-xs font-bold">W</span>
+            <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-bold">W</span>
             </div>
-            <span className="text-sm text-slate-500 dark:text-slate-400 italic truncate">
+            <span className="text-xs text-slate-500 dark:text-slate-400 italic truncate">
               {emptySlotText.replace(/Winner of |Loser of /g, '')}
             </span>
           </div>
         </div>
         
         {!isPlayer1Waiting && waitingPlayer && (
-          <div className="flex items-center justify-between p-3 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex items-center justify-between p-2 border-t border-slate-200 dark:border-slate-700">
             <PlayerRow player={waitingPlayer} isWinner={false} />
           </div>
         )}
@@ -139,7 +139,7 @@ export function MatchCard({
     <div
       onClick={onClick}
       className={cn(
-        'relative w-[280px] bg-white dark:bg-slate-900 border-2 rounded-lg overflow-hidden',
+        'relative w-[220px] bg-white dark:bg-slate-900 border-2 rounded-lg overflow-hidden',
         'transition-all duration-200',
         isCompleted && 'border-green-500 dark:border-green-600',
         isLive && 'border-yellow-500 dark:border-yellow-600 shadow-lg shadow-yellow-500/20 animate-pulse',
@@ -150,7 +150,7 @@ export function MatchCard({
     >
       {/* Player 1 */}
       <div className={cn(
-        'flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-700',
+        'flex items-center justify-between p-2 border-b border-slate-200 dark:border-slate-700',
         player1IsWinner && 'bg-green-50 dark:bg-green-950/30'
       )}>
         <PlayerRow 
@@ -162,7 +162,7 @@ export function MatchCard({
       
       {/* Player 2 */}
       <div className={cn(
-        'flex items-center justify-between p-3',
+        'flex items-center justify-between p-2',
         player2IsWinner && 'bg-green-50 dark:bg-green-950/30'
       )}>
         <PlayerRow 
