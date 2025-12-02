@@ -72,18 +72,20 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
       const data = await response.json();
       
       if (response.ok) {
-        setTournament(data);
+        // La API devuelve { tournament: {...} }
+        const tournamentData = data.tournament || data;
+        setTournament(tournamentData);
         
         // Verificar si existe bracket
         const bracketResponse = await fetch(`/api/tournaments/${tournamentId}/bracket`);
         setHasBracket(bracketResponse.ok);
         
         // Verificar si el usuario está registrado
-        if (session) {
+        if (session && tournamentData.registrations) {
           console.log('Session user ID:', session.user.id);
-          console.log('Registrations:', data.registrations);
+          console.log('Registrations:', tournamentData.registrations);
           
-          const userRegistration = data.registrations.find(
+          const userRegistration = tournamentData.registrations.find(
             (reg: any) => reg.userId === session.user.id
           );
           
@@ -298,8 +300,8 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                   <p className="text-xs text-slate-400 uppercase font-semibold">Jugadores</p>
                 </div>
                 <p className="text-white font-bold text-lg">
-                  {tournament.registrations?.length || 0}
-                  {tournament.maxParticipants && <span className="text-slate-400"> / {tournament.maxParticipants}</span>}
+                  {tournament?.registrations?.length || 0}
+                  {tournament?.maxParticipants && <span className="text-slate-400"> / {tournament.maxParticipants}</span>}
                 </p>
               </div>
             </div>
@@ -335,11 +337,11 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                   Participantes
                 </h3>
                 <span className="px-4 py-2 rounded-full font-bold" style={{background: 'rgba(220, 20, 60, 0.2)', color: '#ffd700', border: '1px solid rgba(220, 20, 60, 0.4)'}}>
-                  {tournament.registrations.length} jugadores
+                  {tournament?.registrations?.length || 0} jugadores
                 </span>
               </div>
               
-              {tournament.registrations.length === 0 ? (
+              {(!tournament?.registrations || tournament.registrations.length === 0) ? (
                 <div className="text-center py-12">
                   <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
                   <p className="text-slate-400 text-lg">Aún no hay participantes inscritos</p>
@@ -347,7 +349,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                 </div>
               ) : (
                 <div className="space-y-3 max-h-96 overflow-y-auto pr-2" style={{scrollbarWidth: 'thin'}}>
-                  {tournament.registrations.map((reg: any, index: number) => (
+                  {(tournament?.registrations || []).map((reg: any, index: number) => (
                     <div
                       key={reg.id}
                       className="flex items-center justify-between p-4 rounded-lg transition-all hover:scale-[1.02]"
