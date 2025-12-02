@@ -38,6 +38,30 @@ export default function ConfigureStagesPage() {
     }
   };
 
+  const seedStages = async () => {
+    if (!confirm('¿Crear los 8 stages legales de Smash Ultimate?')) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/seed-stages', {
+        method: 'POST',
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        alert(`✅ ${data.message}`);
+        fetchStages(); // Recargar stages
+      } else {
+        const data = await res.json();
+        alert('Error: ' + (data.error || 'Error desconocido'));
+      }
+    } catch (error) {
+      alert('Error: ' + error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleTournamentChange = (tournamentId: string) => {
     setSelectedTournament(tournamentId);
     const tournament = tournaments.find(t => t.id === tournamentId);
@@ -157,14 +181,25 @@ export default function ConfigureStagesPage() {
             ))}
           </select>
 
-          {selectedTournament && (
-            <button
-              onClick={quickSetup}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              ⚡ Configuración Rápida (Smash Ultimate)
-            </button>
-          )}
+          <div className="flex gap-3 mt-4">
+            {stages.length === 0 && (
+              <button
+                onClick={seedStages}
+                disabled={loading}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-700 text-white rounded-lg transition-colors"
+              >
+                🎭 Crear Stages Legales
+              </button>
+            )}
+            {selectedTournament && stages.length > 0 && (
+              <button
+                onClick={quickSetup}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                ⚡ Configuración Rápida (Smash Ultimate)
+              </button>
+            )}
+          </div>
         </div>
 
         {selectedTournament && (
