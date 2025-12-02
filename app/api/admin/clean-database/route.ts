@@ -29,34 +29,25 @@ export async function POST(req: NextRequest) {
     const deletedRankings = await prisma.ranking.deleteMany();
     console.log(`✅ Eliminados ${deletedRankings.count} rankings`);
 
-    // Paso 4: Eliminar todos los torneos EXCEPTO los creados por el admin actual
-    const deletedTournaments = await prisma.tournament.deleteMany({
+    // Paso 4: Eliminar TODOS los torneos (sin excepciones)
+    const deletedTournaments = await prisma.tournament.deleteMany();
+    console.log(`✅ Eliminados ${deletedTournaments.count} torneos`);
+
+    // Paso 5: Eliminar todos los usuarios EXCEPTO los 3 especificados
+    const keepEmails = [
+      'Gabrielbustosg01@gmail.com',
+      'joelgomezalbornoz@hotmail.com',
+      'admin@smashrank.ar'
+    ];
+    
+    const deletedUsers = await prisma.user.deleteMany({
       where: {
-        createdById: {
-          not: session.user.id
+        email: {
+          notIn: keepEmails
         }
       }
     });
-    console.log(`✅ Eliminados ${deletedTournaments.count} torneos`);
-
-    // Paso 5: Eliminar todos los usuarios ficticios (con email @test.com) EXCEPTO el admin
-    const deletedUsers = await prisma.user.deleteMany({
-      where: {
-        AND: [
-          {
-            email: {
-              endsWith: '@test.com'
-            }
-          },
-          {
-            id: {
-              not: session.user.id
-            }
-          }
-        ]
-      }
-    });
-    console.log(`✅ Eliminados ${deletedUsers.count} usuarios ficticios`);
+    console.log(`✅ Eliminados ${deletedUsers.count} usuarios`);
 
     console.log('✅ Limpieza completada exitosamente!');
 

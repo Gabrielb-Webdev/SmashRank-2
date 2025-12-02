@@ -76,15 +76,20 @@ export default function CleanDatabasePage() {
                   Esta operación eliminará PERMANENTEMENTE:
                 </p>
                 <ul className="space-y-2 text-sm text-red-200">
-                  <li>✗ Todos los torneos (excepto los creados por tu usuario admin)</li>
+                  <li>✗ TODOS los torneos</li>
                   <li>✗ Todos los brackets y matches</li>
                   <li>✗ Todas las inscripciones (registrations)</li>
-                  <li>✗ Todos los usuarios ficticios (con emails @test.com)</li>
+                  <li>✗ TODOS los usuarios (excepto 3 específicos)</li>
                   <li>✗ Todos los rankings</li>
                 </ul>
-                <p className="text-red-300 text-sm mt-3 font-semibold">
-                  ⚠️ Tu usuario admin NO será eliminado
+                <p className="text-green-300 text-sm mt-3 font-semibold">
+                  ✅ Se mantendrán estos usuarios:
                 </p>
+                <ul className="space-y-1 text-xs text-green-200 mt-2">
+                  <li>• Gabriel Sin H (Gabrielbustosg01@gmail.com)</li>
+                  <li>• iiori.__ (joelgomezalbornoz@hotmail.com)</li>
+                  <li>• admin (admin@smashrank.ar)</li>
+                </ul>
               </div>
             </div>
           </div>
