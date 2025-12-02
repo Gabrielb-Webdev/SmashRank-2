@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { X, Trophy, MessageCircle, ClipboardList, Eye, Clock, CheckCircle, Ban, User, Map } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface MatchFlowModalProps {
   match: any;
