@@ -10,7 +10,10 @@ const tournamentSchema = z.object({
   description: z.string().optional(),
   isOnline: z.boolean().optional().default(true),
   format: z.enum(['SINGLE_ELIMINATION', 'DOUBLE_ELIMINATION', 'ROUND_ROBIN', 'SWISS', 'CREW_BATTLE']),
-  maxParticipants: z.union([z.number(), z.string()]).transform(val => typeof val === 'string' ? parseInt(val) : val).pipe(z.number().positive()),
+  maxParticipants: z.union([z.number(), z.string(), z.null()]).transform(val => {
+    if (val === null || val === '') return 16; // Valor por defecto
+    return typeof val === 'string' ? parseInt(val) : val;
+  }).pipe(z.number().positive()),
   startDate: z.string(),
   rules: z.string().optional(),
   stageList: z.string().optional(),
