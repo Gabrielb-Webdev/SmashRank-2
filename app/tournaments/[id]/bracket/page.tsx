@@ -299,35 +299,15 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         : "Por determinar";
       
       return (
-        <div 
-          key={match.id} 
-          className="relative flex items-center gap-3"
-        >
-          {/* Match label hexagonal */}
-          <div 
-            className="w-7 h-14 flex items-center justify-center text-xs font-bold flex-shrink-0"
-            style={{
-              clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
-              background: 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)',
-              color: '#fff',
-              boxShadow: '0 0 15px rgba(220, 20, 60, 0.3)'
-            }}>
-            {matchLabel}
+        <div key={match.id} className="rounded-lg border border-dashed border-slate-700/30 bg-slate-900/30">
+          <div className="px-3 py-1 bg-slate-800/30 border-b border-dashed border-slate-700/20">
+            <span className="text-[10px] font-bold text-slate-500">{matchLabel}</span>
           </div>
-          
-          {/* Container glassmorphism vacío */}
-          <div 
-            className="rounded-lg overflow-hidden"
-            style={{ 
-              width: '220px',
-              background: 'rgba(15, 23, 42, 0.4)',
-              backdropFilter: 'blur(10px)',
-              border: '1px dashed rgba(71, 85, 105, 0.4)'
-            }}>
-            <div className="px-3 py-2 flex items-center border-b border-dashed border-slate-700/30">
+          <div className="divide-y divide-dashed divide-slate-700/20">
+            <div className="px-3 py-2">
               <span className="text-slate-500 italic text-xs">{slot1Text}</span>
             </div>
-            <div className="px-3 py-2 flex items-center">
+            <div className="px-3 py-2">
               <span className="text-slate-500 italic text-xs">{slot2Text}</span>
             </div>
           </div>
@@ -361,48 +341,28 @@ export default function BracketPage({ params }: { params: { id: string } }) {
         : "Por determinar";
       
       return (
-        <div 
-          key={match.id} 
-          className="relative flex items-center gap-3"
-        >
-          {/* Match label hexagonal */}
-          <div 
-            className="w-7 h-14 flex items-center justify-center text-xs font-bold flex-shrink-0"
-            style={{
-              clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
-              background: 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)',
-              color: '#fff',
-              boxShadow: '0 0 15px rgba(220, 20, 60, 0.3)'
-            }}>
-            {matchLabel}
+        <div key={match.id} className="rounded-lg border border-slate-700/50 bg-slate-900/40">
+          <div className="px-3 py-1 bg-slate-800/40 border-b border-slate-700/40">
+            <span className="text-[10px] font-bold text-red-400">{matchLabel}</span>
           </div>
-          
-          {/* Container con glassmorphism */}
-          <div 
-            className="rounded-lg overflow-hidden"
-            style={{ 
-              width: '220px',
-              background: 'rgba(15, 23, 42, 0.6)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(71, 85, 105, 0.5)'
-            }}>
+          <div className="divide-y divide-slate-700/30">
             {isPlayer1Waiting && waitingPlayer ? (
               <>
-                <div className="px-3 py-2 flex items-center border-b border-slate-700/50">
-                  <span className="text-white text-xs font-medium">{waitingPlayer.username}</span>
+                <div className="px-3 py-2">
+                  <span className="text-white text-sm font-medium">{waitingPlayer.username}</span>
                 </div>
-                <div className="px-3 py-2 flex items-center">
+                <div className="px-3 py-2">
                   <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
                 </div>
               </>
             ) : (
               <>
-                <div className="px-3 py-2 flex items-center border-b border-slate-700/50">
+                <div className="px-3 py-2">
                   <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
                 </div>
                 {waitingPlayer && (
-                  <div className="px-3 py-2 flex items-center">
-                    <span className="text-white text-xs font-medium">{waitingPlayer.username}</span>
+                  <div className="px-3 py-2">
+                    <span className="text-white text-sm font-medium">{waitingPlayer.username}</span>
                   </div>
                 )}
               </>
@@ -412,88 +372,84 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       );
     }
 
-    // Match MODERNO con glassmorphism y efectos
+    // Match card LIMPIO tipo lista
     return (
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`relative transition-all flex items-center gap-3 group ${
-          isClickable ? 'cursor-pointer' : ''
+        className={`relative transition-all ${
+          isClickable ? 'cursor-pointer hover:bg-slate-800/50' : ''
         }`}
       >
-        {/* Match label hexagonal */}
         <div 
-          className="w-7 h-14 flex items-center justify-center text-xs font-bold flex-shrink-0 relative"
-          style={{
-            clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
-            background: 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)',
-            color: '#fff',
-            boxShadow: '0 0 15px rgba(220, 20, 60, 0.3)'
-          }}>
-          {matchLabel}
-        </div>
-        
-        {/* Container con glassmorphism */}
-        <div 
-          className="relative overflow-hidden rounded-lg transition-all group-hover:scale-[1.02]"
-          style={{ 
-            width: '220px',
-            background: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(71, 85, 105, 0.5)'
-          }}>
-          {/* Player 1 con efecto ganador */}
-          <div 
-            className={`px-3 py-2 flex items-center justify-between border-b transition-colors ${
-              match.winnerId === match.player1Id 
-                ? 'bg-gradient-to-r from-red-600/20 to-transparent border-red-500/50' 
-                : 'border-slate-700/50'
-            }`}
-          >
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              {match.winnerId === match.player1Id && (
-                <span className="text-yellow-400 text-sm">★</span>
-              )}
-              <span className={`text-xs font-medium truncate ${
-                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-300'
+          className="rounded-lg border border-slate-700/50 bg-slate-900/50 overflow-hidden"
+        >
+          {/* Header con match label */}
+          <div className="px-3 py-1 bg-slate-800/50 border-b border-slate-700/50 flex items-center gap-2">
+            <span className="text-[10px] font-bold text-red-400">{matchLabel}</span>
+            {realMatch && realMatch.status !== 'COMPLETED' && (
+              <span className={`text-[9px] px-1.5 py-0.5 rounded ${
+                realMatch.status === 'PLAYING' ? 'bg-green-500/20 text-green-400' :
+                realMatch.status === 'CHECKIN' ? 'bg-yellow-500/20 text-yellow-400' :
+                'bg-blue-500/20 text-blue-400'
               }`}>
-                {player1.username}
-              </span>
-            </div>
-            {realMatch && (
-              <span className={`text-sm font-bold ${
-                match.winnerId === match.player1Id ? 'text-yellow-400' : 'text-slate-500'
-              }`}>
-                {realMatch.player1Score || 0}
+                {realMatch.status === 'PLAYING' ? 'En juego' :
+                 realMatch.status === 'CHECKIN' ? 'Check-in' : 'Preparando'}
               </span>
             )}
           </div>
 
-          {/* Player 2 con efecto ganador */}
-          <div 
-            className={`px-3 py-2 flex items-center justify-between transition-colors ${
-              match.winnerId === match.player2Id 
-                ? 'bg-gradient-to-r from-red-600/20 to-transparent' 
-                : ''
-            }`}
-          >
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              {match.winnerId === match.player2Id && (
-                <span className="text-yellow-400 text-sm">★</span>
+          {/* Players */}
+          <div className="divide-y divide-slate-700/30">
+            {/* Player 1 */}
+            <div 
+              className={`px-3 py-2 flex items-center justify-between transition-colors ${
+                match.winnerId === match.player1Id ? 'bg-red-500/10' : ''
+              }`}
+            >
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {match.winnerId === match.player1Id && (
+                  <span className="text-yellow-400 text-xs">★</span>
+                )}
+                <span className={`text-sm truncate ${
+                  match.winnerId === match.player1Id ? 'text-white font-semibold' : 'text-slate-300'
+                }`}>
+                  {player1.username}
+                </span>
+              </div>
+              {realMatch && (
+                <span className={`text-base font-bold ${
+                  match.winnerId === match.player1Id ? 'text-yellow-400' : 'text-slate-500'
+                }`}>
+                  {realMatch.player1Score || 0}
+                </span>
               )}
-              <span className={`text-xs font-medium truncate ${
-                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-300'
-              }`}>
-                {player2.username}
-              </span>
             </div>
-            {realMatch && (
-              <span className={`text-sm font-bold ${
-                match.winnerId === match.player2Id ? 'text-yellow-400' : 'text-slate-500'
-              }`}>
-                {realMatch.player2Score || 0}
-              </span>
-            )}
+
+            {/* Player 2 */}
+            <div 
+              className={`px-3 py-2 flex items-center justify-between transition-colors ${
+                match.winnerId === match.player2Id ? 'bg-red-500/10' : ''
+              }`}
+            >
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {match.winnerId === match.player2Id && (
+                  <span className="text-yellow-400 text-xs">★</span>
+                )}
+                <span className={`text-sm truncate ${
+                  match.winnerId === match.player2Id ? 'text-white font-semibold' : 'text-slate-300'
+                }`}>
+                  {player2.username}
+                </span>
+              </div>
+              {realMatch && (
+                <span className={`text-base font-bold ${
+                  match.winnerId === match.player2Id ? 'text-yellow-400' : 'text-slate-500'
+                }`}>
+                  {realMatch.player2Score || 0}
+                </span>
+              )}
+            </div>
           </div>
 
         {/* Status indicator as a small badge if needed */}
@@ -561,106 +517,34 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           </h3>
         </div>
 
-        {/* Bracket horizontal COMPACTO */}
-        <div className="overflow-x-auto pb-4">
-          <div className="flex gap-3 min-w-min">
-            {Object.entries(rounds)
-              .sort((a, b) => Number(a[0]) - Number(b[0]))
-              .map(([roundNum, roundMatches]) => {
-                const rNum = Number(roundNum);
-                // Calcular espaciado vertical que aumenta con cada ronda
-                const baseSpacing = 4;
-                const verticalGap = rNum > 1 ? baseSpacing * Math.pow(2, rNum - 1) : baseSpacing;
+        {/* ESTRUCTURA VERTICAL TIPO LISTA con conexiones minimalistas */}
+        <div className="space-y-2">
+          {Object.entries(rounds)
+            .sort((a, b) => Number(a[0]) - Number(b[0]))
+            .map(([roundNum, roundMatches]) => {
+              const rNum = Number(roundNum);
 
-                return (
-                  <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '300px' }}>
-                    {/* Título de ronda con efecto neon */}
-                    <div className="mb-4 p-2 rounded-lg text-center relative overflow-hidden"
-                      style={{
-                        background: 'rgba(15, 23, 42, 0.7)',
-                        backdropFilter: 'blur(5px)',
-                        border: '1px solid rgba(220, 20, 60, 0.4)',
-                        boxShadow: '0 0 15px rgba(220, 20, 60, 0.15)'
-                      }}>
-                      <div className="absolute inset-0 opacity-20" 
-                        style={{
-                          background: 'radial-gradient(circle at 50% 0%, rgba(220, 20, 60, 0.3), transparent 70%)'
-                        }}/>
-                      <h4 className="font-bold text-sm uppercase relative z-10"
-                        style={{
-                          background: 'linear-gradient(to right, #fff 20%, #dc143c 50%, #fff 80%)',
-                          backgroundClip: 'text',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent'
-                        }}>
-                        {getRoundName(rNum, totalRounds)}
-                      </h4>
-                    </div>
-
-                    {/* Matches de la ronda con líneas conectoras */}
-                    <div className="flex flex-col justify-around h-full relative" style={{ gap: `${verticalGap}px` }}>
-                      {roundMatches
-                        .sort((a, b) => a.matchNumber - b.matchNumber)
-                        .map((match, idx) => {
-                          const isLastRound = rNum === totalRounds;
-                          const isPairStart = idx % 2 === 0;
-                          const hasNextInPair = idx + 1 < roundMatches.length;
-                          
-                          return (
-                            <div key={match.id} className="relative flex items-center">
-                              {/* Líneas conectoras con efecto glow */}
-                              {!isLastRound && (
-                                <>
-                                  {/* Línea horizontal con glow */}
-                                  <div 
-                                    className="absolute left-full top-1/2"
-                                    style={{ 
-                                      transform: 'translateY(-50%)',
-                                      width: '40px',
-                                      height: '2px',
-                                      background: 'linear-gradient(to right, rgba(220, 20, 60, 0.6), rgba(220, 20, 60, 0.3))',
-                                      boxShadow: '0 0 8px rgba(220, 20, 60, 0.5)'
-                                    }}
-                                  />
-                                  
-                                  {/* Conexión vertical con efecto */}
-                                  {isPairStart && hasNextInPair && (
-                                    <>
-                                      <div 
-                                        className="absolute left-full"
-                                        style={{
-                                          top: '50%',
-                                          height: `${verticalGap + 70}px`,
-                                          marginLeft: '40px',
-                                          width: '2px',
-                                          background: 'linear-gradient(to bottom, rgba(220, 20, 60, 0.5), rgba(220, 20, 60, 0.3), rgba(220, 20, 60, 0.5))',
-                                          boxShadow: '0 0 8px rgba(220, 20, 60, 0.4)'
-                                        }}
-                                      />
-                                      <div 
-                                        className="absolute left-full"
-                                        style={{
-                                          top: `calc(50% + ${(verticalGap + 70) / 2}px)`,
-                                          marginLeft: '40px',
-                                          width: '20px',
-                                          height: '2px',
-                                          background: 'linear-gradient(to right, rgba(220, 20, 60, 0.5), rgba(220, 20, 60, 0.3))',
-                                          boxShadow: '0 0 8px rgba(220, 20, 60, 0.4)'
-                                        }}
-                                      />
-                                    </>
-                                  )}
-                                </>
-                              )}
-                              {renderMatch(match, idx, roundMatches)}
-                            </div>
-                          );
-                        })}
-                    </div>
+              return (
+                <div key={roundNum} className="space-y-2">
+                  {/* Header de ronda compacto inline */}
+                  <div className="flex items-center gap-3 px-4 py-2 bg-red-900/20 border-l-4 border-red-500">
+                    <span className="text-red-400 font-bold text-sm">{getRoundName(rNum, totalRounds)}</span>
+                    <div className="flex-1 h-px bg-red-500/30"/>
                   </div>
-                );
-              })}
-          </div>
+
+                  {/* Grid de matches - 2 columnas en desktop */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 px-4">
+                    {roundMatches
+                      .sort((a, b) => a.matchNumber - b.matchNumber)
+                      .map((match, idx) => (
+                        <div key={match.id}>
+                          {renderMatch(match, idx, roundMatches)}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
     );
