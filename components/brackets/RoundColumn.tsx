@@ -3,7 +3,7 @@
  * Columna vertical que contiene todos los matches de una ronda
  */
 
-import { MatchCardNew } from './MatchCardNew';
+import { MatchCardV3 } from './MatchCardV3';
 
 interface Match {
   id: string;
@@ -74,31 +74,45 @@ export function RoundColumn({
       })
     : null;
   
+  // Filtrar matches basado en showProjected
+  // Si showProjected=false, solo mostrar matches con al menos un jugador
+  const visibleMatches = sortedMatches.filter(match => {
+    if (showProjected) return true;
+    return match.player1Id || match.player2Id;
+  });
+
+  // Si no hay matches visibles, no renderizar la columna
+  if (visibleMatches.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col gap-3 min-w-[240px]">
-      {/* Round Header */}
+    <div className="flex flex-col gap-3 min-w-[270px]">
+      {/* Round Header - Diseño moderno */}
       <div className="text-center">
-        <div className="inline-flex items-center px-3 py-1 bg-slate-800/50 border border-slate-700/50 rounded-md">
-          <h3 className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+        <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg shadow-lg">
+          <h3 className="text-xs font-black text-white uppercase tracking-widest">
             {roundName}
           </h3>
         </div>
         {formattedTime && (
-          <p className="text-[10px] text-slate-600 mt-1">
+          <p className="text-[10px] text-slate-500 mt-1.5 font-medium">
             {formattedTime}
           </p>
         )}
       </div>
       
-      {/* Matches */}
-      <div className="flex flex-col justify-center" style={{ gap: `${gapSize}px` }}>
-        {sortedMatches.map((match) => {
+      {/* Matches - Recalcular gap basado en matches VISIBLES */}
+      <div className="flex flex-col justify-center" style={{ 
+        gap: `${visibleMatches.length >= 8 ? 8 : visibleMatches.length >= 4 ? 32 : visibleMatches.length >= 2 ? 64 : 96}px` 
+      }}>
+        {visibleMatches.map((match) => {
           const matchLabel = matchLabelMap.get(match.id) || match.id;
           const player1 = getPlayerInfo(match.player1Id);
           const player2 = getPlayerInfo(match.player2Id);
           
           return (
-            <MatchCardNew
+            <MatchCardV3
               key={match.id}
               match={match}
               player1={player1}

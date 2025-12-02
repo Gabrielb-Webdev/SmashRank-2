@@ -128,15 +128,23 @@ export function BracketView({
       {/* Winners Bracket */}
       {winnersRounds.length > 0 && (
         <section>
-          {/* Section Header */}
-          <div className="mb-4 px-4 py-3 rounded-lg bg-gradient-to-r from-red-950/30 to-yellow-950/30 border border-red-900/20">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-yellow-500 flex items-center justify-center">
-                <span className="text-white text-lg">🏆</span>
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">Winners Bracket</h2>
-                <p className="text-slate-500 text-xs">Lose here and drop to Losers</p>
+          {/* Section Header - Diseño profesional */}
+          <div className="mb-8 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-red-500/10 rounded-xl blur-xl" />
+            <div className="relative px-6 py-5 rounded-xl bg-slate-900/90 border-2 border-yellow-500/30 backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-red-500 flex items-center justify-center shadow-xl">
+                    <Trophy className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-white tracking-tight">WINNERS BRACKET</h2>
+                    <p className="text-yellow-400 text-xs font-semibold uppercase tracking-wider">Lose → Drop to Losers</p>
+                  </div>
+                </div>
+                <div className="text-xs text-slate-500 font-mono">
+                  {winnersRounds.length} rounds
+                </div>
               </div>
             </div>
           </div>
@@ -179,15 +187,23 @@ export function BracketView({
       {/* Losers Bracket */}
       {losersRounds.length > 0 && (
         <section>
-          {/* Section Header */}
-          <div className="mb-4 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-950/30 to-purple-950/30 border border-blue-900/20">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                <span className="text-white text-lg">⚡</span>
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">Losers Bracket</h2>
-                <p className="text-slate-500 text-xs">Lose here and you're out</p>
+          {/* Section Header - Diseño profesional */}
+          <div className="mb-8 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl blur-xl" />
+            <div className="relative px-6 py-5 rounded-xl bg-slate-900/90 border-2 border-blue-500/30 backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shadow-xl">
+                    <span className="text-white text-2xl">⚡</span>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-white tracking-tight">LOSERS BRACKET</h2>
+                    <p className="text-blue-400 text-xs font-semibold uppercase tracking-wider">Lose → Elimination</p>
+                  </div>
+                </div>
+                <div className="text-xs text-slate-500 font-mono">
+                  {losersRounds.length} rounds
+                </div>
               </div>
             </div>
           </div>
@@ -230,21 +246,23 @@ export function BracketView({
       {/* Grand Finals */}
       {grandFinals && (
         <section>
-          {/* Section Header */}
-          <div className="mb-6 p-8 rounded-xl relative overflow-hidden text-center"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(220, 20, 60, 0.2) 100%)',
-              border: '3px solid rgba(255, 215, 0, 0.5)',
-              boxShadow: '0 8px 30px rgba(255, 215, 0, 0.3)'
-            }}>
-            <div className="flex items-center justify-center gap-4 mb-2">
-              <Trophy className="w-10 h-10 text-yellow-400" />
-              <h2 className="text-4xl font-black text-white">GRAND FINALS</h2>
-              <Trophy className="w-10 h-10 text-yellow-400" />
+          {/* Section Header - Diseño épico */}
+          <div className="mb-10 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-red-500/20 to-purple-500/20 rounded-2xl blur-2xl animate-pulse" />
+            <div className="relative px-8 py-6 rounded-2xl bg-slate-900/95 border-4 border-yellow-500 backdrop-blur-sm">
+              <div className="flex items-center justify-center gap-6">
+                <Trophy className="w-14 h-14 text-yellow-400 animate-bounce" />
+                <div className="text-center">
+                  <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-400 to-purple-400 tracking-tight">
+                    GRAND FINALS
+                  </h2>
+                  <p className="text-slate-300 text-sm font-bold uppercase tracking-widest mt-1">
+                    Winner Takes All
+                  </p>
+                </div>
+                <Trophy className="w-14 h-14 text-yellow-400 animate-bounce" style={{ animationDelay: '0.2s' }} />
+              </div>
             </div>
-            <p className="text-slate-300 text-lg">
-              Ganador de Winners vs Ganador de Losers
-            </p>
           </div>
           
           {/* Grand Finals Match */}
@@ -253,69 +271,97 @@ export function BracketView({
               {onMatchClick && (
                 <div
                   onClick={() => onMatchClick(grandFinals)}
-                  className="cursor-pointer transform hover:scale-105 transition-transform"
+                  className="cursor-pointer transform hover:scale-105 transition-all duration-300"
                 >
-                  {/* Usar MatchCard directamente */}
-                  <div className="relative w-[320px] bg-gradient-to-br from-yellow-500/20 to-red-500/20 border-4 border-yellow-500 rounded-xl overflow-hidden shadow-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-transparent" />
+                  {/* Card especial de Grand Finals */}
+                  <div className="relative w-[400px] bg-slate-900 border-4 border-yellow-500 rounded-2xl overflow-hidden shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-red-500/10 to-purple-500/10" />
                     
-                    <div className="relative z-10 p-4 space-y-3">
+                    <div className="relative z-10 p-6 space-y-4">
                       {/* Player 1 */}
                       <div className={cn(
-                        'flex items-center justify-between p-3 rounded-lg',
-                        'bg-slate-900/80 border-2',
-                        grandFinals.winnerId === grandFinals.player1Id ? 'border-green-500' : 'border-slate-700'
+                        'flex items-center justify-between p-4 rounded-xl transition-all',
+                        'bg-slate-800/80 backdrop-blur-sm border-3',
+                        grandFinals.winnerId === grandFinals.player1Id 
+                          ? 'border-emerald-500 shadow-lg shadow-emerald-500/20' 
+                          : 'border-slate-700'
                       )}>
                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                          {getPlayerInfo(grandFinals.player1Id)?.username || (
-                            <span className="text-slate-400 italic text-sm">
-                              {showProjected 
-                                ? (grandFinals.player1Source || 'Por determinar')
-                                : 'TBD'
-                              }
-                            </span>
-                          )}
+                          <span className={cn(
+                            "text-lg font-bold truncate",
+                            grandFinals.winnerId === grandFinals.player1Id ? "text-white" : "text-slate-300"
+                          )}>
+                            {getPlayerInfo(grandFinals.player1Id)?.username || (
+                              <span className="text-slate-500 italic text-base">
+                                {showProjected 
+                                  ? (grandFinals.player1Source || 'TBD')
+                                  : 'TBD'
+                                }
+                              </span>
+                            )}
+                          </span>
                           {grandFinals.winnerId === grandFinals.player1Id && (
-                            <Trophy className="w-5 h-5 text-yellow-400 ml-auto" />
+                            <div className="ml-auto">
+                              <Trophy className="w-6 h-6 text-yellow-400 animate-pulse" />
+                            </div>
                           )}
                         </div>
                         {grandFinals.player1Score !== undefined && (
-                          <span className="text-2xl font-black text-white ml-4">
+                          <div className={cn(
+                            "ml-4 w-12 h-12 rounded-lg flex items-center justify-center text-2xl font-black",
+                            grandFinals.winnerId === grandFinals.player1Id 
+                              ? "bg-emerald-500 text-white" 
+                              : "bg-slate-900 text-slate-400"
+                          )}>
                             {grandFinals.player1Score}
-                          </span>
+                          </div>
                         )}
                       </div>
                       
                       {/* VS Divider */}
                       <div className="flex items-center justify-center">
-                        <div className="px-4 py-1 bg-gradient-to-r from-yellow-500 to-red-500 rounded-full">
-                          <span className="text-white font-black text-sm">VS</span>
+                        <div className="px-6 py-2 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500 rounded-full shadow-lg">
+                          <span className="text-white font-black text-lg tracking-wider">VS</span>
                         </div>
                       </div>
                       
                       {/* Player 2 */}
                       <div className={cn(
-                        'flex items-center justify-between p-3 rounded-lg',
-                        'bg-slate-900/80 border-2',
-                        grandFinals.winnerId === grandFinals.player2Id ? 'border-green-500' : 'border-slate-700'
+                        'flex items-center justify-between p-4 rounded-xl transition-all',
+                        'bg-slate-800/80 backdrop-blur-sm border-3',
+                        grandFinals.winnerId === grandFinals.player2Id 
+                          ? 'border-emerald-500 shadow-lg shadow-emerald-500/20' 
+                          : 'border-slate-700'
                       )}>
                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                          {getPlayerInfo(grandFinals.player2Id)?.username || (
-                            <span className="text-slate-400 italic text-sm">
-                              {showProjected 
-                                ? (grandFinals.player2Source || 'Por determinar')
-                                : 'TBD'
-                              }
-                            </span>
-                          )}
+                          <span className={cn(
+                            "text-lg font-bold truncate",
+                            grandFinals.winnerId === grandFinals.player2Id ? "text-white" : "text-slate-300"
+                          )}>
+                            {getPlayerInfo(grandFinals.player2Id)?.username || (
+                              <span className="text-slate-500 italic text-base">
+                                {showProjected 
+                                  ? (grandFinals.player2Source || 'TBD')
+                                  : 'TBD'
+                                }
+                              </span>
+                            )}
+                          </span>
                           {grandFinals.winnerId === grandFinals.player2Id && (
-                            <Trophy className="w-5 h-5 text-yellow-400 ml-auto" />
+                            <div className="ml-auto">
+                              <Trophy className="w-6 h-6 text-yellow-400 animate-pulse" />
+                            </div>
                           )}
                         </div>
                         {grandFinals.player2Score !== undefined && (
-                          <span className="text-2xl font-black text-white ml-4">
+                          <div className={cn(
+                            "ml-4 w-12 h-12 rounded-lg flex items-center justify-center text-2xl font-black",
+                            grandFinals.winnerId === grandFinals.player2Id 
+                              ? "bg-emerald-500 text-white" 
+                              : "bg-slate-900 text-slate-400"
+                          )}>
                             {grandFinals.player2Score}
-                          </span>
+                          </div>
                         )}
                       </div>
                     </div>
