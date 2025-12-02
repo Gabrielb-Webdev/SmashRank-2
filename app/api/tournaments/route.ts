@@ -7,16 +7,13 @@ import { slugify } from '@/lib/utils';
 
 const tournamentSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
-  description: z.string().optional(),
+  description: z.string().default(''),
   isOnline: z.boolean().optional().default(true),
   format: z.enum(['SINGLE_ELIMINATION', 'DOUBLE_ELIMINATION', 'ROUND_ROBIN', 'SWISS', 'CREW_BATTLE']),
-  maxParticipants: z.union([z.number(), z.string(), z.null()]).transform(val => {
-    if (val === null || val === '') return 16; // Valor por defecto
-    return typeof val === 'string' ? parseInt(val) : val;
-  }).pipe(z.number().positive()),
-  startDate: z.string(),
-  rules: z.string().optional(),
-  stageList: z.string().optional(),
+  maxParticipants: z.number().positive().default(16),
+  startDate: z.string().min(1, 'La fecha de inicio es requerida'),
+  rules: z.string().default(''),
+  stageList: z.string().default('Battlefield, Final Destination, Smashville'),
   ruleset: z.any().optional(),
 });
 
@@ -162,13 +159,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(tournament, { status: 201 });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
+      console.error('❌ Error de validación:', error.errors);
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { 
+          error: error.errors[0].message,
+          validationErrors: error.errors
+        },
         { status: 400 }
       );
     }
 
-    console.error('Error al crear torneo:', error);
+    console.error('❌ Error al crear torneo:', error);
     console.error('Error details:', {
       message: error.message,
       code: error.code,
@@ -179,7 +180,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { 
         error: 'Error al crear torneo',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: error.message,
+        code: error.code,
+        meta: error.meta
       },
       { status: 500 }
     );

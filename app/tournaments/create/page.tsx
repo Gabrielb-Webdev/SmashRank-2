@@ -128,27 +128,34 @@ export default function CreateTournamentPage() {
       const rules = `${formData.stockCount} stocks, ${formData.timeLimit} minutos, ${itemsLabel}`;
       const stageList = formData.stages.length > 0 ? formData.stages.join(', ') : 'Battlefield, Final Destination, Smashville, Town & City, Pokémon Stadium 2';
 
+      const payload = {
+        name: formData.name,
+        description: formData.description || '',
+        format: formData.format,
+        maxParticipants: parseInt(formData.maxParticipants) || 16,
+        startDate: formData.startDate,
+        rules,
+        stageList,
+      };
+
+      console.log('📤 Enviando datos al servidor:', payload);
+
       const res = await fetch('/api/tournaments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          format: formData.format,
-          maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
-          startDate: formData.startDate,
-          rules,
-          stageList,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
+
+      console.log('📥 Respuesta del servidor:', { status: res.status, data });
 
       if (res.ok) {
         toast.success('¡Torneo creado exitosamente!');
         router.push('/tournaments');
         router.refresh();
       } else {
+        console.error('❌ Error del servidor:', data);
         toast.error(data.error || 'Error al crear el torneo');
       }
     } catch (error) {
