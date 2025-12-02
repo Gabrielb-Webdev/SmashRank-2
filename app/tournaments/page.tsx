@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Trophy, Calendar, Users, Plus, Filter, Wifi, Gamepad2 } from 'lucide-react';
+import { Trophy, Calendar, Users, Plus, Filter, Wifi, Gamepad2, Trash2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { TOURNAMENT_FORMATS, TOURNAMENT_STATUSES } from '@/lib/constants';
 
@@ -35,6 +35,30 @@ export default function TournamentsPage() {
       setTournaments([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteTournament = async (tournamentId: string, tournamentName: string) => {
+    if (!confirm(`¿Estás seguro de eliminar el torneo "${tournamentName}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/tournaments/${tournamentId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remover del estado local
+        setTournaments(tournaments.filter(t => t.id !== tournamentId));
+        alert('✅ Torneo eliminado exitosamente');
+      } else {
+        const data = await response.json();
+        alert(`❌ Error: ${data.error || 'No se pudo eliminar el torneo'}`);
+      }
+    } catch (error) {
+      console.error('Error al eliminar torneo:', error);
+      alert('❌ Error de conexión al eliminar el torneo');
     }
   };
 
@@ -213,13 +237,23 @@ export default function TournamentsPage() {
                   </div>
                 </div>
 
-                {/* Action Button */}
+                {/* Action Buttons */}
                 <div className="p-6 pt-4 border-t border-slate-700">
-                  <Link href={`/tournaments/${tournament.id}`} className="block">
+                  <Link href={`/tournaments/${tournament.id}`} className="block mb-2">
                     <button className="w-full btn-secondary py-3 font-semibold group-hover:border-red-500 group-hover:text-red-400 transition-all">
                       Ver Detalles
                     </button>
                   </Link>
+                  
+                  {session?.user.role === 'ADMIN' && (
+                    <button
+                      onClick={() => deleteTournament(tournament.id, tournament.name)}
+                      className="w-full py-2 px-4 rounded-lg text-sm font-semibold bg-red-600/20 border border-red-600/50 text-red-400 hover:bg-red-600/30 hover:border-red-500 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Eliminar Torneo
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
