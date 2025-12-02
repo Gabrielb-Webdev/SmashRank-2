@@ -14,7 +14,9 @@ export default function GenerateBracketsPage() {
 
   // Cargar torneos dinámicamente
   useEffect(() => {
-    if (session?.user.role !== 'ADMIN') {
+    if (!session) return;
+    
+    if (session.user.role !== 'ADMIN') {
       router.push('/');
       return;
     }
@@ -32,6 +34,10 @@ export default function GenerateBracketsPage() {
       .catch(err => console.error('Error loading tournaments:', err))
       .finally(() => setFetchingTournaments(false));
   }, [session, router]);
+
+  if (!session || session.user.role !== 'ADMIN') {
+    return null;
+  }
 
   const generateBracket = async (tournamentId: string, tournamentName: string) => {
     setLoading(true);
