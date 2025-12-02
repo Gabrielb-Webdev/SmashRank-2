@@ -57,11 +57,6 @@ export function RoundColumn({
   // Ordenar matches por position
   const sortedMatches = [...matches].sort((a, b) => a.position - b.position);
   
-  // Calcular espaciado basado en la cantidad de matches (efecto embudo)
-  // Más matches = menos espaciado, menos matches = más espaciado
-  const matchCount = sortedMatches.length;
-  const gapSize = matchCount >= 8 ? 8 : matchCount >= 4 ? 32 : matchCount >= 2 ? 64 : 96;
-  
   // Formatear fecha/hora si existe
   const formattedTime = scheduledTime 
     ? new Date(scheduledTime).toLocaleString('es-AR', {
@@ -86,10 +81,20 @@ export function RoundColumn({
     return null;
   }
 
+  // Calcular espaciado progresivo (embudo más marcado)
+  // Mientras menos matches, MÁS espacio entre ellos
+  const getGapSize = (matchCount: number): number => {
+    if (matchCount >= 16) return 4;
+    if (matchCount >= 8) return 12;
+    if (matchCount >= 4) return 40;
+    if (matchCount >= 2) return 80;
+    return 120;
+  };
+
   return (
-    <div className="flex flex-col gap-3 min-w-[290px]">
-      {/* Round Header - Diseño moderno */}
-      <div className="text-center">
+    <div className="flex flex-col gap-4 min-w-[290px]">
+      {/* Round Header - SIEMPRE arriba */}
+      <div className="text-center flex-shrink-0">
         <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg shadow-lg">
           <h3 className="text-xs font-black text-white uppercase tracking-widest">
             {roundName}
@@ -102,9 +107,9 @@ export function RoundColumn({
         )}
       </div>
       
-      {/* Matches - Recalcular gap basado en matches VISIBLES */}
-      <div className="flex flex-col justify-center" style={{ 
-        gap: `${visibleMatches.length >= 8 ? 8 : visibleMatches.length >= 4 ? 32 : visibleMatches.length >= 2 ? 64 : 96}px` 
+      {/* Matches - Espaciado progresivo (embudo) */}
+      <div className="flex flex-col" style={{ 
+        gap: `${getGapSize(visibleMatches.length)}px` 
       }}>
         {visibleMatches.map((match) => {
           const matchLabel = matchLabelMap.get(match.id) || match.id;

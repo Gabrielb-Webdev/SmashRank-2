@@ -152,9 +152,9 @@ export function BracketView({
           {/* Horizontal Scrollable Container */}
           <div className="relative">
             <div className="overflow-x-auto pb-8">
-              <div className="inline-flex items-center gap-16 min-w-min px-4">
+              <div className="inline-flex items-start gap-16 min-w-min px-4">
                 {winnersRounds.map((round, index) => (
-                  <div key={round.roundNumber} className="flex items-center gap-8">
+                  <div key={round.roundNumber} className="flex items-start gap-8">
                     <RoundColumn
                       roundName={round.roundName}
                       roundNumber={round.roundNumber}
@@ -167,7 +167,7 @@ export function BracketView({
                     
                     {/* Arrow Connector */}
                     {index < winnersRounds.length - 1 && (
-                      <div className="flex items-center">
+                      <div className="flex items-center pt-12">
                         <ChevronRight className="w-8 h-8 text-slate-600" />
                       </div>
                     )}
@@ -211,9 +211,9 @@ export function BracketView({
           {/* Horizontal Scrollable Container */}
           <div className="relative">
             <div className="overflow-x-auto pb-8">
-              <div className="inline-flex items-center gap-16 min-w-min px-4">
+              <div className="inline-flex items-start gap-16 min-w-min px-4">
                 {losersRounds.map((round, index) => (
-                  <div key={round.roundNumber} className="flex items-center gap-8">
+                  <div key={round.roundNumber} className="flex items-start gap-8">
                     <RoundColumn
                       roundName={round.roundName}
                       roundNumber={round.roundNumber}
@@ -226,7 +226,7 @@ export function BracketView({
                     
                     {/* Arrow Connector */}
                     {index < losersRounds.length - 1 && (
-                      <div className="flex items-center">
+                      <div className="flex items-center pt-12">
                         <ChevronRight className="w-8 h-8 text-slate-600" />
                       </div>
                     )}
