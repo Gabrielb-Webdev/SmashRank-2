@@ -84,6 +84,7 @@ export default async function AdminDashboard() {
     { label: 'Gestionar Usuarios', href: '/admin/users', icon: Users, description: 'Administrar usuarios del sistema' },
     { label: 'Configurar Stages', href: '/admin/configure-stages', icon: Settings, description: 'Configurar stages para torneos' },
     { label: 'Rankings', href: '/rankings', icon: BarChart3, description: 'Ver clasificaciones' },
+    { label: '🔧 Diagnóstico Torneos', href: '/admin/tournament-diagnostics', icon: Shield, description: 'Diagnosticar y solucionar problemas' },
   ];
 
 
@@ -126,7 +127,7 @@ export default async function AdminDashboard() {
         {/* Quick Actions */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-6">Acciones Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {quickActions.map((action, index) => (
               <Link
                 key={action.href}
