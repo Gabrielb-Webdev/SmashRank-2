@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { X, Trophy, MessageCircle, ClipboardList, Eye, Clock, CheckCircle, Ban, User, Map } from 'lucide-react';
-import toast from 'react-hot-toast';
 
 interface MatchFlowModalProps {
   match: any;
@@ -42,7 +41,21 @@ export default function MatchFlowModal({
     fetchStages();
     fetchCharacters();
     loadChatMessages();
+    loadMatchData();
   }, []);
+
+  const loadMatchData = async () => {
+    try {
+      const response = await fetch(`/api/tournaments/${tournamentId}/matches/${match.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        // Actualizar el match con los datos completos incluyendo games
+        // Esto se manejará mediante onUpdate() del padre
+      }
+    } catch (error) {
+      console.error('Error loading match data:', error);
+    }
+  };
 
   const fetchStages = async () => {
     try {
@@ -210,28 +223,38 @@ export default function MatchFlowModal({
           description="Both players must check in to start the match"
         >
           {(!match.player1CheckIn || !match.player2CheckIn) && canInteract && (
-            <button
-              onClick={async () => {
-                setLoading(true);
-                try {
-                  const res = await fetch(`/api/tournaments/${tournamentId}/matches/${match.id}/checkin`, {
-                    method: 'POST',
-                  });
-                  if (res.ok) {
-                    toast.success('Check-in complete!');
-                    onUpdate();
+            <div className="space-y-2">
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const res = await fetch(`/api/tournaments/${tournamentId}/matches/${match.id}/checkin`, {
+                      method: 'POST',
+                    });
+                    if (res.ok) {
+                      toast.success('Check-in completado!');
+                      onUpdate();
+                    } else {
+                      const data = await res.json();
+                      toast.error(data.error || 'Error en check-in');
+                    }
+                  } catch (error) {
+                    toast.error('Error durante el check-in');
+                  } finally {
+                    setLoading(false);
                   }
-                } catch (error) {
-                  toast.error('Error during check-in');
-                } finally {
-                  setLoading(false);
-                }
-              }}
-              disabled={loading || (isPlayer1 && match.player1CheckIn) || (isPlayer2 && match.player2CheckIn)}
-              className="w-full py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 disabled:bg-slate-700 text-white font-semibold transition-colors"
-            >
-              {(isPlayer1 && match.player1CheckIn) || (isPlayer2 && match.player2CheckIn) ? '✓ Checked In' : 'Check In'}
-            </button>
+                }}
+                disabled={loading || (isPlayer1 && match.player1CheckIn) || (isPlayer2 && match.player2CheckIn)}
+                className="w-full py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-colors"
+              >
+                {(isPlayer1 && match.player1CheckIn) || (isPlayer2 && match.player2CheckIn) ? '✓ Ya hiciste Check-in' : 'Hacer Check-in'}
+              </button>
+              <div className="text-xs text-slate-400 text-center">
+                {match.player1CheckIn && '✓ ' + (match.player1?.username || 'Player 1') + ' listo'}
+                {match.player1CheckIn && match.player2CheckIn && ' • '}
+                {match.player2CheckIn && '✓ ' + (match.player2?.username || 'Player 2') + ' listo'}
+              </div>
+            </div>
           )}
         </TaskItem>
 

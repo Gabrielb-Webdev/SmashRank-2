@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import MatchFlowModal from '@/components/matches/MatchFlowModal';
 
 interface Match {
   id: string;
@@ -32,10 +33,15 @@ export default function BracketViewerV2({ tournamentId, isAdmin }: BracketViewer
   const [loading, setLoading] = useState(true);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [activeTab, setActiveTab] = useState<'WINNERS' | 'LOSERS'>('WINNERS');
+  const [tournamentStages, setTournamentStages] = useState<{ starterStages: string[]; counterPickStages: string[] }>({ 
+    starterStages: [], 
+    counterPickStages: [] 
+  });
   const router = useRouter();
 
   useEffect(() => {
     fetchBracket();
+    fetchTournamentData();
     const interval = setInterval(fetchBracket, 10000);
     return () => clearInterval(interval);
   }, [tournamentId]);
@@ -49,6 +55,21 @@ export default function BracketViewerV2({ tournamentId, isAdmin }: BracketViewer
       console.error('Error al cargar bracket:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTournamentData = async () => {
+    try {
+      const res = await fetch(`/api/tournaments/${tournamentId}`);
+      const data = await res.json();
+      if (data.tournament) {
+        setTournamentStages({
+          starterStages: data.tournament.starterStages || [],
+          counterPickStages: data.tournament.counterpickStages || [],
+        });
+      }
+    } catch (error) {
+      console.error('Error al cargar datos del torneo:', error);
     }
   };
 
@@ -206,17 +227,16 @@ export default function BracketViewerV2({ tournamentId, isAdmin }: BracketViewer
         </motion.div>
       )}
 
-      {/* Match Detail Modal */}
-      <AnimatePresence>
-        {selectedMatch && (
-          <MatchDetailModal
-            match={selectedMatch}
-            onClose={() => setSelectedMatch(null)}
-            onUpdate={fetchBracket}
-            isAdmin={isAdmin}
-          />
-        )}
-      </AnimatePresence>
+      {/* Match Flow Modal */}
+      {selectedMatch && (
+        <MatchFlowModal
+          match={selectedMatch}
+          tournamentId={tournamentId}
+          tournamentStages={tournamentStages}
+          onClose={() => setSelectedMatch(null)}
+          onUpdate={fetchBracket}
+        />
+      )}
     </div>
   );
 }
@@ -301,265 +321,6 @@ function MatchCard({ match, onClick, isAdmin, isGrandFinal = false }: any) {
         </div>
       )}
     </div>
-  );
-}
-
-function MatchDetailModal({ match, onClose, onUpdate, isAdmin }: any) {
-  const [player1Score, setPlayer1Score] = useState(match.player1Score || 0);
-  const [player2Score, setPlayer2Score] = useState(match.player2Score || 0);
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubmit = async (winnerId: string) => {
-    setSubmitting(true);
-    try {
-      const res = await fetch(`/api/tournaments/${match.tournamentId}/matches/${match.id}/report`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          winnerId,
-          player1Score,
-          player2Score,
-        }),
-      });
-
-      if (res.ok) {
-        onUpdate();
-        onClose();
-      }
-    } catch (error) {
-      console.error('Error al reportar resultado:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        transition={{ type: "spring", duration: 0.5 }}
-        className="bg-slate-900 border-2 border-red-600 rounded-2xl p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-red-600/30 custom-scrollbar"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-black text-white mb-2">
-              Detalle del Match
-            </h2>
-            <p className="text-sm text-slate-400">
-              {match.bracketType} • Ronda {match.round} • Match {match.matchNumber}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all flex items-center justify-center"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className="space-y-6">
-          {/* Player 1 Card */}
-          <motion.div 
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className={`p-6 rounded-xl border-2 ${
-              match.winnerId === match.player1?.id
-                ? 'bg-gradient-to-br from-red-600/20 to-red-700/10 border-red-600'
-                : 'bg-slate-800/50 border-slate-700'
-            }`}
-          >
-            <div className="flex items-center gap-4 mb-4">
-              {match.player1?.participants?.[0]?.character && (
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-4xl shadow-lg">
-                  {getCharacterEmoji(match.player1.participants[0].character.name)}
-                </div>
-              )}
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-white">
-                  {match.player1?.username || 'TBD'}
-                </h3>
-                {match.player1?.participants?.[0]?.character && (
-                  <p className="text-sm text-slate-400">
-                    {match.player1.participants[0].character.name}
-                  </p>
-                )}
-              </div>
-              {match.winnerId === match.player1?.id && (
-                <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: "spring", delay: 0.3 }}
-                  className="text-5xl"
-                >
-                  👑
-                </motion.div>
-              )}
-            </div>
-
-            {match.status !== 'COMPLETED' && isAdmin && match.player1 && (
-              <div className="space-y-3">
-                <label className="block text-sm font-bold text-slate-300">Puntuación:</label>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setPlayer1Score(Math.max(0, player1Score - 1))}
-                    className="w-12 h-12 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xl transition-all"
-                  >
-                    −
-                  </button>
-                  <input
-                    type="number"
-                    min="0"
-                    value={player1Score}
-                    onChange={(e) => setPlayer1Score(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="flex-1 bg-slate-950 border-2 border-slate-700 focus:border-red-600 rounded-lg px-6 py-3 text-4xl font-black text-center text-white outline-none transition-all"
-                  />
-                  <button
-                    onClick={() => setPlayer1Score(player1Score + 1)}
-                    className="w-12 h-12 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xl transition-all"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            )}
-            {match.status === 'COMPLETED' && (
-              <div className="text-center">
-                <p className="text-6xl font-black text-white">{match.player1Score}</p>
-                <p className="text-sm text-slate-500 mt-2">Puntos</p>
-              </div>
-            )}
-          </motion.div>
-
-          {/* VS Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full h-px bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-slate-900 px-6 py-2 text-2xl font-black text-red-600 border-2 border-red-600 rounded-full">
-                VS
-              </span>
-            </div>
-          </div>
-
-          {/* Player 2 Card */}
-          <motion.div 
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className={`p-6 rounded-xl border-2 ${
-              match.winnerId === match.player2?.id
-                ? 'bg-gradient-to-br from-red-600/20 to-red-700/10 border-red-600'
-                : 'bg-slate-800/50 border-slate-700'
-            }`}
-          >
-            <div className="flex items-center gap-4 mb-4">
-              {match.player2?.participants?.[0]?.character && (
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-4xl shadow-lg">
-                  {getCharacterEmoji(match.player2.participants[0].character.name)}
-                </div>
-              )}
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-white">
-                  {match.player2?.username || 'TBD'}
-                </h3>
-                {match.player2?.participants?.[0]?.character && (
-                  <p className="text-sm text-slate-400">
-                    {match.player2.participants[0].character.name}
-                  </p>
-                )}
-              </div>
-              {match.winnerId === match.player2?.id && (
-                <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: "spring", delay: 0.3 }}
-                  className="text-5xl"
-                >
-                  👑
-                </motion.div>
-              )}
-            </div>
-
-            {match.status !== 'COMPLETED' && isAdmin && match.player2 && (
-              <div className="space-y-3">
-                <label className="block text-sm font-bold text-slate-300">Puntuación:</label>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setPlayer2Score(Math.max(0, player2Score - 1))}
-                    className="w-12 h-12 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xl transition-all"
-                  >
-                    −
-                  </button>
-                  <input
-                    type="number"
-                    min="0"
-                    value={player2Score}
-                    onChange={(e) => setPlayer2Score(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="flex-1 bg-slate-950 border-2 border-slate-700 focus:border-red-600 rounded-lg px-6 py-3 text-4xl font-black text-center text-white outline-none transition-all"
-                  />
-                  <button
-                    onClick={() => setPlayer2Score(player2Score + 1)}
-                    className="w-12 h-12 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold text-xl transition-all"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            )}
-            {match.status === 'COMPLETED' && (
-              <div className="text-center">
-                <p className="text-6xl font-black text-white">{match.player2Score}</p>
-                <p className="text-sm text-slate-500 mt-2">Puntos</p>
-              </div>
-            )}
-          </motion.div>
-
-          {/* Actions */}
-          {match.status !== 'COMPLETED' && isAdmin && match.player1 && match.player2 && (
-            <motion.div 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex gap-4 pt-6"
-            >
-              <button
-                onClick={() => handleSubmit(match.player1.id)}
-                disabled={submitting}
-                className="flex-1 px-6 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 disabled:from-slate-700 disabled:to-slate-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
-              >
-                {submitting ? '...' : `${match.player1.username} Gana 🏆`}
-              </button>
-              <button
-                onClick={() => handleSubmit(match.player2.id)}
-                disabled={submitting}
-                className="flex-1 px-6 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 disabled:from-slate-700 disabled:to-slate-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
-              >
-                {submitting ? '...' : `${match.player2.username} Gana 🏆`}
-              </button>
-            </motion.div>
-          )}
-
-          <button 
-            onClick={onClose}
-            className="w-full px-6 py-3 rounded-xl font-bold text-slate-400 bg-slate-800 hover:bg-slate-700 hover:text-white transition-all"
-          >
-            Cerrar
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
   );
 }
 

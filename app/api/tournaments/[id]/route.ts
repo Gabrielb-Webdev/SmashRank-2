@@ -47,7 +47,7 @@ export async function GET(
       currentParticipants: tournament.registrations.length,
     };
 
-    return NextResponse.json(tournamentWithParticipants);
+    return NextResponse.json({ tournament: tournamentWithParticipants });
   } catch (error) {
     console.error('Error al obtener torneo:', error);
     return NextResponse.json(
