@@ -22,6 +22,7 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
   const [registrationStatus, setRegistrationStatus] = useState<string>('');
   const [canRegister, setCanRegister] = useState(false);
   const [hasBracket, setHasBracket] = useState(false);
+  const [generatingBracket, setGeneratingBracket] = useState(false);
   const tournamentId = params.id;
 
   useEffect(() => {
@@ -151,6 +152,33 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
       toast.error(error.message || 'Error al procesar la inscripción');
     } finally {
       setRegistering(false);
+    }
+  };
+
+  const generateBracket = async () => {
+    setGeneratingBracket(true);
+    try {
+      const response = await fetch(`/api/tournaments/${tournamentId}/bracket`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('✅ Bracket generado exitosamente!');
+        setHasBracket(true);
+        // Redirigir al bracket después de 1 segundo
+        setTimeout(() => {
+          router.push(`/tournaments/${tournamentId}/bracket`);
+        }, 1000);
+      } else {
+        toast.error(data.error || 'Error al generar bracket');
+      }
+    } catch (error) {
+      console.error('Error generando bracket:', error);
+      toast.error('Error al generar el bracket');
+    } finally {
+      setGeneratingBracket(false);
     }
   };
 
@@ -470,6 +498,35 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                 </>
               )}
             </div>
+
+            {/* Admin Actions */}
+            {session?.user?.role === 'ADMIN' && (
+              <div className="p-6 rounded-xl" style={{background: 'rgba(139, 92, 246, 0.1)', border: '2px solid rgba(139, 92, 246, 0.4)'}}>
+                <h3 className="text-white font-bold text-xl mb-4">⚙️ Admin</h3>
+                <div className="space-y-3">
+                  {hasBracket ? (
+                    <Link href={`/tournaments/${tournamentId}/bracket`}>
+                      <button className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105 bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg">
+                        👁️ Ver Bracket
+                      </button>
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={generateBracket}
+                      disabled={generatingBracket || !tournament?.registrations?.length}
+                      className="w-full py-3 rounded-lg font-bold text-white transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-green-600 to-emerald-600 shadow-lg"
+                    >
+                      {generatingBracket ? '⏳ Generando...' : '🎯 Generar Bracket'}
+                    </button>
+                  )}
+                  <Link href={`/admin/tournament-diagnostics`}>
+                    <button className="w-full py-3 rounded-lg font-semibold text-purple-400 transition-all border-2 border-purple-500/40 hover:bg-purple-500/10">
+                      🔧 Diagnóstico
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Important Dates */}
             <div className="p-6 rounded-xl" style={{background: 'rgba(15, 23, 42, 0.6)', border: '2px solid rgba(255, 215, 0, 0.3)'}}>
