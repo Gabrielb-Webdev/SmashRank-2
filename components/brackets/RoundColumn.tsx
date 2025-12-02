@@ -57,6 +57,11 @@ export function RoundColumn({
   // Ordenar matches por position
   const sortedMatches = [...matches].sort((a, b) => a.position - b.position);
   
+  // Calcular espaciado basado en la cantidad de matches (efecto embudo)
+  // Más matches = menos espaciado, menos matches = más espaciado
+  const matchCount = sortedMatches.length;
+  const gapSize = matchCount >= 8 ? 8 : matchCount >= 4 ? 32 : matchCount >= 2 ? 64 : 96;
+  
   // Formatear fecha/hora si existe
   const formattedTime = scheduledTime 
     ? new Date(scheduledTime).toLocaleString('es-AR', {
@@ -86,7 +91,7 @@ export function RoundColumn({
       </div>
       
       {/* Matches */}
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col justify-center" style={{ gap: `${gapSize}px` }}>
         {sortedMatches.map((match) => {
           const matchLabel = matchLabelMap.get(match.id) || match.id;
           const player1 = getPlayerInfo(match.player1Id);

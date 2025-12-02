@@ -147,7 +147,7 @@ export function BracketView({
           <div className="relative">
             <div className="overflow-x-auto pb-8 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
               <div className="flex justify-center">
-                <div className="inline-flex items-start gap-16 min-w-min px-4">
+                <div className="inline-flex items-center gap-16 min-w-min px-4">
                   {winnersRounds.map((round, index) => (
                   <div key={round.roundNumber} className="flex items-center gap-8">
                     <RoundColumn
@@ -162,7 +162,7 @@ export function BracketView({
                     
                     {/* Arrow Connector */}
                     {index < winnersRounds.length - 1 && (
-                      <div className="flex items-center self-stretch" style={{ paddingTop: '80px' }}>
+                      <div className="flex items-center">
                         <ChevronRight className="w-8 h-8 text-slate-600" />
                       </div>
                     )}
@@ -202,7 +202,7 @@ export function BracketView({
           <div className="relative">
             <div className="overflow-x-auto pb-8 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
               <div className="flex justify-center">
-                <div className="inline-flex items-start gap-16 min-w-min px-4">
+                <div className="inline-flex items-center gap-16 min-w-min px-4">
                   {losersRounds.map((round, index) => (
                   <div key={round.roundNumber} className="flex items-center gap-8">
                     <RoundColumn
@@ -217,7 +217,7 @@ export function BracketView({
                     
                     {/* Arrow Connector */}
                     {index < losersRounds.length - 1 && (
-                      <div className="flex items-center self-stretch" style={{ paddingTop: '80px' }}>
+                      <div className="flex items-center">
                         <ChevronRight className="w-8 h-8 text-slate-600" />
                       </div>
                     )}
