@@ -67,13 +67,13 @@ export async function POST(
 
     // Construir el objeto Bracket para propagateMatchResult
     const bracket = {
-      winners: allMatches.filter(m => m.bracketType === 'WINNERS'),
-      losers: allMatches.filter(m => m.bracketType === 'LOSERS'),
-      grandFinals: allMatches.find(m => m.bracketType === 'GRANDS'),
+      winners: allMatches.filter(m => m.bracketType === 'WINNERS') as any[],
+      losers: allMatches.filter(m => m.bracketType === 'LOSERS') as any[],
+      grandFinals: allMatches.find(m => m.bracketType === 'GRANDS') as any,
     };
 
     // Propagar resultado usando el nuevo sistema
-    const updatedBracket = propagateMatchResult(bracket, matchId, winnerId!, loserId!);
+    const updatedBracket = propagateMatchResult(bracket as any, matchId, winnerId!, loserId!);
 
     // Actualizar los matches afectados en la base de datos
     const allUpdatedMatches = [
