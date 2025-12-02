@@ -142,6 +142,7 @@ export async function POST(req: NextRequest) {
         rules: validatedData.rules || '',
         stageList: validatedData.stageList || 'Battlefield, Final Destination, Smashville',
         ruleset: validatedData.ruleset || {},
+        streamUrls: [],
         status: 'REGISTRATION_OPEN',
         createdById: session.user.id,
       },
