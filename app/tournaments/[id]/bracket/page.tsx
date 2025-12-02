@@ -379,78 +379,74 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       );
     }
 
-    // Match card ESTILO MODERNO CON VS
+    // Match card MINIMALISTA COMPACTO
     return (
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`relative group ${isClickable ? 'cursor-pointer' : ''}`}
+        className={`relative ${isClickable ? 'cursor-pointer' : ''}`}
       >
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 overflow-hidden hover:border-red-500 transition-all shadow-xl hover:shadow-red-500/20">
-          {/* Match label top bar */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 px-3 py-1 flex items-center justify-between">
-            <span className="text-white text-xs font-bold">Match {matchLabel}</span>
-            {realMatch && realMatch.status === 'PLAYING' && (
-              <span className="flex items-center gap-1 text-xs text-white">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"/>
-                En vivo
-              </span>
-            )}
-          </div>
-
-          {/* Player 1 */}
-          <div 
-            className={`px-4 py-3 flex items-center justify-between ${
-              match.winnerId === match.player1Id ? 'bg-green-500/10 border-l-4 border-green-500' : ''
-            }`}
-          >
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              {match.winnerId === match.player1Id && (
-                <span className="text-green-500 text-lg">🏆</span>
-              )}
-              <span className={`text-sm font-semibold truncate ${
-                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-200'
-              }`}>
-                {player1.username}
-              </span>
-            </div>
-            {realMatch && (
-              <div className={`text-xl font-bold tabular-nums px-3 py-1 rounded ${
-                match.winnerId === match.player1Id ? 'bg-green-500 text-white' : 'bg-slate-700 text-slate-300'
-              }`}>
-                {realMatch.player1Score || 0}
+        <div className="bg-slate-900/90 backdrop-blur rounded-lg border border-slate-700 overflow-hidden hover:border-slate-500 transition-all">
+          {/* Players compactos */}
+          <div className="divide-y divide-slate-700/50">
+            {/* Player 1 */}
+            <div className={`px-3 py-2.5 flex items-center gap-3 ${
+              match.winnerId === match.player1Id ? 'bg-slate-800' : ''
+            }`}>
+              <div className="flex-1 min-w-0">
+                <span className={`text-sm truncate block ${
+                  match.winnerId === match.player1Id ? 'text-white font-bold' : 'text-slate-300'
+                }`}>
+                  {player1.username}
+                </span>
               </div>
-            )}
-          </div>
-
-          {/* VS Divider */}
-          <div className="flex items-center justify-center py-1 bg-slate-700/50">
-            <span className="text-xs font-bold text-red-400">VS</span>
-          </div>
-
-          {/* Player 2 */}
-          <div 
-            className={`px-4 py-3 flex items-center justify-between ${
-              match.winnerId === match.player2Id ? 'bg-green-500/10 border-l-4 border-green-500' : ''
-            }`}
-          >
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              {match.winnerId === match.player2Id && (
-                <span className="text-green-500 text-lg">🏆</span>
-              )}
-              <span className={`text-sm font-semibold truncate ${
-                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-200'
-              }`}>
-                {player2.username}
-              </span>
-            </div>
-            {realMatch && (
-              <div className={`text-xl font-bold tabular-nums px-3 py-1 rounded ${
-                match.winnerId === match.player2Id ? 'bg-green-500 text-white' : 'bg-slate-700 text-slate-300'
-              }`}>
-                {realMatch.player2Score || 0}
+              <div className="flex items-center gap-2">
+                {match.winnerId === match.player1Id && (
+                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <span className="text-white text-[10px]">✓</span>
+                  </div>
+                )}
+                {realMatch && (
+                  <span className={`text-base font-bold tabular-nums w-8 text-center ${
+                    match.winnerId === match.player1Id ? 'text-white' : 'text-slate-400'
+                  }`}>
+                    {realMatch.player1Score || 0}
+                  </span>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Player 2 */}
+            <div className={`px-3 py-2.5 flex items-center gap-3 ${
+              match.winnerId === match.player2Id ? 'bg-slate-800' : ''
+            }`}>
+              <div className="flex-1 min-w-0">
+                <span className={`text-sm truncate block ${
+                  match.winnerId === match.player2Id ? 'text-white font-bold' : 'text-slate-300'
+                }`}>
+                  {player2.username}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {match.winnerId === match.player2Id && (
+                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+                    <span className="text-white text-[10px]">✓</span>
+                  </div>
+                )}
+                {realMatch && (
+                  <span className={`text-base font-bold tabular-nums w-8 text-center ${
+                    match.winnerId === match.player2Id ? 'text-white' : 'text-slate-400'
+                  }`}>
+                    {realMatch.player2Score || 0}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Match label esquina superior izquierda */}
+          <div className="absolute -top-2 -left-2 bg-red-600 w-6 h-6 rounded-md flex items-center justify-center shadow-md">
+            <span className="text-[10px] font-bold text-white">{matchLabel}</span>
           </div>
 
         {/* Status indicator as a small badge if needed */}
@@ -518,48 +514,52 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           </h3>
         </div>
 
-        {/* BRACKET ESTILO CASCADA CON FLECHAS */}
-        <div className="space-y-6">
-          {Object.entries(rounds)
-            .sort((a, b) => Number(a[0]) - Number(b[0]))
-            .map(([roundNum, roundMatches], roundIndex) => {
-              const rNum = Number(roundNum);
-              const isLastRound = roundIndex === Object.keys(rounds).length - 1;
+        {/* BRACKET HORIZONTAL ULTRA LIMPIO */}
+        <div className="overflow-x-auto pb-8">
+          <div className="inline-flex items-start gap-6 min-w-min px-4">
+            {Object.entries(rounds)
+              .sort((a, b) => Number(a[0]) - Number(b[0]))
+              .map(([roundNum, roundMatches], roundIndex) => {
+                const rNum = Number(roundNum);
+                const isLastRound = roundIndex === Object.keys(rounds).length - 1;
 
-              return (
-                <div key={roundNum}>
-                  {/* Header de ronda con badge */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-red-600 px-4 py-2 rounded-full">
-                      <span className="text-white font-bold text-sm uppercase">{getRoundName(rNum, totalRounds)}</span>
-                    </div>
-                    <div className="flex-1 h-0.5 bg-gradient-to-r from-red-600 to-transparent"/>
-                  </div>
-
-                  {/* Grid de matches */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {roundMatches
-                      .sort((a, b) => a.matchNumber - b.matchNumber)
-                      .map((match, idx) => (
-                        <div key={match.id} className="relative">
-                          {renderMatch(match, idx, roundMatches)}
+                return (
+                  <div key={roundNum} className="flex items-start gap-6">
+                    {/* Columna de la ronda */}
+                    <div className="flex flex-col gap-6" style={{ minWidth: '260px' }}>
+                      {/* Header minimalista */}
+                      <div className="text-center">
+                        <div className="inline-block bg-slate-900 border-2 border-slate-700 rounded-lg px-4 py-2">
+                          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                            {getRoundName(rNum, totalRounds)}
+                          </span>
                         </div>
-                      ))}
-                  </div>
+                      </div>
 
-                  {/* Flecha separadora entre rondas */}
-                  {!isLastRound && (
-                    <div className="flex items-center justify-center my-6">
-                      <div className="flex items-center gap-2">
-                        <div className="h-0.5 w-16 bg-slate-600"/>
-                        <div className="text-slate-500 text-2xl">▼</div>
-                        <div className="h-0.5 w-16 bg-slate-600"/>
+                      {/* Matches de la ronda */}
+                      <div className="flex flex-col gap-6">
+                        {roundMatches
+                          .sort((a, b) => a.matchNumber - b.matchNumber)
+                          .map((match, idx) => (
+                            <div key={match.id}>
+                              {renderMatch(match, idx, roundMatches)}
+                            </div>
+                          ))}
                       </div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+
+                    {/* Conector hacia siguiente ronda */}
+                    {!isLastRound && (
+                      <div className="flex items-center self-stretch py-16">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="text-slate-600 text-xl">→</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
     );
