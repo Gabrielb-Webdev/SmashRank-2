@@ -62,8 +62,8 @@ export function MatchCardV3({
       className={cn('relative group', className)}
       onClick={onClick}
     >
-      {/* Match Label - Centro arriba */}
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+      {/* Match Label - Izquierda centro */}
+      <div className="absolute -left-3 top-1/2 -translate-y-1/2 z-10">
         <div className={cn(
           'w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black shadow-lg',
           isLive && 'bg-red-500 text-white animate-pulse',
