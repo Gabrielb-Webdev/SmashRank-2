@@ -57,6 +57,7 @@ export default function InjectParticipantsPage() {
   const injectParticipants = async (tournamentId: string, count: number, tournamentName: string) => {
     setLoading(true);
     try {
+      // Paso 1: Inyectar participantes
       const response = await fetch('/api/admin/inject-participants', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,14 +69,37 @@ export default function InjectParticipantsPage() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        toast.success(`✅ ${count} participantes inyectados en "${tournamentName}"!`);
-        console.log('Resultado:', data);
-      } else {
+      if (!response.ok) {
         toast.error(`❌ Error: ${data.error || 'Error desconocido'}`);
         console.error('Error details:', data);
+        setLoading(false);
+        return;
+      }
+
+      toast.success(`✅ ${count} participantes inyectados!`);
+      console.log('Resultado:', data);
+
+      // Paso 2: Generar el bracket automáticamente
+      toast.loading('Generando bracket...');
+      
+      const bracketResponse = await fetch(`/api/tournaments/${tournamentId}/brackets/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const bracketData = await bracketResponse.json();
+
+      if (bracketResponse.ok) {
+        toast.dismiss();
+        toast.success(`🎉 ¡Bracket generado exitosamente para "${tournamentName}"!`);
+        console.log('Bracket generado:', bracketData);
+      } else {
+        toast.dismiss();
+        toast.error(`⚠️ Participantes inyectados pero error al generar bracket: ${bracketData.error}`);
+        console.error('Error bracket:', bracketData);
       }
     } catch (error) {
+      toast.dismiss();
       toast.error('❌ Error de conexión');
       console.error('Error:', error);
     } finally {
