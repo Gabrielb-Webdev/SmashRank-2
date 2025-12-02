@@ -176,7 +176,6 @@ model Tournament {
   // Relaciones
   creator       User           @relation("TournamentCreator", fields: [createdById], references: [id])
   registrations Registration[]
-  brackets      Bracket[]
   matches       Match[]
   rankings      Ranking[]
 
@@ -216,18 +215,6 @@ model Registration {
   @@index([userId])
   @@index([seed])
   @@index([status])
-}
-
-model Bracket {
-  id           String   @id @default(cuid())
-  tournamentId String   @unique
-  type         String   // "double_elimination", "single_elimination", etc.
-  data         Json     // Estructura del bracket completo
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relaciones
-  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
 }
 
 model Match {

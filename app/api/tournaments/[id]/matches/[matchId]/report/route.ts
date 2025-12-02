@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { advanceBracket } from '@/lib/brackets';
+import { propagateMatchResult } from '@/lib/doubleElimination';
 
 export async function POST(
   request: NextRequest,
@@ -65,50 +65,35 @@ export async function POST(
       where: { tournamentId: match.tournamentId },
     });
 
-    // Avanzar el bracket
-    const updatedMatches = advanceBracket(
-      allMatches.map(m => ({
-        id: m.id,
-        tournamentId: m.tournamentId,
-        bracketType: m.bracketType as any,
-        round: m.round,
-        matchNumber: m.matchNumber,
-        player1Id: m.player1Id,
-        player2Id: m.player2Id,
-        player1Score: m.player1Score,
-        player2Score: m.player2Score,
-        winnerId: m.winnerId,
-        status: m.status as any,
-        nextMatchId: m.nextMatchId,
-        loserNextMatchId: m.loserNextMatchId,
-      })),
-      matchId,
-      winnerId!,
-      loserId!
-    );
+    // Propagar resultado usando el nuevo sistema
+    const matchesMap = new Map(allMatches.map(m => [m.id, m]));
+    const affectedMatches = propagateMatchResult(matchesMap, matchId, winnerId!, loserId!);
 
-    // Actualizar los matches afectados
-    for (const updatedMatch of updatedMatches) {
-      const dbMatch = allMatches.find(m => m.id === updatedMatch.id);
-      if (dbMatch && (dbMatch.player1Id !== updatedMatch.player1Id || dbMatch.player2Id !== updatedMatch.player2Id)) {
-        await prisma.match.update({
-          where: { id: updatedMatch.id },
-          data: {
-            player1Id: updatedMatch.player1Id,
-            player2Id: updatedMatch.player2Id,
-          },
-        });
-      }
+    // Actualizar los matches afectados en la base de datos
+    for (const affectedMatch of affectedMatches) {
+      await prisma.match.update({
+        where: { id: affectedMatch.id },
+        data: {
+          player1Id: affectedMatch.player1Id,
+          player2Id: affectedMatch.player2Id,
+          status: affectedMatch.status,
+        },
+      });
     }
 
-    // Si el perdedor fue eliminado en single elimination, marcarlo
-    // Nota: La tabla Registration no tiene campo 'status', así que este código está comentado por ahora
-    // TODO: Implementar sistema de eliminación si es necesario
-    /*
-    if (match.tournament.format === 'SINGLE_ELIMINATION' && !match.loserNextMatchId) {
-      // Aquí iría la lógica de eliminación si se agrega el campo status a Registration
+    // Actualizar el estado del jugador eliminado si perdió en losers bracket
+    if (match.bracketType === 'LOSERS' && !match.nextLoserMatchId) {
+      await prisma.registration.updateMany({
+        where: {
+          tournamentId: match.tournamentId,
+          userId: loserId,
+        },
+        data: {
+          status: 'ELIMINATED',
+          currentBracket: 'LOSERS',
+        },
+      });
     }
-    */
 
     return NextResponse.json({
       message: 'Resultado reportado exitosamente',

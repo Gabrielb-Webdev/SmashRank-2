@@ -21,8 +21,6 @@ export async function POST() {
       prisma.match.deleteMany({}),
       // Eliminar registrations
       prisma.registration.deleteMany({}),
-      // Eliminar brackets
-      prisma.bracket.deleteMany({}),
       // Eliminar rankings
       prisma.ranking.deleteMany({}),
       // Eliminar torneos

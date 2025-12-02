@@ -17,12 +17,9 @@ export async function POST(
       );
     }
 
-    // Verificar que el torneo existe y tiene bracket
+    // Verificar que el torneo existe y tiene matches
     const tournament = await prisma.tournament.findUnique({
       where: { id: params.id },
-      include: {
-        brackets: true,
-      },
     });
 
     if (!tournament) {
@@ -32,7 +29,12 @@ export async function POST(
       );
     }
 
-    if (tournament.brackets.length === 0) {
+    // Verificar que tenga matches generados
+    const matchCount = await prisma.match.count({
+      where: { tournamentId: params.id },
+    });
+
+    if (matchCount === 0) {
       return NextResponse.json(
         { error: 'Debe generar el bracket antes de iniciar el torneo' },
         { status: 400 }
@@ -46,46 +48,6 @@ export async function POST(
       );
     }
 
-    // Obtener el bracket
-    const bracket = tournament.brackets[0];
-    const bracketData = bracket.data as any;
-
-    // Crear solo los matches de la PRIMERA RONDA con ambos jugadores
-    const matches: any[] = [];
-    const now = new Date();
-    const checkInDeadline = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutos
-
-    // Winners bracket - Solo ronda 1
-    if (bracketData.winners) {
-      const firstRoundMatches = bracketData.winners.filter(
-        (match: any) => match.roundNumber === 1 && match.player1Id && match.player2Id
-      );
-      
-      for (const match of firstRoundMatches) {
-        matches.push({
-          id: match.id,
-          tournamentId: params.id,
-          bracketType: 'WINNERS',
-          round: match.roundNumber,
-          matchNumber: match.matchNumber,
-          player1Id: match.player1Id,
-          player2Id: match.player2Id,
-          status: 'CHECKIN',
-          checkInDeadline: checkInDeadline,
-          player1CheckIn: false,
-          player2CheckIn: false,
-          currentGame: 1,
-          bestOf: 3,
-        });
-      }
-    }
-
-    // Crear todos los matches
-    await prisma.match.createMany({
-      data: matches,
-      skipDuplicates: true,
-    });
-
     // Actualizar estado del torneo
     await prisma.tournament.update({
       where: { id: params.id },
@@ -95,7 +57,6 @@ export async function POST(
     return NextResponse.json({
       success: true,
       message: 'Torneo iniciado exitosamente',
-      matchesCreated: matches.length,
     });
   } catch (error) {
     console.error('Error al iniciar torneo:', error);
