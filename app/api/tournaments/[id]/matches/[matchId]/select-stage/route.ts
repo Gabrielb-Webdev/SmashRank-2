@@ -14,12 +14,11 @@ export async function POST(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { gameNumber, stageId } = body;
+    const { stageId } = await request.json();
 
-    if (!gameNumber || !stageId) {
+    if (!stageId) {
       return NextResponse.json(
-        { error: 'Faltan datos requeridos' },
+        { error: 'Stage ID requerido' },
         { status: 400 }
       );
     }
@@ -27,14 +26,24 @@ export async function POST(
     const match = await prisma.match.findUnique({
       where: { id: params.matchId },
       include: {
+        player1: true,
+        player2: true,
         games: {
-          where: { gameNumber },
+          orderBy: { gameNumber: 'desc' },
+          take: 1,
         },
       },
     });
 
     if (!match) {
       return NextResponse.json({ error: 'Match no encontrado' }, { status: 404 });
+    }
+
+    if (match.tournamentId !== params.id) {
+      return NextResponse.json(
+        { error: 'Match no pertenece a este torneo' },
+        { status: 400 }
+      );
     }
 
     const isPlayer1 = match.player1Id === session.user.id;
@@ -47,68 +56,68 @@ export async function POST(
       );
     }
 
-    const game = match.games[0];
-    if (!game) {
+    const currentGame = match.games[0];
+    if (!currentGame) {
       return NextResponse.json({ error: 'Game no encontrado' }, { status: 404 });
     }
 
-    if (game.status !== 'STAGE_SELECT') {
+    // Verificar que estamos en fase de STAGE_SELECT
+    if (currentGame.phase !== 'STAGE_SELECT') {
       return NextResponse.json(
-        { error: 'Este game no está en fase de selección de stage' },
+        { error: `No es el momento de seleccionar stage. Fase actual: ${currentGame.phase}` },
+        { status: 400 }
+      );
+    }
+
+    const playerTurn = isPlayer1 ? 'PLAYER1' : 'PLAYER2';
+
+    // Verificar que es el turno del jugador
+    if (currentGame.currentTurn !== playerTurn) {
+      const waitingFor = currentGame.currentTurn === 'PLAYER1' ? match.player1?.username : match.player2?.username;
+      return NextResponse.json(
+        { error: `No es tu turno. Esperando a ${waitingFor}` },
         { status: 400 }
       );
     }
 
     // Verificar que el stage no esté baneado
-    if (game.bannedStages.includes(stageId)) {
+    if (currentGame.bannedStages.includes(stageId)) {
       return NextResponse.json(
         { error: 'Este stage está baneado' },
         { status: 400 }
       );
     }
 
-    // Verificar quién debe seleccionar
-    let canSelect = false;
-
-    if (gameNumber === 1) {
-      // Game 1: Player 1 selecciona (quien está arriba)
-      canSelect = isPlayer1;
-    } else {
-      // Games 2+: El perdedor del game anterior selecciona
-      const previousGame = await prisma.matchGame.findFirst({
-        where: {
-          matchId: params.matchId,
-          gameNumber: gameNumber - 1,
-        },
-      });
-
-      if (previousGame?.winnerId) {
-        const loserId =
-          previousGame.winnerId === match.player1Id
-            ? match.player2Id
-            : match.player1Id;
-        canSelect = session.user.id === loserId;
+    // DSR (Dave's Stupid Rule): No puedes elegir un stage donde ya ganaste
+    if (currentGame.gameNumber > 1) {
+      if (isPlayer1 && match.player1WonStages.includes(stageId)) {
+        return NextResponse.json(
+          { error: 'DSR: No puedes elegir un stage donde ya ganaste' },
+          { status: 400 }
+        );
+      }
+      if (isPlayer2 && match.player2WonStages.includes(stageId)) {
+        return NextResponse.json(
+          { error: 'DSR: No puedes elegir un stage donde ya ganaste' },
+          { status: 400 }
+        );
       }
     }
 
-    if (!canSelect) {
-      return NextResponse.json(
-        { error: 'No es tu turno para seleccionar el stage' },
-        { status: 400 }
-      );
-    }
-
+    // Actualizar el game con el stage seleccionado
     const updatedGame = await prisma.matchGame.update({
-      where: { id: game.id },
+      where: { id: currentGame.id },
       data: {
         selectedStage: stageId,
-        status: 'CHAR_SELECT',
+        phase: 'PLAYING',
+        currentTurn: null, // Ya no hay turnos durante el juego
       },
     });
 
     return NextResponse.json({
       success: true,
       game: updatedGame,
+      message: 'Stage seleccionado. ¡Jueguen el game!',
     });
   } catch (error) {
     console.error('Error al seleccionar stage:', error);

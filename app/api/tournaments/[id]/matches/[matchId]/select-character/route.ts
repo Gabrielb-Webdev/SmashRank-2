@@ -11,15 +11,17 @@ export async function POST(
     const session = await getServerSession(authOptions);
 
     if (!session) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'No autorizado' },
+        { status: 401 }
+      );
     }
 
-    const body = await request.json();
-    const { gameNumber, characterId } = body;
+    const { characterId } = await request.json();
 
-    if (!gameNumber || !characterId) {
+    if (!characterId) {
       return NextResponse.json(
-        { error: 'Faltan datos requeridos' },
+        { error: 'Character ID requerido' },
         { status: 400 }
       );
     }
@@ -27,19 +29,33 @@ export async function POST(
     const match = await prisma.match.findUnique({
       where: { id: params.matchId },
       include: {
+        player1: true,
+        player2: true,
         games: {
-          where: { gameNumber },
+          orderBy: { gameNumber: 'desc' },
+          take: 1,
         },
       },
     });
 
     if (!match) {
-      return NextResponse.json({ error: 'Match no encontrado' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Match no encontrado' },
+        { status: 404 }
+      );
     }
 
+    if (match.tournamentId !== params.id) {
+      return NextResponse.json(
+        { error: 'Match no pertenece a este torneo' },
+        { status: 400 }
+      );
+    }
+
+    // Verificar que el usuario es participante
     const isPlayer1 = match.player1Id === session.user.id;
     const isPlayer2 = match.player2Id === session.user.id;
-
+    
     if (!isPlayer1 && !isPlayer2) {
       return NextResponse.json(
         { error: 'No eres participante de este match' },
@@ -47,89 +63,99 @@ export async function POST(
       );
     }
 
-    const game = match.games[0];
-    if (!game) {
-      return NextResponse.json({ error: 'Game no encontrado' }, { status: 404 });
+    const currentGame = match.games[0];
+    if (!currentGame) {
+      return NextResponse.json(
+        { error: 'Game no encontrado' },
+        { status: 404 }
+      );
     }
 
-    if (game.status !== 'CHAR_SELECT') {
+    // Verificar que estamos en fase de CHARACTER_SELECT
+    if (currentGame.phase !== 'CHARACTER_SELECT') {
       return NextResponse.json(
-        { error: 'Este game no está en fase de selección de personaje' },
+        { error: `No es el momento de seleccionar personaje. Fase actual: ${currentGame.phase}` },
         { status: 400 }
       );
     }
 
-    // Determinar quién selecciona primero
-    let selectFirst = false;
-    let updateData: any = {};
+    const playerTurn = isPlayer1 ? 'PLAYER1' : 'PLAYER2';
 
-    if (gameNumber === 1) {
-      // Game 1: Player 1 selecciona primero
-      if (isPlayer1 && !game.player1Character) {
-        selectFirst = true;
-        updateData.player1Character = characterId;
-      } else if (isPlayer2 && game.player1Character && !game.player2Character) {
-        updateData.player2Character = characterId;
-        updateData.status = 'PLAYING';
-      }
-    } else {
-      // Games 2+: Ganador selecciona primero
-      const previousGame = await prisma.matchGame.findFirst({
-        where: {
-          matchId: params.matchId,
-          gameNumber: gameNumber - 1,
-        },
-      });
+    // Verificar que es el turno del jugador
+    if (currentGame.currentTurn !== playerTurn) {
+      const waitingFor = currentGame.currentTurn === 'PLAYER1' ? match.player1?.username : match.player2?.username;
+      return NextResponse.json(
+        { error: `No es tu turno. Esperando a ${waitingFor}` },
+        { status: 400 }
+      );
+    }
 
-      const winnerId = previousGame?.winnerId;
-      const isWinner = winnerId === session.user.id;
-
-      if (isWinner) {
-        if (isPlayer1 && !game.player1Character) {
-          updateData.player1Character = characterId;
-        } else if (isPlayer2 && !game.player2Character) {
-          updateData.player2Character = characterId;
+    // Actualizar selección de personaje
+    const updateData: any = {};
+    
+    if (isPlayer1) {
+      updateData.player1Character = characterId;
+      
+      // Si player2 ya seleccionó, avanzar a siguiente fase
+      if (currentGame.player2Character) {
+        // Ambos seleccionaron, pasar a stage ban/select
+        if (currentGame.gameNumber === 1) {
+          // Game 1: Banning phase (1-2-1 pattern)
+          updateData.phase = 'STAGE_BAN';
+          updateData.currentTurn = 'PLAYER1'; // Player 1 banea primero
+          updateData.banTurnCount = 0;
+        } else {
+          // Games 2-3: Winner bans 3 stages
+          updateData.phase = 'STAGE_BAN';
+          // El ganador del juego anterior banea
+          const winnerId = currentGame.previousWinnerId;
+          updateData.currentTurn = winnerId === match.player1Id ? 'PLAYER1' : 'PLAYER2';
+          updateData.banTurnCount = 0;
         }
       } else {
-        // El perdedor selecciona segundo
-        if (isPlayer1 && game.player2Character && !game.player1Character) {
-          updateData.player1Character = characterId;
-          updateData.status = 'PLAYING';
-        } else if (isPlayer2 && game.player1Character && !game.player2Character) {
-          updateData.player2Character = characterId;
-          updateData.status = 'PLAYING';
-        }
+        // Esperar a player2
+        updateData.currentTurn = 'PLAYER2';
       }
-    }
-
-    if (Object.keys(updateData).length === 0) {
-      return NextResponse.json(
-        { error: 'No es tu turno para seleccionar personaje' },
-        { status: 400 }
-      );
+    } else {
+      updateData.player2Character = characterId;
+      
+      // Si player1 ya seleccionó, avanzar a siguiente fase
+      if (currentGame.player1Character) {
+        // Ambos seleccionaron, pasar a stage ban/select
+        if (currentGame.gameNumber === 1) {
+          // Game 1: Banning phase (1-2-1 pattern)
+          updateData.phase = 'STAGE_BAN';
+          updateData.currentTurn = 'PLAYER1'; // Player 1 banea primero
+          updateData.banTurnCount = 0;
+        } else {
+          // Games 2-3: Winner bans 3 stages
+          updateData.phase = 'STAGE_BAN';
+          // El ganador del juego anterior banea
+          const winnerId = currentGame.previousWinnerId;
+          updateData.currentTurn = winnerId === match.player1Id ? 'PLAYER1' : 'PLAYER2';
+          updateData.banTurnCount = 0;
+        }
+      } else {
+        // Esperar a player1
+        updateData.currentTurn = 'PLAYER1';
+      }
     }
 
     const updatedGame = await prisma.matchGame.update({
-      where: { id: game.id },
+      where: { id: currentGame.id },
       data: updateData,
     });
-
-    // Si ambos seleccionaron, actualizar el match
-    if (updateData.status === 'PLAYING') {
-      await prisma.match.update({
-        where: { id: params.matchId },
-        data: { status: 'PLAYING' },
-      });
-    }
 
     return NextResponse.json({
       success: true,
       game: updatedGame,
+      message: `Personaje seleccionado exitosamente`,
+      nextPhase: updateData.phase || 'CHARACTER_SELECT',
     });
   } catch (error) {
     console.error('Error al seleccionar personaje:', error);
     return NextResponse.json(
-      { error: 'Error al seleccionar personaje' },
+      { error: 'Error al procesar selección' },
       { status: 500 }
     );
   }

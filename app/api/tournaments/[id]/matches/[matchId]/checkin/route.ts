@@ -19,6 +19,11 @@ export async function POST(
 
     const match = await prisma.match.findUnique({
       where: { id: params.matchId },
+      include: {
+        player1: true,
+        player2: true,
+        games: true,
+      },
     });
 
     if (!match) {
@@ -35,9 +40,10 @@ export async function POST(
       );
     }
 
-    if (match.status !== 'CHECKIN') {
+    // Verificar que el match está PENDING o ONGOING
+    if (match.status !== 'PENDING' && match.status !== 'ONGOING') {
       return NextResponse.json(
-        { error: 'Este match no está en fase de check-in' },
+        { error: 'Este match no está disponible para check-in' },
         { status: 400 }
       );
     }
@@ -58,38 +64,56 @@ export async function POST(
       );
     }
 
-    // Actualizar check-in
     const isPlayer1 = match.player1Id === session.user.id;
     const updateData: any = {};
 
     if (isPlayer1) {
+      if (match.player1CheckIn) {
+        return NextResponse.json(
+          { error: 'Ya hiciste check-in' },
+          { status: 400 }
+        );
+      }
       updateData.player1CheckIn = true;
     } else {
+      if (match.player2CheckIn) {
+        return NextResponse.json(
+          { error: 'Ya hiciste check-in' },
+          { status: 400 }
+        );
+      }
       updateData.player2CheckIn = true;
     }
 
-    // Si ambos jugadores hicieron check-in, cambiar estado a BANNING y crear primer game
+    // Si ambos jugadores hicieron check-in, inicializar primer game
     const bothCheckedIn = isPlayer1
       ? match.player2CheckIn
       : match.player1CheckIn;
 
     if (bothCheckedIn) {
-      updateData.status = 'BANNING';
-      updateData.startedAt = new Date();
+      updateData.status = 'ONGOING';
+      updateData.currentGame = 1;
     }
 
     const updatedMatch = await prisma.match.update({
       where: { id: params.matchId },
       data: updateData,
+      include: {
+        player1: true,
+        player2: true,
+        games: true,
+      },
     });
 
-    // Crear primer game si ambos están listos
-    if (bothCheckedIn) {
+    // Crear primer game si ambos están listos y no existe
+    if (bothCheckedIn && match.games.length === 0) {
       await prisma.matchGame.create({
         data: {
           matchId: params.matchId,
           gameNumber: 1,
-          status: 'BANNING',
+          phase: 'CHARACTER_SELECT',
+          currentTurn: 'PLAYER1', // Player 1 selecciona personaje primero en game 1
+          status: 'IN_PROGRESS',
         },
       });
     }
@@ -98,6 +122,9 @@ export async function POST(
       success: true,
       match: updatedMatch,
       bothReady: bothCheckedIn,
+      message: bothCheckedIn 
+        ? 'Ambos jugadores listos! El match puede comenzar.' 
+        : 'Check-in exitoso. Esperando al otro jugador.',
     });
   } catch (error) {
     console.error('Error al hacer check-in:', error);

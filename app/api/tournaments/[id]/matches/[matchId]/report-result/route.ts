@@ -132,12 +132,39 @@ export async function POST(
         matchCompleted = true;
       }
 
+      // Actualizar DSR tracking: agregar stage a la lista del ganador
+      const gameWinnerId = updatedGame.winnerId;
+      const wonStage = updatedGame.selectedStage;
+      
+      if (gameWinnerId && wonStage) {
+        if (gameWinnerId === match.player1Id) {
+          await prisma.match.update({
+            where: { id: params.matchId },
+            data: {
+              player1WonStages: {
+                push: wonStage,
+              },
+            },
+          });
+        } else if (gameWinnerId === match.player2Id) {
+          await prisma.match.update({
+            where: { id: params.matchId },
+            data: {
+              player2WonStages: {
+                push: wonStage,
+              },
+            },
+          });
+        }
+      }
+
       if (matchCompleted) {
-        // Actualizar match
+        // Actualizar match completo
         await prisma.match.update({
           where: { id: params.matchId },
           data: {
             winnerId: matchWinnerId,
+            loserId: matchWinnerId === match.player1Id ? match.player2Id : match.player1Id,
             status: 'COMPLETED',
             completedAt: new Date(),
             player1Score: player1Wins,
@@ -145,25 +172,33 @@ export async function POST(
           },
         });
 
-        // Avanzar ganador al siguiente match
+        // TODO: Avanzar ganador al siguiente match en el bracket
         // Aquí deberías implementar la lógica para actualizar el bracket
-        // Por ahora, solo marcamos el match como completado
       } else {
-        // Crear el siguiente game
+        // Crear el siguiente game con la configuración correcta
         const nextGameNumber = gameNumber + 1;
+        
+        // Games 2-3: El ganador selecciona personaje primero
+        const gameTwoOrThreeFirstTurn = gameWinnerId === match.player1Id ? 'PLAYER1' : 'PLAYER2';
+        
         await prisma.matchGame.create({
           data: {
             matchId: params.matchId,
             gameNumber: nextGameNumber,
-            status: 'BANNING',
+            phase: 'CHARACTER_SELECT',
+            currentTurn: gameTwoOrThreeFirstTurn, // Ganador selecciona personaje primero
+            previousWinnerId: gameWinnerId, // Guardar ganador del juego anterior
+            status: 'IN_PROGRESS',
           },
         });
 
         await prisma.match.update({
           where: { id: params.matchId },
           data: {
-            status: 'BANNING',
+            status: 'ONGOING',
             currentGame: nextGameNumber,
+            player1Score: player1Wins,
+            player2Score: player2Wins,
           },
         });
       }

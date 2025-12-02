@@ -160,6 +160,8 @@ model Tournament {
   // Reglas
   rules             String?
   stageList         String?
+  starterStages     String[]         // IDs de starter stages (para game 1)
+  counterpickStages String[]         // IDs de counterpick stages (para game 2+)
   ruleset           Json?
   
   // Streaming
@@ -257,6 +259,10 @@ model Match {
   currentGame      Int         @default(1)
   bestOf           Int         @default(3)
   
+  // DSR (Dave's Stupid Rule) tracking
+  player1WonStages String[]    // Array de IDs de stages donde player1 ganó
+  player2WonStages String[]    // Array de IDs de stages donde player2 ganó
+  
   // Match data (stores ban/pick history)
   matchData        Json?       // { games: [{ bans: [], stage: "", characters: {}, winner: "" }] }
   
@@ -294,22 +300,39 @@ model Match {
 model MatchGame {
   id            String   @id @default(cuid())
   matchId       String
-  gameNumber    Int
+  gameNumber    Int      // 1, 2, or 3 for BO3
+  
+  // Phase tracking
+  phase         String   @default("LOBBY") // "LOBBY", "CHARACTER_SELECT", "STAGE_BAN", "STAGE_SELECT", "PLAYING", "REPORTING", "COMPLETED"
+  currentTurn   String?  // "PLAYER1" or "PLAYER2" - who needs to act
+  
+  // Previous game result (for games 2-3)
+  previousWinnerId String? // ID del ganador del juego anterior
   
   // Stage banning/selection
-  bannedStages  String[] // Array de IDs de stages baneados
-  selectedStage String?  // ID del stage seleccionado
+  bannedStages    String[] // Array de IDs de stages baneados
+  bannedByPlayer1 String[] // Stages banned by player 1
+  bannedByPlayer2 String[] // Stages banned by player 2
+  selectedStage   String?  // ID del stage seleccionado
   
   // Character selection
   player1Character String?
   player2Character String?
+  
+  // Turn tracking for banning (Game 1: 1-2-1 pattern)
+  banTurnCount     Int      @default(0) // Tracks how many bans have been made
+  
+  // Lobby status
+  player1JoinedLobby Boolean @default(false)
+  player2JoinedLobby Boolean @default(false)
   
   // Result
   winnerId      String?
   reportedBy    String?  // User ID who reported
   confirmedBy   String?  // User ID who confirmed
   
-  status        String   @default("PENDING") // "PENDING", "BANNING", "STAGE_SELECT", "CHAR_SELECT", "PLAYING", "REPORTING", "COMPLETED"
+  status        String   @default("PENDING") // "PENDING", "IN_PROGRESS", "COMPLETED"
+  completedAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -317,8 +340,10 @@ model MatchGame {
   match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
   winner  User? @relation(fields: [winnerId], references: [id])
 
+  @@unique([matchId, gameNumber])
   @@index([matchId])
   @@index([winnerId])
+  @@index([phase])
 }
 
 model Ranking {
