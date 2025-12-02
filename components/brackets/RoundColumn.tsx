@@ -42,6 +42,7 @@ interface RoundColumnProps {
   onMatchClick?: (match: Match) => void;
   showProjected?: boolean;
   scheduledTime?: Date;
+  hideHeader?: boolean;
 }
 
 export function RoundColumn({
@@ -53,6 +54,7 @@ export function RoundColumn({
   onMatchClick,
   showProjected = true,
   scheduledTime,
+  hideHeader = false,
 }: RoundColumnProps) {
   // Ordenar matches por position
   const sortedMatches = [...matches].sort((a, b) => a.position - b.position);
@@ -93,19 +95,21 @@ export function RoundColumn({
 
   return (
     <div className="flex flex-col gap-4 min-w-[290px]">
-      {/* Round Header - SIEMPRE arriba */}
-      <div className="text-center flex-shrink-0">
-        <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg shadow-lg">
-          <h3 className="text-xs font-black text-white uppercase tracking-widest">
-            {roundName}
-          </h3>
+      {/* Round Header - Opcional (estilo Excel) */}
+      {!hideHeader && (
+        <div className="text-center flex-shrink-0">
+          <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg shadow-lg">
+            <h3 className="text-xs font-black text-white uppercase tracking-widest">
+              {roundName}
+            </h3>
+          </div>
+          {formattedTime && (
+            <p className="text-[10px] text-slate-500 mt-1.5 font-medium">
+              {formattedTime}
+            </p>
+          )}
         </div>
-        {formattedTime && (
-          <p className="text-[10px] text-slate-500 mt-1.5 font-medium">
-            {formattedTime}
-          </p>
-        )}
-      </div>
+      )}
       
       {/* Matches - Espaciado progresivo (embudo) */}
       <div className="flex flex-col" style={{ 

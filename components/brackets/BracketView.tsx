@@ -149,12 +149,33 @@ export function BracketView({
             </div>
           </div>
           
-          {/* Horizontal Scrollable Container */}
+          {/* Layout tipo Excel/Tabla */}
           <div className="relative">
             <div className="overflow-x-auto pb-8">
-              <div className="inline-flex items-start gap-16 min-w-min px-4">
+              {/* Fila de Headers (como títulos de columnas de Excel) */}
+              <div className="inline-flex gap-16 min-w-min px-4 mb-6">
                 {winnersRounds.map((round, index) => (
-                  <div key={round.roundNumber} className="flex items-start gap-8">
+                  <div key={`header-${round.roundNumber}`} className="flex items-center gap-8">
+                    <div className="w-[290px] text-center">
+                      <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg shadow-lg">
+                        <h3 className="text-xs font-black text-white uppercase tracking-widest">
+                          {round.roundName}
+                        </h3>
+                      </div>
+                    </div>
+                    
+                    {/* Espaciador para la flecha */}
+                    {index < winnersRounds.length - 1 && (
+                      <div className="w-8" />
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Fila de Contenido (matches) */}
+              <div className="inline-flex items-center gap-16 min-w-min px-4">
+                {winnersRounds.map((round, index) => (
+                  <div key={round.roundNumber} className="flex items-center gap-8">
                     <RoundColumn
                       roundName={round.roundName}
                       roundNumber={round.roundNumber}
@@ -163,11 +184,12 @@ export function BracketView({
                       getPlayerInfo={getPlayerInfo}
                       onMatchClick={onMatchClick}
                       showProjected={showProjected}
+                      hideHeader={true}
                     />
                     
                     {/* Arrow Connector */}
                     {index < winnersRounds.length - 1 && (
-                      <div className="flex items-center pt-12">
+                      <div className="flex items-center">
                         <ChevronRight className="w-8 h-8 text-slate-600" />
                       </div>
                     )}
@@ -208,12 +230,33 @@ export function BracketView({
             </div>
           </div>
           
-          {/* Horizontal Scrollable Container */}
+          {/* Layout tipo Excel/Tabla */}
           <div className="relative">
             <div className="overflow-x-auto pb-8">
-              <div className="inline-flex items-start gap-16 min-w-min px-4">
+              {/* Fila de Headers (como títulos de columnas de Excel) */}
+              <div className="inline-flex gap-16 min-w-min px-4 mb-6">
                 {losersRounds.map((round, index) => (
-                  <div key={round.roundNumber} className="flex items-start gap-8">
+                  <div key={`header-${round.roundNumber}`} className="flex items-center gap-8">
+                    <div className="w-[290px] text-center">
+                      <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 rounded-lg shadow-lg">
+                        <h3 className="text-xs font-black text-white uppercase tracking-widest">
+                          {round.roundName}
+                        </h3>
+                      </div>
+                    </div>
+                    
+                    {/* Espaciador para la flecha */}
+                    {index < losersRounds.length - 1 && (
+                      <div className="w-8" />
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Fila de Contenido (matches) */}
+              <div className="inline-flex items-center gap-16 min-w-min px-4">
+                {losersRounds.map((round, index) => (
+                  <div key={round.roundNumber} className="flex items-center gap-8">
                     <RoundColumn
                       roundName={round.roundName}
                       roundNumber={round.roundNumber}
@@ -222,11 +265,12 @@ export function BracketView({
                       getPlayerInfo={getPlayerInfo}
                       onMatchClick={onMatchClick}
                       showProjected={showProjected}
+                      hideHeader={true}
                     />
                     
                     {/* Arrow Connector */}
                     {index < losersRounds.length - 1 && (
-                      <div className="flex items-center pt-12">
+                      <div className="flex items-center">
                         <ChevronRight className="w-8 h-8 text-slate-600" />
                       </div>
                     )}
