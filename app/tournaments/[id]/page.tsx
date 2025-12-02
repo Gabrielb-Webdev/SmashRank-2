@@ -28,7 +28,15 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
     fetchTournament();
   }, [tournamentId]);
 
-
+  useEffect(() => {
+    // Re-verificar cuando cambia la sesión
+    if (session && tournament) {
+      const userRegistration = tournament.registrations?.find(
+        (reg: any) => reg.userId === session.user.id
+      );
+      setIsRegistered(!!userRegistration);
+    }
+  }, [session, tournament]);
 
   // Verificar estado de inscripciones
   useEffect(() => {
@@ -91,7 +99,13 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
             (reg: any) => reg.userId === session.user.id
           );
           
-          setIsRegistered(!!userRegistration);
+          const registered = !!userRegistration;
+          setIsRegistered(registered);
+          console.log('🔍 Estado de registro:', { 
+            userId: session.user.id, 
+            registered,
+            totalRegistrations: tournamentData.registrations.length 
+          });
         }
       }
     } catch (error) {
@@ -114,6 +128,16 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
       const data = await response.json();
 
       if (!response.ok) {
+        // Si ya está inscrito, actualizar el estado sin mostrar error
+        if (data.error && data.error.includes('Ya estás inscrito')) {
+          console.log('✅ Usuario ya inscrito, actualizando estado...');
+          setIsRegistered(true);
+          setShowRegisterModal(false);
+          toast.success('Ya estás inscrito en este torneo');
+          fetchTournament();
+          return;
+        }
+        
         console.error('Error de registro:', data);
         throw new Error(data.error || 'Error al inscribirse');
       }
