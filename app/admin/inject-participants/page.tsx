@@ -82,7 +82,7 @@ export default function InjectParticipantsPage() {
       // Paso 2: Generar el bracket automáticamente
       toast.loading('Generando bracket...');
       
-      const bracketResponse = await fetch(`/api/tournaments/${tournamentId}/brackets/generate`, {
+      const bracketResponse = await fetch(`/api/tournaments/${tournamentId}/bracket`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

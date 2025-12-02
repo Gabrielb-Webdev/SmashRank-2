@@ -53,7 +53,7 @@ export default function GenerateBracketsPage() {
     try {
       console.log(`🎯 Generando bracket para ${tournamentName}...`);
       
-      const response = await fetch(`/api/tournaments/${tournamentId}/brackets/generate`, {
+      const response = await fetch(`/api/tournaments/${tournamentId}/bracket`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

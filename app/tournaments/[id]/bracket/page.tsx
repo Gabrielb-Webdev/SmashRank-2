@@ -143,7 +143,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
     try {
       setGenerating(true);
       
-      const res = await fetch(`/api/tournaments/${params.id}/brackets/generate`, {
+      const res = await fetch(`/api/tournaments/${params.id}/bracket`, {
         method: 'POST',
       });
       
