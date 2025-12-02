@@ -109,6 +109,19 @@ function getLosersRoundName(roundNumber: number, totalRounds: number): string {
 }
 
 /**
+ * Genera una letra de match (A, B, C... Z, AA, AB, AC...)
+ */
+function getMatchLabel(index: number): string {
+  if (index < 26) {
+    return String.fromCharCode(65 + index);
+  } else {
+    const first = Math.floor(index / 26) - 1;
+    const second = index % 26;
+    return String.fromCharCode(65 + first) + String.fromCharCode(65 + second);
+  }
+}
+
+/**
  * Genera un bracket de Double Elimination completo
  */
 export function generateDoubleEliminationBracket(
@@ -121,6 +134,10 @@ export function generateDoubleEliminationBracket(
   
   // Generar seeding óptimo basado en el bracket size
   const seeding = generateSeeding(bracketSize);
+  
+  // Crear mapeo de IDs a Labels (A, B, C, etc.)
+  const matchIdToLabel = new Map<string, string>();
+  let labelCounter = 0;
   
   // Crear un mapa de seeds reales a jugadores
   const playersByRealSeed = new Map<number, Player>();
@@ -141,6 +158,27 @@ export function generateDoubleEliminationBracket(
   
   const winners: Match[] = [];
   const losers: Match[] = [];
+  
+  // ==================== PRIMERA PASADA: ASIGNAR LABELS ====================
+  
+  // Asignar labels a Winners matches
+  for (let round = 1; round <= totalWinnersRounds; round++) {
+    const matchesInRound = Math.pow(2, totalWinnersRounds - round + 1) / 2;
+    for (let matchPos = 0; matchPos < matchesInRound; matchPos++) {
+      const matchId = `W-R${round}-M${matchPos + 1}`;
+      matchIdToLabel.set(matchId, getMatchLabel(labelCounter++));
+    }
+  }
+  
+  // Asignar labels a Losers matches
+  for (let round = 1; round <= totalLosersRounds; round++) {
+    const winnersRoundForDrops = Math.ceil(round / 2) + 1;
+    const matchesInRound = Math.pow(2, totalWinnersRounds - winnersRoundForDrops);
+    for (let matchPos = 0; matchPos < matchesInRound; matchPos++) {
+      const matchId = `L-R${round}-M${matchPos + 1}`;
+      matchIdToLabel.set(matchId, getMatchLabel(labelCounter++));
+    }
+  }
   
   // ==================== WINNERS BRACKET ====================
   
@@ -202,6 +240,10 @@ export function generateDoubleEliminationBracket(
       const prevMatch1Id = `W-R${round - 1}-M${prevMatch1Pos + 1}`;
       const prevMatch2Id = `W-R${round - 1}-M${prevMatch2Pos + 1}`;
       
+      // Obtener las letras de los matches anteriores
+      const prevMatch1Label = matchIdToLabel.get(prevMatch1Id) || prevMatch1Id;
+      const prevMatch2Label = matchIdToLabel.get(prevMatch2Id) || prevMatch2Id;
+      
       winners.push({
         id: matchId,
         tournamentId,
@@ -209,8 +251,8 @@ export function generateDoubleEliminationBracket(
         roundName: getWinnersRoundName(round, totalWinnersRounds),
         roundNumber: round,
         position: matchPos + 1,
-        player1Source: `Winner of ${prevMatch1Id}`,
-        player2Source: `Winner of ${prevMatch2Id}`,
+        player1Source: `winner of ${prevMatch1Label}`,
+        player2Source: `winner of ${prevMatch2Label}`,
         previousMatch1Id: prevMatch1Id,
         previousMatch2Id: prevMatch2Id,
         player1Score: 0,
@@ -241,6 +283,10 @@ export function generateDoubleEliminationBracket(
     const winnersMatch1Id = `W-R1-M${i * 2 + 1}`;
     const winnersMatch2Id = `W-R1-M${i * 2 + 2}`;
     
+    // Obtener las letras
+    const winnersMatch1Label = matchIdToLabel.get(winnersMatch1Id) || winnersMatch1Id;
+    const winnersMatch2Label = matchIdToLabel.get(winnersMatch2Id) || winnersMatch2Id;
+    
     losers.push({
       id: matchId,
       tournamentId,
@@ -248,8 +294,8 @@ export function generateDoubleEliminationBracket(
       roundName: getLosersRoundName(1, totalLosersRounds),
       roundNumber: 1,
       position: i + 1,
-      player1Source: `Loser of ${winnersMatch1Id}`,
-      player2Source: `Loser of ${winnersMatch2Id}`,
+      player1Source: `loser of ${winnersMatch1Label}`,
+      player2Source: `loser of ${winnersMatch2Label}`,
       player1Score: 0,
       player2Score: 0,
       status: 'PENDING',
@@ -288,8 +334,11 @@ export function generateDoubleEliminationBracket(
         const losersMatch = `L-R${round - 1}-M${matchPos + 1}`;
         const winnersMatch = `W-R${winnersRoundForDrops}-M${matchPos + 1}`;
         
-        player1Source = `Winner of ${losersMatch}`;
-        player2Source = `Loser of ${winnersMatch}`;
+        const losersLabel = matchIdToLabel.get(losersMatch) || losersMatch;
+        const winnersLabel = matchIdToLabel.get(winnersMatch) || winnersMatch;
+        
+        player1Source = `winner of ${losersLabel}`;
+        player2Source = `loser of ${winnersLabel}`;
         
         // Actualizar referencias
         const lm = losers.find(m => m.id === losersMatch);
@@ -302,8 +351,11 @@ export function generateDoubleEliminationBracket(
         const prevMatch1 = `L-R${round - 1}-M${matchPos * 2 + 1}`;
         const prevMatch2 = `L-R${round - 1}-M${matchPos * 2 + 2}`;
         
-        player1Source = `Winner of ${prevMatch1}`;
-        player2Source = `Winner of ${prevMatch2}`;
+        const prevMatch1Label = matchIdToLabel.get(prevMatch1) || prevMatch1;
+        const prevMatch2Label = matchIdToLabel.get(prevMatch2) || prevMatch2;
+        
+        player1Source = `winner of ${prevMatch1Label}`;
+        player2Source = `winner of ${prevMatch2Label}`;
         
         // Actualizar referencias
         const pm1 = losers.find(m => m.id === prevMatch1);
@@ -336,6 +388,9 @@ export function generateDoubleEliminationBracket(
   const winnersFinalist = `W-R${totalWinnersRounds}-M1`;
   const losersFinalist = `L-R${totalLosersRounds}-M1`;
   
+  const winnersFinalistLabel = matchIdToLabel.get(winnersFinalist) || winnersFinalist;
+  const losersFinalistLabel = matchIdToLabel.get(losersFinalist) || losersFinalist;
+  
   const grandFinals: Match = {
     id: 'GRAND-FINALS',
     tournamentId,
@@ -343,8 +398,8 @@ export function generateDoubleEliminationBracket(
     roundName: 'Grand Finals',
     roundNumber: 1,
     position: 1,
-    player1Source: `Winner of ${winnersFinalist}`,
-    player2Source: `Winner of ${losersFinalist}`,
+    player1Source: `winner of ${winnersFinalistLabel}`,
+    player2Source: `winner of ${losersFinalistLabel}`,
     previousMatch1Id: winnersFinalist,
     previousMatch2Id: losersFinalist,
     player1Score: 0,
