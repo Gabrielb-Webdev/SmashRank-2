@@ -303,23 +303,31 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           key={match.id} 
           className="relative flex items-center gap-3"
         >
-          {/* Match label PEQUEÑO */}
+          {/* Match label hexagonal */}
           <div 
-            className="w-8 h-16 rounded-md flex items-center justify-center text-sm font-bold flex-shrink-0"
+            className="w-7 h-14 flex items-center justify-center text-xs font-bold flex-shrink-0"
             style={{
-              background: 'rgba(51, 65, 85, 0.8)',
-              border: '1px solid rgba(148, 163, 184, 0.3)',
-              color: '#94a3b8'
+              clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+              background: 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)',
+              color: '#fff',
+              boxShadow: '0 0 15px rgba(220, 20, 60, 0.3)'
             }}>
             {matchLabel}
           </div>
           
-          {/* Container SIMPLIFICADO */}
-          <div style={{ width: '240px' }}>
-            <div className="px-2 py-2 flex items-center gap-2 border border-b-0 border-dashed border-slate-600 rounded-t bg-slate-800/30">
+          {/* Container glassmorphism vacío */}
+          <div 
+            className="rounded-lg overflow-hidden"
+            style={{ 
+              width: '220px',
+              background: 'rgba(15, 23, 42, 0.4)',
+              backdropFilter: 'blur(10px)',
+              border: '1px dashed rgba(71, 85, 105, 0.4)'
+            }}>
+            <div className="px-3 py-2 flex items-center border-b border-dashed border-slate-700/30">
               <span className="text-slate-500 italic text-xs">{slot1Text}</span>
             </div>
-            <div className="px-2 py-2 flex items-center gap-2 border border-dashed border-slate-600 rounded-b bg-slate-800/30">
+            <div className="px-3 py-2 flex items-center">
               <span className="text-slate-500 italic text-xs">{slot2Text}</span>
             </div>
           </div>
@@ -357,36 +365,44 @@ export default function BracketPage({ params }: { params: { id: string } }) {
           key={match.id} 
           className="relative flex items-center gap-3"
         >
-          {/* Match label PEQUEÑO */}
+          {/* Match label hexagonal */}
           <div 
-            className="w-8 h-16 rounded-md flex items-center justify-center text-sm font-bold flex-shrink-0"
+            className="w-7 h-14 flex items-center justify-center text-xs font-bold flex-shrink-0"
             style={{
-              background: 'rgba(51, 65, 85, 0.8)',
-              border: '1px solid rgba(148, 163, 184, 0.3)',
-              color: '#94a3b8'
+              clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+              background: 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)',
+              color: '#fff',
+              boxShadow: '0 0 15px rgba(220, 20, 60, 0.3)'
             }}>
             {matchLabel}
           </div>
           
-          {/* Container SIMPLIFICADO */}
-          <div style={{ width: '240px' }}>
+          {/* Container con glassmorphism */}
+          <div 
+            className="rounded-lg overflow-hidden"
+            style={{ 
+              width: '220px',
+              background: 'rgba(15, 23, 42, 0.6)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(71, 85, 105, 0.5)'
+            }}>
             {isPlayer1Waiting && waitingPlayer ? (
               <>
-                <div className="px-2 py-2 flex items-center border border-b-0 border-slate-700 rounded-t bg-slate-800/50">
-                  <span className="text-white text-xs font-bold">{waitingPlayer.username}</span>
+                <div className="px-3 py-2 flex items-center border-b border-slate-700/50">
+                  <span className="text-white text-xs font-medium">{waitingPlayer.username}</span>
                 </div>
-                <div className="px-2 py-2 flex items-center border border-dashed border-slate-600 rounded-b bg-slate-800/30">
+                <div className="px-3 py-2 flex items-center">
                   <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
                 </div>
               </>
             ) : (
               <>
-                <div className="px-2 py-2 flex items-center border border-b-0 border-dashed border-slate-600 rounded-t bg-slate-800/30">
+                <div className="px-3 py-2 flex items-center border-b border-slate-700/50">
                   <span className="text-slate-500 italic text-xs">{emptySlotText}</span>
                 </div>
                 {waitingPlayer && (
-                  <div className="px-2 py-2 flex items-center border border-slate-700 rounded-b bg-slate-800/50">
-                    <span className="text-white text-xs font-bold">{waitingPlayer.username}</span>
+                  <div className="px-3 py-2 flex items-center">
+                    <span className="text-white text-xs font-medium">{waitingPlayer.username}</span>
                   </div>
                 )}
               </>
@@ -396,68 +412,84 @@ export default function BracketPage({ params }: { params: { id: string } }) {
       );
     }
 
-    // Match normal SIMPLIFICADO
+    // Match MODERNO con glassmorphism y efectos
     return (
       <div 
         key={match.id} 
         onClick={() => isClickable && setSelectedMatch(realMatch)}
-        className={`relative transition-all flex items-center gap-2 ${
-          isClickable ? 'cursor-pointer hover:scale-[1.01] hover:z-10' : ''
+        className={`relative transition-all flex items-center gap-3 group ${
+          isClickable ? 'cursor-pointer' : ''
         }`}
       >
-        {/* Match label PEQUEÑO a la izquierda */}
+        {/* Match label hexagonal */}
         <div 
-          className="w-8 h-16 rounded-md flex items-center justify-center text-sm font-bold flex-shrink-0"
+          className="w-7 h-14 flex items-center justify-center text-xs font-bold flex-shrink-0 relative"
           style={{
-            background: 'rgba(51, 65, 85, 0.8)',
-            border: '1px solid rgba(148, 163, 184, 0.3)',
-            color: '#94a3b8'
+            clipPath: 'polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%)',
+            background: 'linear-gradient(135deg, #dc143c 0%, #ff1744 100%)',
+            color: '#fff',
+            boxShadow: '0 0 15px rgba(220, 20, 60, 0.3)'
           }}>
           {matchLabel}
         </div>
         
-        {/* Container del match MÁS COMPACTO */}
-        <div style={{ width: '240px' }}>
-          {/* Player 1 SIMPLIFICADO */}
+        {/* Container con glassmorphism */}
+        <div 
+          className="relative overflow-hidden rounded-lg transition-all group-hover:scale-[1.02]"
+          style={{ 
+            width: '220px',
+            background: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(71, 85, 105, 0.5)'
+          }}>
+          {/* Player 1 con efecto ganador */}
           <div 
-            className={`px-2 py-2 flex items-center justify-between rounded-t border border-b-0 ${
-              match.winnerId === match.player1Id ? 'border-red-500 bg-red-900/30' : 'border-slate-700 bg-slate-800/50'
+            className={`px-3 py-2 flex items-center justify-between border-b transition-colors ${
+              match.winnerId === match.player1Id 
+                ? 'bg-gradient-to-r from-red-600/20 to-transparent border-red-500/50' 
+                : 'border-slate-700/50'
             }`}
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <span className={`text-xs truncate ${
-                match.winnerId === match.player1Id ? 'text-white font-bold' : 'text-slate-300'
+              {match.winnerId === match.player1Id && (
+                <span className="text-yellow-400 text-sm">★</span>
+              )}
+              <span className={`text-xs font-medium truncate ${
+                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-300'
               }`}>
                 {player1.username}
               </span>
-              {match.winnerId === match.player1Id && <span className="text-xs">👑</span>}
             </div>
             {realMatch && (
-              <span className={`text-sm font-bold ml-2 ${
-                match.winnerId === match.player1Id ? 'text-white' : 'text-slate-400'
+              <span className={`text-sm font-bold ${
+                match.winnerId === match.player1Id ? 'text-yellow-400' : 'text-slate-500'
               }`}>
                 {realMatch.player1Score || 0}
               </span>
             )}
           </div>
 
-          {/* Player 2 SIMPLIFICADO */}
+          {/* Player 2 con efecto ganador */}
           <div 
-            className={`px-2 py-2 flex items-center justify-between rounded-b border border-t-0 ${
-              match.winnerId === match.player2Id ? 'border-red-500 bg-red-900/30' : 'border-slate-700 bg-slate-800/50'
+            className={`px-3 py-2 flex items-center justify-between transition-colors ${
+              match.winnerId === match.player2Id 
+                ? 'bg-gradient-to-r from-red-600/20 to-transparent' 
+                : ''
             }`}
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <span className={`text-xs truncate ${
-                match.winnerId === match.player2Id ? 'text-white font-bold' : 'text-slate-300'
+              {match.winnerId === match.player2Id && (
+                <span className="text-yellow-400 text-sm">★</span>
+              )}
+              <span className={`text-xs font-medium truncate ${
+                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-300'
               }`}>
                 {player2.username}
               </span>
-              {match.winnerId === match.player2Id && <span className="text-xs">👑</span>}
             </div>
             {realMatch && (
-              <span className={`text-sm font-bold ml-2 ${
-                match.winnerId === match.player2Id ? 'text-white' : 'text-slate-400'
+              <span className={`text-sm font-bold ${
+                match.winnerId === match.player2Id ? 'text-yellow-400' : 'text-slate-500'
               }`}>
                 {realMatch.player2Score || 0}
               </span>
@@ -511,11 +543,21 @@ export default function BracketPage({ params }: { params: { id: string } }) {
 
     return (
       <div className="mb-8">
-        {/* Título del bracket SIMPLIFICADO */}
-        <div className="mb-4 p-3 rounded-lg border border-red-600/50 bg-red-900/20">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <span className="text-xl">{icon}</span>
-            {title}
+        {/* Título bracket con estilo neon */}
+        <div className="mb-4 p-4 rounded-lg relative overflow-hidden"
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(220, 20, 60, 0.5)',
+            boxShadow: '0 0 20px rgba(220, 20, 60, 0.2)'
+          }}>
+          <div className="absolute inset-0 opacity-10" 
+            style={{
+              background: 'linear-gradient(45deg, transparent 30%, rgba(220, 20, 60, 0.3) 50%, transparent 70%)'
+            }}/>
+          <h3 className="text-lg font-bold text-white flex items-center gap-3 relative z-10">
+            <span className="text-2xl">{icon}</span>
+            <span className="bg-gradient-to-r from-red-500 to-red-300 bg-clip-text text-transparent">{title}</span>
           </h3>
         </div>
 
@@ -532,9 +574,25 @@ export default function BracketPage({ params }: { params: { id: string } }) {
 
                 return (
                   <div key={roundNum} className="flex flex-col relative" style={{ minWidth: '300px' }}>
-                    {/* Título de la ronda SIMPLIFICADO */}
-                    <div className="mb-4 p-2 rounded text-center border border-red-600/30 bg-red-900/10">
-                      <h4 className="font-bold text-white text-sm uppercase">
+                    {/* Título de ronda con efecto neon */}
+                    <div className="mb-4 p-2 rounded-lg text-center relative overflow-hidden"
+                      style={{
+                        background: 'rgba(15, 23, 42, 0.7)',
+                        backdropFilter: 'blur(5px)',
+                        border: '1px solid rgba(220, 20, 60, 0.4)',
+                        boxShadow: '0 0 15px rgba(220, 20, 60, 0.15)'
+                      }}>
+                      <div className="absolute inset-0 opacity-20" 
+                        style={{
+                          background: 'radial-gradient(circle at 50% 0%, rgba(220, 20, 60, 0.3), transparent 70%)'
+                        }}/>
+                      <h4 className="font-bold text-sm uppercase relative z-10"
+                        style={{
+                          background: 'linear-gradient(to right, #fff 20%, #dc143c 50%, #fff 80%)',
+                          backgroundClip: 'text',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent'
+                        }}>
                         {getRoundName(rNum, totalRounds)}
                       </h4>
                     </div>
@@ -550,40 +608,44 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                           
                           return (
                             <div key={match.id} className="relative flex items-center">
-                              {/* Líneas conectoras LIMPIAS estilo start.gg */}
+                              {/* Líneas conectoras con efecto glow */}
                               {!isLastRound && (
                                 <>
-                                  {/* Línea horizontal desde el match */}
+                                  {/* Línea horizontal con glow */}
                                   <div 
-                                    className="absolute left-full top-1/2 bg-slate-600"
+                                    className="absolute left-full top-1/2"
                                     style={{ 
                                       transform: 'translateY(-50%)',
-                                      width: '48px',
-                                      height: '2px'
+                                      width: '40px',
+                                      height: '2px',
+                                      background: 'linear-gradient(to right, rgba(220, 20, 60, 0.6), rgba(220, 20, 60, 0.3))',
+                                      boxShadow: '0 0 8px rgba(220, 20, 60, 0.5)'
                                     }}
                                   />
                                   
-                                  {/* Conexión vertical entre pares de matches */}
+                                  {/* Conexión vertical con efecto */}
                                   {isPairStart && hasNextInPair && (
                                     <>
-                                      {/* Línea vertical */}
                                       <div 
-                                        className="absolute left-full bg-slate-600"
+                                        className="absolute left-full"
                                         style={{
                                           top: '50%',
-                                          height: `${verticalGap + 85}px`,
-                                          marginLeft: '48px',
-                                          width: '2px'
+                                          height: `${verticalGap + 70}px`,
+                                          marginLeft: '40px',
+                                          width: '2px',
+                                          background: 'linear-gradient(to bottom, rgba(220, 20, 60, 0.5), rgba(220, 20, 60, 0.3), rgba(220, 20, 60, 0.5))',
+                                          boxShadow: '0 0 8px rgba(220, 20, 60, 0.4)'
                                         }}
                                       />
-                                      {/* Línea horizontal final */}
                                       <div 
-                                        className="absolute left-full bg-slate-600"
+                                        className="absolute left-full"
                                         style={{
-                                          top: `calc(50% + ${(verticalGap + 85) / 2}px)`,
-                                          marginLeft: '48px',
-                                          width: '24px',
-                                          height: '2px'
+                                          top: `calc(50% + ${(verticalGap + 70) / 2}px)`,
+                                          marginLeft: '40px',
+                                          width: '20px',
+                                          height: '2px',
+                                          background: 'linear-gradient(to right, rgba(220, 20, 60, 0.5), rgba(220, 20, 60, 0.3))',
+                                          boxShadow: '0 0 8px rgba(220, 20, 60, 0.4)'
                                         }}
                                       />
                                     </>
