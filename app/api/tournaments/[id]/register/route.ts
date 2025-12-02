@@ -43,9 +43,9 @@ export async function POST(
     console.log(`✅ Torneo encontrado: ${tournament.name}, status: ${tournament.status}`);
 
     // Verificar que el torneo permita inscripciones
-    if (tournament.status !== 'REGISTRATION_OPEN' && tournament.status !== 'UPCOMING') {
+    if (tournament.status !== 'REGISTRATION_OPEN') {
       return NextResponse.json(
-        { error: 'Las inscripciones no están abiertas para este torneo' },
+        { error: `Las inscripciones no están abiertas. Status actual: ${tournament.status}` },
         { status: 400 }
       );
     }
