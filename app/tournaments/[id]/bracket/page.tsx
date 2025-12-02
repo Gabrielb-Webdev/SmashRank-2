@@ -403,7 +403,6 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                       setSelectedMatch(match);
                     }
                   }}
-                  showProjected={showProjected}
                 />
               </>
             )}
