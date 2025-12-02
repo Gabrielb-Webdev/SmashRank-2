@@ -29,7 +29,10 @@ export default function MigrationPage() {
       const res = await fetch('/api/tournaments');
       const data = await res.json();
       
-      const hasMigration = data.tournaments?.some((t: any) => 
+      // La API devuelve un array directo, no { tournaments: [...] }
+      const tournaments = Array.isArray(data) ? data : [];
+      
+      const hasMigration = tournaments.some((t: any) => 
         t.hasOwnProperty('starterStages') || t.hasOwnProperty('counterpickStages')
       );
 

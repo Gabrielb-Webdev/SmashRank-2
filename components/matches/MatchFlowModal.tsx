@@ -55,6 +55,7 @@ export default function MatchFlowModal({
     fetchCharacters();
     loadChatMessages();
     loadMatchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadMatchData = async () => {
@@ -428,9 +429,9 @@ export default function MatchFlowModal({
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-black text-white">
-                {match.roundName}
+                {match?.roundName || 'Match'}
               </h2>
-              <p className="text-slate-400 text-sm">Match #{match.position} • Best of 3</p>
+              <p className="text-slate-400 text-sm">Match #{match?.position || 0} • Best of {match?.bestOf || 3}</p>
             </div>
             <button 
               onClick={onClose}
@@ -444,20 +445,20 @@ export default function MatchFlowModal({
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-lg">
-                {match.player1?.username?.charAt(0).toUpperCase() || '?'}
+                {match?.player1?.username?.charAt(0)?.toUpperCase() || '?'}
               </div>
               <div>
-                <div className="font-bold text-white">{match.player1?.username || 'TBD'}</div>
-                <div className="text-sm text-slate-400">{match.player1Score || 0} wins</div>
+                <div className="font-bold text-white">{match?.player1?.username || 'TBD'}</div>
+                <div className="text-sm text-slate-400">{match?.player1Score || 0} wins</div>
               </div>
             </div>
             <div className="flex items-center gap-3 justify-end">
               <div className="text-right">
-                <div className="font-bold text-white">{match.player2?.username || 'TBD'}</div>
-                <div className="text-sm text-slate-400">{match.player2Score || 0} wins</div>
+                <div className="font-bold text-white">{match?.player2?.username || 'TBD'}</div>
+                <div className="text-sm text-slate-400">{match?.player2Score || 0} wins</div>
               </div>
               <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg">
-                {match.player2?.username?.charAt(0).toUpperCase() || '?'}
+                {match?.player2?.username?.charAt(0)?.toUpperCase() || '?'}
               </div>
             </div>
           </div>

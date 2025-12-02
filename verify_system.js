@@ -18,7 +18,8 @@ fetch('/api/stages')
 fetch('/api/tournaments')
   .then(res => res.json())
   .then(data => {
-    const tournaments = data.tournaments || [];
+    // La API devuelve un array directo
+    const tournaments = Array.isArray(data) ? data : [];
     console.log('\n✅ Torneos encontrados:', tournaments.length);
     
     tournaments.forEach(t => {
