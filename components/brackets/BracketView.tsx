@@ -129,18 +129,16 @@ export function BracketView({
       {winnersRounds.length > 0 && (
         <section>
           {/* Section Header */}
-          <div className="mb-6 p-6 rounded-xl relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%)',
-              border: '2px solid rgba(220, 20, 60, 0.3)'
-            }}>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">🏆</span>
-              <h2 className="text-2xl font-black text-white">Winners Bracket</h2>
+          <div className="mb-4 px-4 py-3 rounded-lg bg-gradient-to-r from-red-950/30 to-yellow-950/30 border border-red-900/20">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-yellow-500 flex items-center justify-center">
+                <span className="text-white text-lg">🏆</span>
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white">Winners Bracket</h2>
+                <p className="text-slate-500 text-xs">Lose here and drop to Losers</p>
+              </div>
             </div>
-            <p className="text-slate-400 text-sm mt-1">
-              Pierde aquí y caes al Losers Bracket
-            </p>
           </div>
           
           {/* Horizontal Scrollable Container */}
@@ -184,18 +182,16 @@ export function BracketView({
       {losersRounds.length > 0 && (
         <section>
           {/* Section Header */}
-          <div className="mb-6 p-6 rounded-xl relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%)',
-              border: '2px solid rgba(59, 130, 246, 0.3)'
-            }}>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">⚡</span>
-              <h2 className="text-2xl font-black text-white">Losers Bracket</h2>
+          <div className="mb-4 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-950/30 to-purple-950/30 border border-blue-900/20">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <span className="text-white text-lg">⚡</span>
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white">Losers Bracket</h2>
+                <p className="text-slate-500 text-xs">Lose here and you're out</p>
+              </div>
             </div>
-            <p className="text-slate-400 text-sm mt-1">
-              Pierde aquí y quedas eliminado del torneo
-            </p>
           </div>
           
           {/* Horizontal Scrollable Container */}

@@ -3,7 +3,7 @@
  * Columna vertical que contiene todos los matches de una ronda
  */
 
-import { MatchCard } from './MatchCard';
+import { MatchCardNew } from './MatchCardNew';
 
 interface Match {
   id: string;
@@ -75,16 +75,16 @@ export function RoundColumn({
     : null;
   
   return (
-    <div className="flex flex-col gap-4 min-w-[240px]">
+    <div className="flex flex-col gap-3 min-w-[240px]">
       {/* Round Header */}
-      <div className="text-center space-y-1">
-        <div className="inline-block bg-slate-900 dark:bg-slate-800 border-2 border-slate-700 dark:border-slate-600 rounded-lg px-3 py-1.5 shadow-md">
-          <h3 className="text-xs font-bold text-white uppercase tracking-wide">
+      <div className="text-center">
+        <div className="inline-flex items-center px-3 py-1 bg-slate-800/50 border border-slate-700/50 rounded-md">
+          <h3 className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
             {roundName}
           </h3>
         </div>
         {formattedTime && (
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-[10px] text-slate-600 mt-1">
             {formattedTime}
           </p>
         )}
@@ -98,7 +98,7 @@ export function RoundColumn({
           const player2 = getPlayerInfo(match.player2Id);
           
           return (
-            <MatchCard
+            <MatchCardNew
               key={match.id}
               match={match}
               player1={player1}

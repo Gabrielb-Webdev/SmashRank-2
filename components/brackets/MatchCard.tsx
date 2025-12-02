@@ -1,9 +1,10 @@
 /**
- * MatchCard Component - Tarjeta de match estilo start.gg
- * Soporta múltiples estados: Completado, Pendiente, En Progreso, TBD
+ * MatchCard Component - Nuevo diseño moderno estilo start.gg
+ * Diseño compacto con mejor jerarquía visual
  */
 
 import { cn } from '@/lib/utils';
+import { Check } from 'lucide-react';
 
 interface PlayerInfo {
   id: string;
@@ -53,27 +54,19 @@ export function MatchCard({
   
   // Estado: TBD (sin jugadores definidos)
   if (!hasAnyPlayer && !showProjected) {
-    return null; // No mostrar si showProjected está desactivado
+    return null;
   }
   
   if (!hasAnyPlayer) {
     return (
-      <div
-        className={cn(
-          'w-[220px] bg-slate-900/60 border-2 border-dashed border-slate-700 rounded-lg p-3',
-          'opacity-50 cursor-not-allowed',
-          className
-        )}
-      >
-        <div className="flex items-center justify-center h-20">
-          <div className="text-center">
-            <div className="text-slate-500 text-sm mb-1">- - - - -</div>
-            <div className="text-slate-600 text-xs">To be determined</div>
+      <div className={cn('relative w-[240px]', className)}>
+        <div className="bg-[#1a1d29] border border-slate-700/50 rounded overflow-hidden">
+          <div className="flex items-center justify-center h-16 text-slate-600 text-xs">
+            To be determined
           </div>
         </div>
-        {/* Match ID Badge */}
-        <div className="absolute -top-2 -left-2 bg-slate-700 w-7 h-7 rounded-md flex items-center justify-center shadow-lg">
-          <span className="text-xs font-bold text-slate-400">{matchLabel}</span>
+        <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-400">
+          {matchLabel}
         </div>
       </div>
     );
