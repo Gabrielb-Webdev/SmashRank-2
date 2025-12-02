@@ -269,7 +269,10 @@ export function BracketView({
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           {getPlayerInfo(grandFinals.player1Id)?.username || (
                             <span className="text-slate-400 italic text-sm">
-                              {grandFinals.player1Source?.replace('Winner of ', 'Ganador del ') || 'Por determinar'}
+                              {showProjected 
+                                ? (grandFinals.player1Source || 'Por determinar')
+                                : 'TBD'
+                              }
                             </span>
                           )}
                           {grandFinals.winnerId === grandFinals.player1Id && (
@@ -299,7 +302,10 @@ export function BracketView({
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           {getPlayerInfo(grandFinals.player2Id)?.username || (
                             <span className="text-slate-400 italic text-sm">
-                              {grandFinals.player2Source?.replace('Winner of ', 'Ganador del ') || 'Por determinar'}
+                              {showProjected 
+                                ? (grandFinals.player2Source || 'Por determinar')
+                                : 'TBD'
+                              }
                             </span>
                           )}
                           {grandFinals.winnerId === grandFinals.player2Id && (

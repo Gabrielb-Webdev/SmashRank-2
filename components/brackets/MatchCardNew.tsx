@@ -85,6 +85,7 @@ export function MatchCardNew({
           isWinner={player1IsWinner}
           score={match.player1Score}
           source={match.player1Source}
+          showProjected={showProjected}
           isTop
         />
         
@@ -97,6 +98,7 @@ export function MatchCardNew({
           isWinner={player2IsWinner}
           score={match.player2Score}
           source={match.player2Source}
+          showProjected={showProjected}
         />
         
         {/* Live Indicator */}
@@ -123,16 +125,27 @@ interface PlayerSlotProps {
   score?: number;
   source?: string;
   isTop?: boolean;
+  showProjected?: boolean;
 }
 
-function PlayerSlot({ player, isWinner, score, source, isTop }: PlayerSlotProps) {
+function PlayerSlot({ player, isWinner, score, source, isTop, showProjected }: PlayerSlotProps) {
   if (!player) {
-    // Mostrar el source completo sin recortar
-    const displayText = source === 'BYE' ? 'BYE' : (source || 'TBD');
+    // Determinar qué mostrar según showProjected
+    let displayText = 'TBD';
+    let textStyle = 'text-slate-600';
+    
+    if (source === 'BYE') {
+      displayText = 'BYE';
+      textStyle = 'text-slate-500 italic';
+    } else if (showProjected && source) {
+      // Mostrar texto proyectado completo (Winner of A, Loser of B, etc.)
+      displayText = source;
+      textStyle = 'text-slate-500 italic';
+    }
     
     return (
       <div className="h-7 px-2 flex items-center bg-[#0f1117]">
-        <span className="text-[11px] text-slate-500 italic truncate">
+        <span className={`text-[11px] truncate ${textStyle}`}>
           {displayText}
         </span>
       </div>

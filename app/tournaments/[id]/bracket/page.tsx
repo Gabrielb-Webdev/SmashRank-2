@@ -381,7 +381,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                       <EyeOff className="w-4 h-4" />
                     )}
                     <span className="font-medium">
-                      {showProjected ? 'Ocultando' : 'Mostrando'} Matches Proyectados
+                      {showProjected ? 'Ocultar' : 'Mostrar'} Matches Proyectados
                     </span>
                   </button>
                   
@@ -396,6 +396,7 @@ export default function BracketPage({ params }: { params: { id: string } }) {
                   losersMatches={bracket.data.losers}
                   grandFinals={bracket.data.grandFinals}
                   getPlayerInfo={getPlayerInfo}
+                  showProjected={showProjected}
                   onMatchClick={(match) => {
                     // Solo permitir click si el torneo está en progreso
                     if (tournament?.status === 'IN_PROGRESS') {
