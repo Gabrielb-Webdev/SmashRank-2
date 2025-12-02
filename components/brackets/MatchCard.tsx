@@ -135,6 +135,10 @@ export function MatchCard({
   const player1IsWinner = match.winnerId === player1.id;
   const player2IsWinner = match.winnerId === player2.id;
   
+  // Verificar si es un BYE (un jugador vs nadie)
+  const isPlayer1BYE = !player1 && match.player1Source === 'BYE';
+  const isPlayer2BYE = !player2 && match.player2Source === 'BYE';
+  
   return (
     <div
       onClick={onClick}
@@ -153,11 +157,20 @@ export function MatchCard({
         'flex items-center justify-between p-2 border-b border-slate-200 dark:border-slate-700',
         player1IsWinner && 'bg-green-50 dark:bg-green-950/30'
       )}>
-        <PlayerRow 
-          player={player1} 
-          isWinner={player1IsWinner}
-          score={match.player1Score}
-        />
+        {player1 ? (
+          <PlayerRow 
+            player={player1} 
+            isWinner={player1IsWinner}
+            score={match.player1Score}
+          />
+        ) : (
+          <div className="flex items-center gap-2 flex-1">
+            <div className="w-6 h-6 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center">
+              <span className="text-xs text-slate-500">—</span>
+            </div>
+            <span className="text-sm text-slate-400 dark:text-slate-600 italic">BYE</span>
+          </div>
+        )}
       </div>
       
       {/* Player 2 */}
@@ -165,11 +178,20 @@ export function MatchCard({
         'flex items-center justify-between p-2',
         player2IsWinner && 'bg-green-50 dark:bg-green-950/30'
       )}>
-        <PlayerRow 
-          player={player2} 
-          isWinner={player2IsWinner}
-          score={match.player2Score}
-        />
+        {player2 ? (
+          <PlayerRow 
+            player={player2} 
+            isWinner={player2IsWinner}
+            score={match.player2Score}
+          />
+        ) : (
+          <div className="flex items-center gap-2 flex-1">
+            <div className="w-6 h-6 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center">
+              <span className="text-xs text-slate-500">—</span>
+            </div>
+            <span className="text-sm text-slate-400 dark:text-slate-600 italic">BYE</span>
+          </div>
+        )}
       </div>
       
       {/* Live Badge */}

@@ -136,17 +136,25 @@ export function generateDoubleEliminationBracket(
   let matchIdCounter = 1;
   const firstRoundMatchCount = bracketSize / 2;
   
+  // SIEMPRE crear todos los matches de R1 para mostrar todos los participantes
   for (let i = 0; i < firstRoundMatchCount; i++) {
     const player1 = orderedPlayers[i * 2];
     const player2 = orderedPlayers[i * 2 + 1];
     
-    // Si uno de los slots es null (BYE), el jugador avanza automáticamente
-    if (!player1 && !player2) {
-      // Ambos slots vacíos - no crear match
-      continue;
-    }
-    
     const matchId = `W-R1-M${i + 1}`;
+    
+    // Determinar el estado del match
+    let matchStatus = 'PENDING';
+    let winnerId: string | undefined;
+    
+    // Si solo hay un jugador (el otro es BYE), ese jugador gana automáticamente
+    if (player1 && !player2) {
+      matchStatus = 'COMPLETED';
+      winnerId = player1.id;
+    } else if (!player1 && player2) {
+      matchStatus = 'COMPLETED';
+      winnerId = player2.id;
+    }
     
     winners.push({
       id: matchId,
@@ -159,9 +167,10 @@ export function generateDoubleEliminationBracket(
       player1Source: player1 ? undefined : 'BYE',
       player2Id: player2?.id,
       player2Source: player2 ? undefined : 'BYE',
+      winnerId,
       player1Score: 0,
       player2Score: 0,
-      status: 'PENDING',
+      status: matchStatus,
       isLive: false,
     });
     
@@ -337,6 +346,26 @@ export function generateDoubleEliminationBracket(
   const lf = losers.find(m => m.id === losersFinalist);
   if (wf) wf.nextMatchId = grandFinals.id;
   if (lf) lf.nextMatchId = grandFinals.id;
+  
+  // ==================== PROPAGAR BYEs ====================
+  // Propagar automáticamente los ganadores por BYE a la siguiente ronda
+  const allMatches = [...winners, ...losers];
+  
+  winners.forEach(match => {
+    if (match.winnerId && match.nextMatchId) {
+      const nextMatch = allMatches.find(m => m.id === match.nextMatchId);
+      if (nextMatch) {
+        // Determinar en qué slot va el ganador
+        if (nextMatch.previousMatch1Id === match.id) {
+          nextMatch.player1Id = match.winnerId;
+          nextMatch.player1Source = undefined;
+        } else if (nextMatch.previousMatch2Id === match.id) {
+          nextMatch.player2Id = match.winnerId;
+          nextMatch.player2Source = undefined;
+        }
+      }
+    }
+  });
   
   return {
     winners,
