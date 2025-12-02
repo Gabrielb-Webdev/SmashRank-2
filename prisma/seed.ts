@@ -114,7 +114,6 @@ async function main() {
   // Limpiar base de datos
   await prisma.ranking.deleteMany();
   await prisma.match.deleteMany();
-  await prisma.bracket.deleteMany();
   await prisma.registration.deleteMany();
   await prisma.tournament.deleteMany();
   await prisma.userCharacter.deleteMany();
