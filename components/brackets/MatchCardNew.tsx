@@ -127,10 +127,13 @@ interface PlayerSlotProps {
 
 function PlayerSlot({ player, isWinner, score, source, isTop }: PlayerSlotProps) {
   if (!player) {
+    // Mostrar el source completo sin recortar
+    const displayText = source === 'BYE' ? 'BYE' : (source || 'TBD');
+    
     return (
       <div className="h-7 px-2 flex items-center bg-[#0f1117]">
-        <span className="text-[11px] text-slate-600 truncate">
-          {source === 'BYE' ? 'BYE' : source?.replace(/Winner of |Loser of /g, '') || 'TBD'}
+        <span className="text-[11px] text-slate-500 italic truncate">
+          {displayText}
         </span>
       </div>
     );
