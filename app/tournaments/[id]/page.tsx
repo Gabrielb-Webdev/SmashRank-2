@@ -114,13 +114,16 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
       const data = await response.json();
 
       if (!response.ok) {
+        console.error('Error de registro:', data);
         throw new Error(data.error || 'Error al inscribirse');
       }
 
       toast.success('¡Inscripción exitosa!');
       setShowRegisterModal(false);
+      setIsRegistered(true);
       fetchTournament();
     } catch (error: any) {
+      console.error('Error completo:', error);
       toast.error(error.message || 'Error al procesar la inscripción');
     } finally {
       setRegistering(false);

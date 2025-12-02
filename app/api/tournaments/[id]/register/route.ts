@@ -12,6 +12,7 @@ export async function POST(
     const session = await getServerSession(authOptions);
 
     if (!session) {
+      console.log('❌ Usuario no autenticado');
       return NextResponse.json(
         { error: 'No autenticado' },
         { status: 401 }
@@ -21,7 +22,7 @@ export async function POST(
     const body = await request.json();
     const { characterId, skinId } = body;
 
-    // Personaje y skin son opcionales ahora
+    console.log(`📝 Intento de registro en torneo ${params.id} por usuario ${session.user.id}`);
 
     // Verificar que el torneo existe y está abierto para inscripciones
     const tournament = await prisma.tournament.findUnique({
@@ -32,22 +33,33 @@ export async function POST(
     });
 
     if (!tournament) {
+      console.log('❌ Torneo no encontrado');
       return NextResponse.json(
         { error: 'Torneo no encontrado' },
         { status: 404 }
       );
     }
 
-    // Verificar fechas de inscripción
+    console.log(`✅ Torneo encontrado: ${tournament.name}, status: ${tournament.status}`);
+
+    // Verificar que el torneo permita inscripciones
+    if (tournament.status !== 'REGISTRATION_OPEN' && tournament.status !== 'UPCOMING') {
+      return NextResponse.json(
+        { error: 'Las inscripciones no están abiertas para este torneo' },
+        { status: 400 }
+      );
+    }
+
+    // Verificar fechas de inscripción solo si están definidas
     const now = new Date();
-    if (now < tournament.registrationStart) {
+    if (tournament.registrationStart && now < tournament.registrationStart) {
       return NextResponse.json(
         { error: 'Las inscripciones aún no han abierto' },
         { status: 400 }
       );
     }
 
-    if (now > tournament.registrationEnd) {
+    if (tournament.registrationEnd && now > tournament.registrationEnd) {
       return NextResponse.json(
         { error: 'Las inscripciones han cerrado' },
         { status: 400 }
