@@ -26,20 +26,21 @@ export default function SystemHealthCheck() {
       const stagesRes = await fetch('/api/stages');
       const stagesOk = stagesRes.ok;
 
-      // 2. Verificar torneos y campos nuevos
+      // 2. Verificar si la migración está completa verificando la estructura de la API
       const tournamentsRes = await fetch('/api/tournaments');
       const tournamentsData = await tournamentsRes.json();
       
-      const hasMigration = tournamentsData.tournaments?.some((t: any) => 
-        t.hasOwnProperty('starterStages') || t.hasOwnProperty('counterpickStages')
-      );
+      // Verificar si el primer torneo tiene la propiedad starterStages (incluso si está vacía)
+      const hasMigration = tournamentsData.tournaments && tournamentsData.tournaments.length > 0
+        ? tournamentsData.tournaments[0].hasOwnProperty('starterStages')
+        : true; // Si no hay torneos, asumimos que la migración está OK
 
       if (!hasMigration) {
         setStatus({
           database: 'ok',
           stages: stagesOk ? 'ok' : 'error',
           migration: 'pending',
-          message: '⚠️ Migración pendiente: Ejecuta neon_migration.sql en Neon',
+          message: '⚠️ Migración pendiente: Ejecuta la migración en /admin/migration',
         });
       } else {
         setStatus({
