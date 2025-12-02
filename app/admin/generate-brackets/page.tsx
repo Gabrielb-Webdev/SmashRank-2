@@ -100,31 +100,33 @@ export default function GenerateBracketsPage() {
               <div className="text-center py-8">
                 <p className="text-slate-400">No hay torneos disponibles</p>
               </div>
-            ) : tournaments.map((tournament, index) => (
-              <div 
-                key={tournament.id}
-                className="bg-slate-900/50 rounded-lg p-6 border border-slate-700 hover:border-slate-600 transition-all"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-2">
-                      {index + 1}. {tournament.name}
-                    </h3>
-                    <div className="space-y-1 text-sm text-slate-400">
-                      <p>• ID: <code className="text-purple-400">{tournament.id}</code></p>
-                      <p>• Participantes: <strong className="text-green-400">{tournament.participants}</strong></p>
+            ) : (
+              tournaments.map((tournament, index) => (
+                <div 
+                  key={tournament.id}
+                  className="bg-slate-900/50 rounded-lg p-6 border border-slate-700 hover:border-slate-600 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white mb-2">
+                        {index + 1}. {tournament.name}
+                      </h3>
+                      <div className="space-y-1 text-sm text-slate-400">
+                        <p>• ID: <code className="text-purple-400">{tournament.id}</code></p>
+                        <p>• Participantes: <strong className="text-green-400">{tournament.participants}</strong></p>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => generateBracket(tournament.id, tournament.name)}
+                      disabled={loading}
+                      className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:opacity-90 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed shadow-lg ml-4"
+                    >
+                      {loading ? '⏳' : '🎯'} Generar
+                    </button>
                   </div>
-                  <button
-                    onClick={() => generateBracket(tournament.id, tournament.name)}
-                    disabled={loading}
-                    className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:opacity-90 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed shadow-lg ml-4"
-                  >
-                    {loading ? '⏳' : '🎯'} Generar
-                  </button>
                 </div>
-              </div>
-            )))}
+              ))
+            )}
           </div>
 
           <div className="mt-8 pt-6 border-t border-slate-700">
