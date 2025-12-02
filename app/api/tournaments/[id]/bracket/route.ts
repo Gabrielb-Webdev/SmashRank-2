@@ -164,12 +164,6 @@ export async function GET(
           },
         },
         games: {
-          include: {
-            player1Character: true,
-            player2Character: true,
-            selectedStage: true,
-            bannedStages: true,
-          },
           orderBy: {
             gameNumber: 'asc',
           },
