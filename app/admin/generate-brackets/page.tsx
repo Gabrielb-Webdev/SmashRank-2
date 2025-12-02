@@ -35,10 +35,6 @@ export default function GenerateBracketsPage() {
       .finally(() => setFetchingTournaments(false));
   }, [session, router]);
 
-  if (!session || session.user.role !== 'ADMIN') {
-    return null;
-  }
-
   const generateBracket = async (tournamentId: string, tournamentName: string) => {
     setLoading(true);
     try {
@@ -80,6 +76,10 @@ export default function GenerateBracketsPage() {
     toast.success('✅ ¡Todos los brackets generados!');
     setLoading(false);
   };
+
+  if (!session || session.user.role !== 'ADMIN') {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
