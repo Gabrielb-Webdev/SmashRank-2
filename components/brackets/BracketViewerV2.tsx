@@ -48,7 +48,7 @@ export default function BracketViewerV2({ tournamentId, isAdmin }: BracketViewer
 
   const fetchBracket = async () => {
     try {
-      const res = await fetch(`/api/tournaments/${tournamentId}/brackets`);
+      const res = await fetch(`/api/tournaments/${tournamentId}/bracket`);
       const data = await res.json();
       setMatches(data.matches || []);
     } catch (error) {
@@ -116,7 +116,7 @@ export default function BracketViewerV2({ tournamentId, isAdmin }: BracketViewer
           {isAdmin && (
             <button
               onClick={async () => {
-                const res = await fetch(`/api/tournaments/${tournamentId}/brackets/generate`, {
+                const res = await fetch(`/api/tournaments/${tournamentId}/bracket`, {
                   method: 'POST',
                 });
                 if (res.ok) {

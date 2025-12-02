@@ -38,6 +38,20 @@ export default function MatchFlowModal({
   const isAdmin = session?.user?.role === 'ADMIN';
   const canInteract = isPlayer1 || isPlayer2 || isAdmin;
 
+  // Debug logging
+  console.log('MatchFlowModal Debug:', {
+    matchId: match?.id,
+    player1Id: match?.player1?.id,
+    player2Id: match?.player2?.id,
+    sessionUserId: session?.user?.id,
+    isPlayer1,
+    isPlayer2,
+    isAdmin,
+    canInteract,
+    player1CheckIn: match?.player1CheckIn,
+    player2CheckIn: match?.player2CheckIn,
+  });
+
   // Validar que match tenga los datos mínimos
   if (!match || !match.id) {
     return (
@@ -236,38 +250,76 @@ export default function MatchFlowModal({
           status={match?.player1CheckIn && match?.player2CheckIn ? 'complete' : 'pending'}
           description="Both players must check in to start the match"
         >
+          {/* Debug info */}
+          {!canInteract && (
+            <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg text-sm text-red-300 mb-3">
+              <p className="font-bold mb-1">⚠️ No puedes hacer check-in</p>
+              <p className="text-xs">Razón: {!session ? 'No estás autenticado' : 'No eres parte de este match'}</p>
+              {session && (
+                <div className="mt-2 text-xs">
+                  <p>Tu ID: {session.user?.id}</p>
+                  <p>Player 1 ID: {match?.player1?.id || 'N/A'}</p>
+                  <p>Player 2 ID: {match?.player2?.id || 'N/A'}</p>
+                </div>
+              )}
+            </div>
+          )}
+          
           {(!match?.player1CheckIn || !match?.player2CheckIn) && canInteract && (
-            <div className="space-y-2">
+            <div className="space-y-3">
               <button
                 onClick={async () => {
+                  console.log('Check-in button clicked');
                   setLoading(true);
                   try {
                     const res = await fetch(`/api/tournaments/${tournamentId}/matches/${match?.id}/checkin`, {
                       method: 'POST',
                     });
+                    console.log('Check-in response:', res.status);
                     if (res.ok) {
                       toast.success('Check-in completado!');
                       onUpdate();
                     } else {
                       const data = await res.json();
+                      console.error('Check-in error:', data);
                       toast.error(data.error || 'Error en check-in');
                     }
                   } catch (error) {
+                    console.error('Check-in exception:', error);
                     toast.error('Error durante el check-in');
                   } finally {
                     setLoading(false);
                   }
                 }}
                 disabled={loading || (isPlayer1 && match?.player1CheckIn) || (isPlayer2 && match?.player2CheckIn)}
-                className="w-full py-2 px-4 rounded-lg bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold transition-colors"
+                className="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-slate-700 disabled:to-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-lg font-bold transition-all shadow-lg hover:shadow-green-500/50"
               >
-                {(isPlayer1 && match?.player1CheckIn) || (isPlayer2 && match?.player2CheckIn) ? '✓ Ya hiciste Check-in' : 'Hacer Check-in'}
+                {loading ? '⏳ Procesando...' : (isPlayer1 && match?.player1CheckIn) || (isPlayer2 && match?.player2CheckIn) ? '✓ Ya hiciste Check-in' : '🎮 HACER CHECK-IN'}
               </button>
-              <div className="text-xs text-slate-400 text-center">
-                {match?.player1CheckIn && '✓ ' + (match?.player1?.username || 'Player 1') + ' listo'}
-                {match?.player1CheckIn && match?.player2CheckIn && ' • '}
-                {match?.player2CheckIn && '✓ ' + (match?.player2?.username || 'Player 2') + ' listo'}
+              
+              <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                <div className="text-sm text-slate-300 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span>{match?.player1?.username || 'Player 1'}</span>
+                    <span className={match?.player1CheckIn ? 'text-green-400 font-bold' : 'text-yellow-400'}>
+                      {match?.player1CheckIn ? '✓ Listo' : '⏳ Esperando'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>{match?.player2?.username || 'Player 2'}</span>
+                    <span className={match?.player2CheckIn ? 'text-green-400 font-bold' : 'text-yellow-400'}>
+                      {match?.player2CheckIn ? '✓ Listo' : '⏳ Esperando'}
+                    </span>
+                  </div>
+                </div>
               </div>
+            </div>
+          )}
+          
+          {match?.player1CheckIn && match?.player2CheckIn && (
+            <div className="p-4 bg-green-900/30 border border-green-700 rounded-lg text-center">
+              <p className="text-green-400 font-bold text-lg">✓ Ambos jugadores listos!</p>
+              <p className="text-sm text-green-300 mt-1">El match puede comenzar</p>
             </div>
           )}
         </TaskItem>

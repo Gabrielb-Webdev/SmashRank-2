@@ -132,9 +132,49 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Obtener todos los matches del torneo
+    // Obtener todos los matches del torneo con todas las relaciones necesarias
     const matches = await prisma.match.findMany({
       where: { tournamentId: params.id },
+      include: {
+        player1: {
+          select: {
+            id: true,
+            username: true,
+            avatar: true,
+            wins: true,
+            losses: true,
+            points: true,
+          },
+        },
+        player2: {
+          select: {
+            id: true,
+            username: true,
+            avatar: true,
+            wins: true,
+            losses: true,
+            points: true,
+          },
+        },
+        winner: {
+          select: {
+            id: true,
+            username: true,
+            avatar: true,
+          },
+        },
+        games: {
+          include: {
+            player1Character: true,
+            player2Character: true,
+            selectedStage: true,
+            bannedStages: true,
+          },
+          orderBy: {
+            gameNumber: 'asc',
+          },
+        },
+      },
       orderBy: [
         { bracketType: 'asc' },
         { round: 'asc' },
@@ -149,24 +189,15 @@ export async function GET(
       );
     }
 
-    // Obtener el torneo con registraciones
+    // Obtener el torneo
     const tournament = await prisma.tournament.findUnique({
       where: { id: params.id },
-      include: {
-        registrations: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                avatar: true,
-                wins: true,
-                losses: true,
-                points: true,
-              },
-            },
-          },
-        },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        starterStages: true,
+        counterpickStages: true,
       },
     });
 
@@ -177,19 +208,10 @@ export async function GET(
       );
     }
 
-    // Organizar matches por tipo
-    const winnersMatches = matches.filter(m => m.bracketType === 'WINNERS');
-    const losersMatches = matches.filter(m => m.bracketType === 'LOSERS');
-    const grandFinals = matches.find(m => m.bracketType === 'GRANDS');
-
+    // Retornar matches con toda la información
     return NextResponse.json({
-      id: params.id,
+      matches,
       tournament,
-      data: {
-        winners: winnersMatches,
-        losers: losersMatches,
-        grandFinals,
-      },
     });
   } catch (error) {
     console.error('Error al obtener bracket:', error);
