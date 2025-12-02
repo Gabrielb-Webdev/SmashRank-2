@@ -146,8 +146,9 @@ export function BracketView({
           {/* Horizontal Scrollable Container */}
           <div className="relative">
             <div className="overflow-x-auto pb-8 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
-              <div className="inline-flex items-start gap-16 min-w-min px-4">
-                {winnersRounds.map((round, index) => (
+              <div className="flex justify-center">
+                <div className="inline-flex items-start gap-16 min-w-min px-4">
+                  {winnersRounds.map((round, index) => (
                   <div key={round.roundNumber} className="flex items-center gap-8">
                     <RoundColumn
                       roundName={round.roundName}
@@ -167,6 +168,7 @@ export function BracketView({
                     )}
                   </div>
                 ))}
+                </div>
               </div>
             </div>
             
@@ -199,8 +201,9 @@ export function BracketView({
           {/* Horizontal Scrollable Container */}
           <div className="relative">
             <div className="overflow-x-auto pb-8 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
-              <div className="inline-flex items-start gap-16 min-w-min px-4">
-                {losersRounds.map((round, index) => (
+              <div className="flex justify-center">
+                <div className="inline-flex items-start gap-16 min-w-min px-4">
+                  {losersRounds.map((round, index) => (
                   <div key={round.roundNumber} className="flex items-center gap-8">
                     <RoundColumn
                       roundName={round.roundName}
@@ -220,6 +223,7 @@ export function BracketView({
                     )}
                   </div>
                 ))}
+                </div>
               </div>
             </div>
             
