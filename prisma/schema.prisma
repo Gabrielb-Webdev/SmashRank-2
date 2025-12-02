@@ -227,6 +227,10 @@ model Match {
   roundNumber      Int         // 1, 2, 3...
   position         Int         // Position within the round
   
+  // Legacy fields (deprecated - kept for backward compatibility)
+  round            Int         // DEPRECATED: Use roundNumber
+  matchNumber      Int         // DEPRECATED: Use position
+  
   // Players
   player1Id        String?
   player1Source    String?     // "Winner of Match #5" or "Loser of Match #3"

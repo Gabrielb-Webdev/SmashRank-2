@@ -90,7 +90,9 @@ export async function POST(
         bracketType: match.bracketType,
         roundName: match.roundName,
         roundNumber: match.roundNumber,
+        round: match.roundNumber, // Legacy field
         position: match.position,
+        matchNumber: match.position, // Legacy field
         player1Id: match.player1Id,
         player1Source: match.player1Source,
         player2Id: match.player2Id,
@@ -135,8 +137,8 @@ export async function GET(
       where: { tournamentId: params.id },
       orderBy: [
         { bracketType: 'asc' },
-        { roundNumber: 'asc' },
-        { position: 'asc' },
+        { round: 'asc' },
+        { matchNumber: 'asc' },
       ],
     });
 
