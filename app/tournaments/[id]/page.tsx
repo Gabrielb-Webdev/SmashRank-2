@@ -76,15 +76,17 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
         const tournamentData = data.tournament || data;
         setTournament(tournamentData);
         
-        // Verificar si existe bracket
-        const bracketResponse = await fetch(`/api/tournaments/${tournamentId}/bracket`);
-        setHasBracket(bracketResponse.ok);
+        // Verificar si existe bracket (sin mostrar error en consola)
+        try {
+          const bracketResponse = await fetch(`/api/tournaments/${tournamentId}/bracket`);
+          setHasBracket(bracketResponse.ok && bracketResponse.status === 200);
+        } catch (err) {
+          // Bracket no existe aún, esto es normal
+          setHasBracket(false);
+        }
         
         // Verificar si el usuario está registrado
         if (session && tournamentData.registrations) {
-          console.log('Session user ID:', session.user.id);
-          console.log('Registrations:', tournamentData.registrations);
-          
           const userRegistration = tournamentData.registrations.find(
             (reg: any) => reg.userId === session.user.id
           );
@@ -226,16 +228,16 @@ export default function TournamentDetailPage({ params }: { params: { id: string 
                     </button>
                   </Link>
                 )}
+                {canEdit && !hasBracket && tournament?.registrations?.length >= 2 && (
+                  <Link href={`/admin/generate-brackets?tournament=${tournamentId}`}>
+                    <button className="px-4 py-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold transition-all flex items-center gap-2 shadow-lg">
+                      <Trophy className="w-4 h-4" />
+                      Generar Bracket ({tournament.registrations.length} jugadores)
+                    </button>
+                  </Link>
+                )}
                 {canEdit && (
                   <>
-                    {!hasBracket && (
-                      <Link href={`/tournaments/${tournamentId}/bracket`}>
-                        <button className="px-4 py-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold transition-all flex items-center gap-2 shadow-lg">
-                          <Trophy className="w-4 h-4" />
-                          Generar Bracket
-                        </button>
-                      </Link>
-                    )}
                     <Link href={`/tournaments/${tournamentId}/edit`}>
                       <button className="px-4 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-white font-semibold transition-all flex items-center gap-2 border border-slate-700">
                         <Edit className="w-4 h-4" />
