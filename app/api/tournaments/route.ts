@@ -8,9 +8,9 @@ import { slugify } from '@/lib/utils';
 const tournamentSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
   description: z.string().optional(),
-  isOnline: z.boolean().default(true),
+  isOnline: z.boolean().optional().default(true),
   format: z.enum(['SINGLE_ELIMINATION', 'DOUBLE_ELIMINATION', 'ROUND_ROBIN', 'SWISS', 'CREW_BATTLE']),
-  maxParticipants: z.number(),
+  maxParticipants: z.union([z.number(), z.string()]).transform(val => typeof val === 'string' ? parseInt(val) : val).pipe(z.number().positive()),
   startDate: z.string(),
   rules: z.string().optional(),
   stageList: z.string().optional(),
