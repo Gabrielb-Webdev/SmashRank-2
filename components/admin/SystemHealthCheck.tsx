@@ -30,9 +30,12 @@ export default function SystemHealthCheck() {
       const tournamentsRes = await fetch('/api/tournaments');
       const tournamentsData = await tournamentsRes.json();
       
+      // La API devuelve un array directo
+      const tournaments = Array.isArray(tournamentsData) ? tournamentsData : [];
+      
       // Verificar si el primer torneo tiene la propiedad starterStages (incluso si está vacía)
-      const hasMigration = tournamentsData.tournaments && tournamentsData.tournaments.length > 0
-        ? tournamentsData.tournaments[0].hasOwnProperty('starterStages')
+      const hasMigration = tournaments.length > 0
+        ? tournaments[0].hasOwnProperty('starterStages')
         : true; // Si no hay torneos, asumimos que la migración está OK
 
       if (!hasMigration) {

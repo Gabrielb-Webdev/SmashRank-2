@@ -21,7 +21,8 @@ export default function ConfigureStagesPage() {
     try {
       const res = await fetch('/api/tournaments');
       const data = await res.json();
-      setTournaments(data.tournaments || []);
+      // La API devuelve un array directo, no un objeto con propiedad tournaments
+      setTournaments(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching tournaments:', error);
     }
